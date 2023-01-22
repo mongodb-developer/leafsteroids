@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -11,6 +12,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float spawnRateS = 0.3f;
 
     [SerializeField] private int[] playerOverlapCount = { 0, 0, 0 };
+
+    [SerializeField] private GameObject spawnLocation;
+
+    private void OnEnable()
+    {
+        spawnLocation.gameObject.GetComponent<MeshRenderer>().enabled = false;
+    }
 
     public void playerHitDeadzone(int overlappingColliderCount)
     {
@@ -37,7 +45,8 @@ public class GameManager : MonoBehaviour
 
     private void SpawnPlayer()
     {
-        var player = Instantiate(playerPrefab, gameObject.transform, true);
+        var player = Instantiate(playerPrefab, spawnLocation.gameObject.transform);
+        player.gameObject.transform.parent = gameObject.transform;
         player.validPlayingField = validPlayingField;
         player.gameManager = this;
     }

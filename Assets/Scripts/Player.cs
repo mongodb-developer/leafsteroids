@@ -5,16 +5,16 @@ public class Player : MonoBehaviour
     public GameObject validPlayingField;
     public GameManager gameManager;
 
-    [SerializeField] private int speedInMS = 30;
+    [SerializeField] private int speedInMS = 20;
     [SerializeField] private int overlappingColliderCount;
     [SerializeField] private Vector3 currentDirection = Vector3.zero;
 
-    private readonly System.Random _random = new();
+    private readonly System.Random random = new();
 
 
     private void Start()
     {
-        InvokeRepeating(nameof(RandomizeDirection), 0f, 1f);
+        InvokeRepeating(nameof(RandomizeDirection), 0f, 0.5f);
     }
 
 
@@ -25,9 +25,10 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+        if (other == null || other.gameObject == null) return;
+
         if (other.gameObject.name.Equals("Deadzone"))
         {
-            // if (overlappingColliderCount != 2) Debug.Break();
             gameManager.playerHitDeadzone(overlappingColliderCount);
         }
 
@@ -73,7 +74,7 @@ public class Player : MonoBehaviour
 
     private float NextFloat(float min, float max)
     {
-        var val = (_random.NextDouble() * (max - min) + min);
+        var val = (random.NextDouble() * (max - min) + min);
         return (float)val;
     }
 }
