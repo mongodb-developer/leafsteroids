@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int playersReachedGoalCount;
     [SerializeField] private int playersLeftMapCount;
 
-    [SerializeField] private float spawnRateS = 0.3f;
+    [SerializeField] private float spawnRateS = 0.03f;
 
     [SerializeField] private int[] playerOverlapCount = { 0, 0, 0 };
 
