@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+public class GameManager2 : MonoBehaviour
 {
     [SerializeField] private Player playerPrefab;
     [SerializeField] private GameObject validPlayingField;
@@ -48,6 +47,6 @@ public class GameManager : MonoBehaviour
         var player = Instantiate(playerPrefab, spawnLocation.gameObject.transform);
         player.gameObject.transform.parent = gameObject.transform;
         player.validPlayingField = validPlayingField;
-        player.gameManager = this;
+        player.gameManager2 = this;
     }
 }

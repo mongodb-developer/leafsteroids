@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
     public GameObject validPlayingField;
-    public GameManager gameManager;
+    [FormerlySerializedAs("gameManager")] public GameManager2 gameManager2;
 
     [SerializeField] private int speedInMS = 20;
     [SerializeField] private int overlappingColliderCount;
@@ -29,13 +30,13 @@ public class Player : MonoBehaviour
 
         if (other.gameObject.name.Equals("Deadzone"))
         {
-            gameManager.playerHitDeadzone(overlappingColliderCount);
+            gameManager2.playerHitDeadzone(overlappingColliderCount);
         }
 
         var goalComponent = other.gameObject.GetComponent<Goal>();
         if (goalComponent != null)
         {
-            gameManager.playerReachedGoal(this);
+            gameManager2.playerReachedGoal(this);
         }
 
         var wallComponent = other.gameObject.GetComponent<Wall>();
@@ -50,7 +51,7 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject == validPlayingField)
         {
-            gameManager.playerLeftMap(this);
+            gameManager2.playerLeftMap(this);
         }
 
         var wallComponent = other.gameObject.GetComponent<Wall>();
