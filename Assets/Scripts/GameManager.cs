@@ -21,10 +21,6 @@ public class GameManager : MonoBehaviour
     private const string dataApiUrlInsertOne =
         "https://data.mongodb-api.com/app/data-mmwob/endpoint/data/v1/action/insertOne";
 
-    // private const string dataApiUrlFindOne =
-    //     "https://data.mongodb-api.com/app/data-mmwob/endpoint/data/v1/action/findOne";
-
-
     private readonly HttpClient client = new();
 
     private void Start()
