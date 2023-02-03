@@ -19,10 +19,6 @@ public class Movement : MonoBehaviour
         startingPosition = transform.position;
     }
 
-    private void Start()
-    {
-        ResetState();
-    }
 
     public void ResetState()
     {
@@ -38,7 +34,8 @@ public class Movement : MonoBehaviour
     {
         // Try to move in the next direction while it's queued to make movements
         // more responsive
-        if (nextDirection != Vector2.zero) {
+        if (nextDirection != Vector2.zero)
+        {
             SetDirection(nextDirection);
         }
     }
@@ -70,8 +67,8 @@ public class Movement : MonoBehaviour
     public bool Occupied(Vector2 direction)
     {
         // If no collider is hit then there is no obstacle in that direction
-        RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.75f, 0f, direction, 1.5f, obstacleLayer);
+        RaycastHit2D hit =
+            Physics2D.BoxCast(transform.position, Vector2.one * 0.75f, 0f, direction, 1.5f, obstacleLayer);
         return hit.collider != null;
     }
-
 }

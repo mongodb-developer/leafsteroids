@@ -1,6 +1,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,8 @@ public class GameManager : MonoBehaviour
     public Text scoreText;
     public Text livesText;
 
+    public TMP_Text textField;
+
     public int ghostMultiplier { get; private set; } = 1;
     public int score { get; private set; }
     public int lives { get; private set; }
@@ -23,10 +26,29 @@ public class GameManager : MonoBehaviour
 
     private readonly HttpClient client = new();
 
+    private string username = "";
+
     private void Start()
     {
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("api-key", "JX0THWuEm9AniPG9fx6B7E8dXg7GhRYcWLS312kvrscu8S0066R16t3TwXqzTQkl");
+        SetScore(0);
+        SetLives(3);
+    }
+
+    public void StartButtonClicked()
+    {
+        username = textField.text;
+        Debug.Log($"username.Length: {username.Length}, username: >>>{username}<<<");
+        if (username.Length <= 3)
+        {
+            Debug.Log("StartButtonClicked returned.");
+            return;
+        }
+
+        Debug.Log("StartButtonClicked starts a new game.");
+
+        ResetState();
         NewGame();
     }
 
@@ -35,6 +57,7 @@ public class GameManager : MonoBehaviour
     {
         if (lives <= 0 && Input.anyKeyDown)
         {
+            Debug.Log("Update fired new game.");
             NewGame();
         }
     }
@@ -167,7 +190,7 @@ public class GameManager : MonoBehaviour
     private async Task PostLocations()
     {
         var locations = pacman.locations.ToArray();
-        var roundResultWithoutId = new RoundResultWithoutId { locations = locations };
+        var roundResultWithoutId = new RoundResultWithoutId { username = username, locations = locations };
 
         var insertOneValues = new PayloadWithDocument
         {

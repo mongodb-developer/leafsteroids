@@ -22,11 +22,6 @@ public class Ghost : MonoBehaviour
         frightened = GetComponent<GhostFrightened>();
     }
 
-    private void Start()
-    {
-        ResetState();
-    }
-
     public void ResetState()
     {
         gameObject.SetActive(true);
@@ -36,11 +31,13 @@ public class Ghost : MonoBehaviour
         chase.Disable();
         scatter.Enable();
 
-        if (home != initialBehavior) {
+        if (home != initialBehavior)
+        {
             home.Disable();
         }
 
-        if (initialBehavior != null) {
+        if (initialBehavior != null)
+        {
             initialBehavior.Enable();
         }
     }
@@ -56,12 +53,14 @@ public class Ghost : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Pacman"))
         {
-            if (frightened.enabled) {
+            if (frightened.enabled)
+            {
                 FindObjectOfType<GameManager>().GhostEaten(this);
-            } else {
+            }
+            else
+            {
                 FindObjectOfType<GameManager>().PacmanEaten();
             }
         }
     }
-
 }
