@@ -31,33 +31,6 @@ public class GameManager : MonoBehaviour
     {
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("api-key", "JX0THWuEm9AniPG9fx6B7E8dXg7GhRYcWLS312kvrscu8S0066R16t3TwXqzTQkl");
-        //
-        //     var findOneValues = new Payload
-        //     {
-        //         dataSource = "Cluster0",
-        //         database = "pacman",
-        //         collection = "round-results"
-        //     };
-        //     var jsonString = JsonUtility.ToJson(findOneValues);
-        //     var document = await PostRequest(dataApiUrlFindOne, jsonString);
-        //     Debug.Log(document);
-        //
-        //     var insertOneValues = new PayloadWithDocument
-        //     {
-        //         dataSource = "Cluster0",
-        //         database = "pacman",
-        //         collection = "round-results",
-        //         document = new DocumentWithoutId
-        //         {
-        //             document = new RoundResultWithoutId
-        //             {
-        //                 locations = new[] { new Location { x = 1, y = 1 } }
-        //             }
-        //         }
-        //     };
-        //     var jsonStringNewDocument = JsonUtility.ToJson(insertOneValues);
-        //     var resultString = await PostRequest(dataApiUrlInsertOne, jsonStringNewDocument);
-        //     Debug.Log(resultString);
         NewGame();
     }
 
@@ -198,7 +171,6 @@ public class GameManager : MonoBehaviour
     private async Task PostLocations()
     {
         var locations = pacman.locations.ToArray();
-        Debug.Log(locations[0]);
         var roundResultWithoutId = new RoundResultWithoutId { locations = locations };
 
         var insertOneValues = new PayloadWithDocument
@@ -216,7 +188,6 @@ public class GameManager : MonoBehaviour
 
     public async Task PostRequest(string url, string jsonString)
     {
-        Debug.Log(jsonString);
         var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
         var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
         stringContent.Headers.ContentType.CharSet = null;
@@ -226,8 +197,6 @@ public class GameManager : MonoBehaviour
         httpRequest.Content.Headers.Add("Content-Type", "application/json");
 
         var response = await client.SendAsync(httpRequest);
-        Debug.Log(response.StatusCode);
-
         var resultString = await response.Content.ReadAsStringAsync();
         Debug.Log(resultString);
     }
