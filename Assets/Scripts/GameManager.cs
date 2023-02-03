@@ -1,3 +1,6 @@
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,10 +18,49 @@ public class GameManager : MonoBehaviour
     public int score { get; private set; }
     public int lives { get; private set; }
 
+    private const string dataApiUrlInsertOne =
+        "https://data.mongodb-api.com/app/data-mmwob/endpoint/data/v1/action/insertOne";
+
+    // private const string dataApiUrlFindOne =
+    //     "https://data.mongodb-api.com/app/data-mmwob/endpoint/data/v1/action/findOne";
+
+
+    private readonly HttpClient client = new();
+
     private void Start()
     {
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Add("api-key", "JX0THWuEm9AniPG9fx6B7E8dXg7GhRYcWLS312kvrscu8S0066R16t3TwXqzTQkl");
+        //
+        //     var findOneValues = new Payload
+        //     {
+        //         dataSource = "Cluster0",
+        //         database = "pacman",
+        //         collection = "round-results"
+        //     };
+        //     var jsonString = JsonUtility.ToJson(findOneValues);
+        //     var document = await PostRequest(dataApiUrlFindOne, jsonString);
+        //     Debug.Log(document);
+        //
+        //     var insertOneValues = new PayloadWithDocument
+        //     {
+        //         dataSource = "Cluster0",
+        //         database = "pacman",
+        //         collection = "round-results",
+        //         document = new DocumentWithoutId
+        //         {
+        //             document = new RoundResultWithoutId
+        //             {
+        //                 locations = new[] { new Location { x = 1, y = 1 } }
+        //             }
+        //         }
+        //     };
+        //     var jsonStringNewDocument = JsonUtility.ToJson(insertOneValues);
+        //     var resultString = await PostRequest(dataApiUrlInsertOne, jsonStringNewDocument);
+        //     Debug.Log(resultString);
         NewGame();
     }
+
 
     private void Update()
     {
@@ -57,6 +99,7 @@ public class GameManager : MonoBehaviour
         pacman.ResetState();
     }
 
+
     private void GameOver()
     {
         gameOverText.enabled = true;
@@ -83,6 +126,8 @@ public class GameManager : MonoBehaviour
 
     public void PacmanEaten()
     {
+        Task.Run(() => PostLocations());
+
         pacman.DeathSequence();
 
         SetLives(lives - 1);
@@ -113,6 +158,8 @@ public class GameManager : MonoBehaviour
 
         if (!HasRemainingPellets())
         {
+            Task.Run(() => PostLocations());
+
             pacman.gameObject.SetActive(false);
             Invoke(nameof(NewRound), 3f);
         }
@@ -146,5 +193,42 @@ public class GameManager : MonoBehaviour
     private void ResetGhostMultiplier()
     {
         ghostMultiplier = 1;
+    }
+
+    private async Task PostLocations()
+    {
+        var locations = pacman.locations.ToArray();
+        Debug.Log(locations[0]);
+        var roundResultWithoutId = new RoundResultWithoutId { locations = locations };
+
+        var insertOneValues = new PayloadWithDocument
+        {
+            dataSource = "Cluster0",
+            database = "pacman",
+            collection = "round-results",
+            document = roundResultWithoutId
+        };
+
+        var jsonStringNewDocument = JsonUtility.ToJson(insertOneValues);
+        await PostRequest(dataApiUrlInsertOne, jsonStringNewDocument);
+        pacman.locations.Clear();
+    }
+
+    public async Task PostRequest(string url, string jsonString)
+    {
+        Debug.Log(jsonString);
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
+        var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+        stringContent.Headers.ContentType.CharSet = null;
+        httpRequest.Content = stringContent;
+
+        httpRequest.Content.Headers.Remove("Content-Type");
+        httpRequest.Content.Headers.Add("Content-Type", "application/json");
+
+        var response = await client.SendAsync(httpRequest);
+        Debug.Log(response.StatusCode);
+
+        var resultString = await response.Content.ReadAsStringAsync();
+        Debug.Log(resultString);
     }
 }
