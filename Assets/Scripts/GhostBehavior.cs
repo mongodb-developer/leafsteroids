@@ -3,12 +3,12 @@ using UnityEngine;
 [RequireComponent(typeof(Ghost))]
 public abstract class GhostBehavior : MonoBehaviour
 {
-    public Ghost ghost { get; private set; }
     public float duration;
+    protected Ghost Ghost { get; private set; }
 
     private void Awake()
     {
-        ghost = GetComponent<Ghost>();
+        Ghost = GetComponent<Ghost>();
     }
 
     public void Enable()
@@ -16,12 +16,12 @@ public abstract class GhostBehavior : MonoBehaviour
         Enable(duration);
     }
 
-    public virtual void Enable(float duration)
+    public virtual void Enable(float enabledDuration)
     {
         enabled = true;
 
         CancelInvoke();
-        Invoke(nameof(Disable), duration);
+        Invoke(nameof(Disable), enabledDuration);
     }
 
     public virtual void Disable()
@@ -30,5 +30,4 @@ public abstract class GhostBehavior : MonoBehaviour
 
         CancelInvoke();
     }
-
 }

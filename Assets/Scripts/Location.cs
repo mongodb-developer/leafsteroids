@@ -8,7 +8,7 @@ public class Location
 
     public bool Equals(Location other)
     {
-        return x == other.x && y == other.y;
+        return Math.Abs(x - other!.x) < 0.001f && Math.Abs(y - other.y) < 0.001f;
     }
 
     public override string ToString()

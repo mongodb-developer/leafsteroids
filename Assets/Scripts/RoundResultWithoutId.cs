@@ -8,7 +8,7 @@ public class RoundResultWithoutId
 
     public override string ToString()
     {
-        if (locations.Length == 1) return $"{locations[0]}";
+        if (locations!.Length == 1) return $"{locations[0]}";
 
         var locationsString = $"{username}, {locations[0]}";
         for (var i = 1; i < locations.Length; i++) locationsString += $", {locations[i]}";

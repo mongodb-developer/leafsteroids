@@ -7,6 +7,6 @@ public class DocumentWithId
 
     public override string ToString()
     {
-        return document.ToString();
+        return document!.ToString();
     }
 }
