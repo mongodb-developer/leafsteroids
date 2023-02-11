@@ -14,11 +14,11 @@ namespace Game
         public Text scoreText;
         public Text livesText;
 
-        public int ghostMultiplier { get; private set; } = 1;
-        public int score { get; private set; }
-        public int lives { get; private set; }
-
         [SerializeField] private Recorder recorder;
+
+        private int GhostMultiplier { get; set; } = 1;
+        private int Score { get; set; }
+        private int Lives { get; set; }
 
         private void Start()
         {
@@ -27,7 +27,7 @@ namespace Game
 
         private void Update()
         {
-            if (lives <= 0 && Input.anyKeyDown)
+            if (Lives <= 0 && Input.anyKeyDown)
             {
                 NewGame();
             }
@@ -42,11 +42,11 @@ namespace Game
 
         private void NewRound()
         {
-            gameOverText.enabled = false;
+            gameOverText!.enabled = false;
 
-            foreach (Transform pellet in pellets)
+            foreach (Transform pellet in pellets!)
             {
-                pellet.gameObject.SetActive(true);
+                pellet!.gameObject.SetActive(true);
             }
 
             ResetState();
@@ -54,48 +54,47 @@ namespace Game
 
         private void ResetState()
         {
-            for (int i = 0; i < ghosts.Length; i++)
+            for (int i = 0; i < ghosts!.Length; i++)
             {
-                ghosts[i].ResetState();
+                ghosts[i]!.ResetState();
             }
 
-            pacman.ResetState();
+            pacman!.ResetState();
         }
 
         private void GameOver()
         {
-            gameOverText.enabled = true;
+            gameOverText!.enabled = true;
 
-            for (int i = 0; i < ghosts.Length; i++)
+            for (int i = 0; i < ghosts!.Length; i++)
             {
-                ghosts[i].gameObject.SetActive(false);
+                ghosts[i]!.gameObject.SetActive(false);
             }
 
-            pacman.gameObject.SetActive(false);
+            pacman!.gameObject.SetActive(false);
 
-            recorder.PersistResorcing();
+            recorder!.PersistRecording();
         }
 
         private void SetLives(int lives)
         {
-            this.lives = lives;
-            livesText.text = "x" + lives.ToString();
+            Lives = lives;
+            livesText!.text = "x" + lives.ToString();
         }
 
         private void SetScore(int score)
         {
-            this.score = score;
-            scoreText.text = score.ToString().PadLeft(2, '0');
+            Score = score;
+            scoreText!.text = score.ToString().PadLeft(2, '0');
         }
 
         public void PacmanEaten()
         {
-            recorder.PersistResorcing();
-            pacman.DeathSequence();
+            pacman!.DeathSequence();
 
-            SetLives(lives - 1);
+            SetLives(Lives - 1);
 
-            if (lives > 0)
+            if (Lives > 0)
             {
                 Invoke(nameof(ResetState), 3f);
             }
@@ -107,42 +106,43 @@ namespace Game
 
         public void GhostEaten(Ghost ghost)
         {
-            int points = ghost.points * ghostMultiplier;
-            SetScore(score + points);
+            int points = ghost!.points * GhostMultiplier;
+            SetScore(Score + points);
 
-            ghostMultiplier++;
+            GhostMultiplier++;
         }
 
         public void PelletEaten(Pellet pellet)
         {
-            pellet.gameObject.SetActive(false);
+            pellet!.gameObject.SetActive(false);
 
-            SetScore(score + pellet.points);
+            SetScore(Score + pellet.points);
 
             if (!HasRemainingPellets())
             {
-                pacman.gameObject.SetActive(false);
+                pacman!.gameObject.SetActive(false);
                 Invoke(nameof(NewRound), 3f);
+                recorder!.PersistRecording();
             }
         }
 
         public void PowerPelletEaten(PowerPellet pellet)
         {
-            for (int i = 0; i < ghosts.Length; i++)
+            for (int i = 0; i < ghosts!.Length; i++)
             {
-                ghosts[i].frightened.Enable(pellet.duration);
+                ghosts[i]!.frightened!.Enable(pellet!.duration);
             }
 
             PelletEaten(pellet);
             CancelInvoke(nameof(ResetGhostMultiplier));
-            Invoke(nameof(ResetGhostMultiplier), pellet.duration);
+            Invoke(nameof(ResetGhostMultiplier), pellet!.duration);
         }
 
         private bool HasRemainingPellets()
         {
-            foreach (Transform pellet in pellets)
+            foreach (Transform pellet in pellets!)
             {
-                if (pellet.gameObject.activeSelf)
+                if (pellet!.gameObject.activeSelf)
                 {
                     return true;
                 }
@@ -153,7 +153,7 @@ namespace Game
 
         private void ResetGhostMultiplier()
         {
-            ghostMultiplier = 1;
+            GhostMultiplier = 1;
         }
     }
 }

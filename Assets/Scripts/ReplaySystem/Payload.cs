@@ -1,18 +1,10 @@
-﻿using System;
-
-namespace ReplaySystem
+﻿namespace ReplaySystem
 {
-    [Serializable]
     public struct Payload
     {
-        public string dataSource;
-        public string database;
-        public string collection;
-        public Recording document;
-
-        public override string ToString()
-        {
-            return $"\n{dataSource}\n{database}\n{collection}\n{document.ToString()}";
-        }
+        public string DataSource;
+        public string Database;
+        public string Collection;
+        public Recording Document;
     }
 }

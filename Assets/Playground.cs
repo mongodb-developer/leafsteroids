@@ -1,32 +1,40 @@
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 public class Playground : MonoBehaviour
 {
     private void Start()
     {
-        // Debug.Log("Start");
-        //
-        // var date = DateTime.Now;
-        // var json1 = JsonUtility.ToJson(date);
-        //
-        // var number = 1f;
-        // var json2 = JsonUtility.ToJson(number);
-        //
-        // var stringg = "foo";
-        // var json3 = JsonUtility.ToJson(stringg);
-        //
-        // Debug.Log(json1);
-        // Debug.Log(json2);
-        // Debug.Log(json3);
+        var data = new Data
+        {
+            PlayerName = "Dodo",
+            Lives = 3,
+            Health = 100f,
+            DateTimee = DateTime.Now,
+            Position = new Vector3(1, 1, 1),
+            Bullshit = new[] { new Vector3(2, 2, 2) },
+            BullshitAgain = new List<Vector3>() { new Vector3(3, 3, 3) }
+        };
+        Debug.Log(data);
+        Debug.Log(JsonUtility.ToJson(data));
+        Debug.Log(JsonConvert.SerializeObject(data));
+    }
+}
 
-        string playerName = "Dodo";
-        int lives = 3;
-        float health = 100f;
+public struct Data
+{
+    public string PlayerName;
+    public int Lives;
+    public float Health;
+    public DateTime DateTimee;
+    public Vector3 Position;
+    public Vector3[] Bullshit;
+    public List<Vector3> BullshitAgain;
 
-        Debug.Log(playerName);
-        playerName = "bar";
-        Debug.Log(playerName);
-
-        Debug.Log(JsonUtility.ToJson(this));
+    public override string ToString()
+    {
+        return $"\n{PlayerName}\n{Lives}\n{Health}\n{DateTimee}\n{Position}\n{Bullshit}\n{BullshitAgain}";
     }
 }

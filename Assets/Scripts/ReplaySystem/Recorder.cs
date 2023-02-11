@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Game;
@@ -16,9 +17,18 @@ namespace ReplaySystem
         private List<Snapshot> Snapshots { get; } = new();
         private readonly AtlasHelper atlasHelper = new();
 
-        public void PersistResorcing()
+        public void StartNewRecording()
         {
-            var recording = new Recording(Snapshots!.ToArray());
+            Snapshots!.Clear();
+        }
+
+        public void PersistRecording()
+        {
+            var recording = new Recording
+            {
+                DateTime = DateTime.Now,
+                Snapshots = Snapshots
+            };
             Task.Run(async () => await atlasHelper!.PersistRecording(recording));
         }
 
@@ -29,14 +39,20 @@ namespace ReplaySystem
 
         private void CreateSnapshot()
         {
-            var pacmanPosition = pacman!.transform.position;
-            var chuckPosition = chuck!.transform.position;
-            var nicPosition = nic!.transform.position;
-            var hubertPosition = hubert!.transform.position;
-            var dominicPosition = dominic!.transform.position;
-
-            var snapshot = new Snapshot(pacmanPosition, chuckPosition, nicPosition, hubertPosition, dominicPosition);
+            var snapshot = new Snapshot
+            {
+                PacManPosition = InvertY(pacman!.transform.position),
+                ChuckPosition = InvertY(chuck!.transform.position),
+                NicPosition = InvertY(nic!.transform.position),
+                HubertPosition = InvertY(hubert!.transform.position),
+                DominicPosition = InvertY(dominic!.transform.position)
+            };
             Snapshots!.Add(snapshot);
+        }
+
+        private static Vector3 InvertY(Vector3 vector)
+        {
+            return new Vector3(vector.x, -vector.y, vector.z);
         }
     }
 }

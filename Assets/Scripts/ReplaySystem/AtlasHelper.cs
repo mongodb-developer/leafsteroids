@@ -1,6 +1,7 @@
 ﻿using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace ReplaySystem
@@ -25,17 +26,12 @@ namespace ReplaySystem
         {
             var payload = new Payload
             {
-                dataSource = "Cluster0",
-                database = "pacman",
-                collection = "round-results",
-                document = recording
+                DataSource = "Cluster0",
+                Database = "pacman",
+                Collection = "recordings",
+                Document = recording
             };
-
-            var json = JsonUtility.ToJson(payload);
-
-            Debug.Log(payload);
-            Debug.Log(json);
-
+            var json = JsonConvert.SerializeObject(payload);
             await PostRequest(DataApiUrlInsertOne, json);
         }
 
@@ -50,11 +46,8 @@ namespace ReplaySystem
             httpRequest.Content.Headers.Add("Content-Type", "application/json");
 
             var response = await client!.SendAsync(httpRequest)!;
-            if (response is { Content: { } })
-            {
-                var resultString = await response.Content.ReadAsStringAsync();
-                Debug.Log(resultString);
-            }
+            var resultString = await response!.Content!.ReadAsStringAsync();
+            Debug.Log(resultString);
         }
     }
 }
