@@ -28,7 +28,7 @@ namespace Recording
                 dataSource = "Cluster0",
                 database = "pacman",
                 collection = "round-results",
-                RoundResultWithoutId = recording
+                document = recording
             };
 
             var jsonStringNewDocument = JsonUtility.ToJson(insertOneValues);

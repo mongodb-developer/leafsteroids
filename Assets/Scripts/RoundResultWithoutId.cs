@@ -1,20 +1,18 @@
 ﻿using System;
+using Recording;
 
-namespace Recording
+[Serializable]
+public class RoundResultWithoutId
 {
-    [Serializable]
-    public class RoundResultWithoutId
-    {
-        public string username;
-        public Location[] locations;
+    public string username;
+    public Location[] locations;
 
-        public override string ToString()
-        {
-            if (locations!.Length == 1) return $"{locations[0]}";
-
-            var locationsString = $"{username}, {locations[0]}";
-            for (var i = 1; i < locations.Length; i++) locationsString += $", {locations[i]}";
-            return locationsString;
-        }
-    }
+    // public override string ToString()
+    // {
+    //     if (locations.Length == 1) return $"{locations[0]}";
+    //
+    //     var locationsString = $"{username}, {locations[0]}";
+    //     for (var i = 1; i < locations.Length; i++) locationsString += $", {locations[i]}";
+    //     return locationsString;
+    // }
 }
