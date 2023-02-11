@@ -1,12 +1,19 @@
 ﻿using System;
+using UnityEngine;
 
 namespace ReplaySystem
 {
     [Serializable]
     public struct Snapshot
     {
-        public Snapshot(Position pacManPosition, Position chuckPosition, Position nicPosition, Position hubertPosition,
-            Position dominicPosition)
+        public Vector3 PacManPosition { get; }
+        public Vector3 ChuckPosition { get; }
+        public Vector3 NicPosition { get; }
+        public Vector3 HubertPosition { get; }
+        public Vector3 DominicPosition { get; }
+
+        public Snapshot(Vector3 pacManPosition, Vector3 chuckPosition, Vector3 nicPosition, Vector3 hubertPosition,
+            Vector3 dominicPosition)
         {
             PacManPosition = pacManPosition;
             ChuckPosition = chuckPosition;
@@ -14,12 +21,6 @@ namespace ReplaySystem
             HubertPosition = hubertPosition;
             DominicPosition = dominicPosition;
         }
-
-        public Position PacManPosition { get; }
-        public Position ChuckPosition { get; }
-        public Position NicPosition { get; }
-        public Position HubertPosition { get; }
-        public Position DominicPosition { get; }
 
         public override string ToString()
         {

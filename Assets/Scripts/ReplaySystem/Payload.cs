@@ -3,7 +3,7 @@
 namespace ReplaySystem
 {
     [Serializable]
-    public class Payload
+    public struct Payload
     {
         public string dataSource;
         public string database;

@@ -16,12 +16,12 @@ namespace ReplaySystem
 
         public override string ToString()
         {
-            var print = $"\n{Date}";
+            var stringValue = $"\n{Date}";
             foreach (var snapshot in snapshots!)
             {
-                print += $"\n{snapshot}";
+                stringValue += $"\n{snapshot}";
             }
-            return print;
+            return stringValue;
         }
     }
 }

@@ -29,11 +29,11 @@ namespace ReplaySystem
 
         private void CreateSnapshot()
         {
-            var pacmanPosition = new Position(pacman!.transform.position);
-            var chuckPosition = new Position(chuck!.transform.position);
-            var nicPosition = new Position(nic!.transform.position);
-            var hubertPosition = new Position(hubert!.transform.position);
-            var dominicPosition = new Position(dominic!.transform.position);
+            var pacmanPosition = pacman!.transform.position;
+            var chuckPosition = chuck!.transform.position;
+            var nicPosition = nic!.transform.position;
+            var hubertPosition = hubert!.transform.position;
+            var dominicPosition = dominic!.transform.position;
 
             var snapshot = new Snapshot(pacmanPosition, chuckPosition, nicPosition, hubertPosition, dominicPosition);
             Snapshots!.Add(snapshot);
