@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,8 +14,8 @@ public class GameManager : MonoBehaviour
 
     public TMP_Text textField;
 
-    public Recorder recorder;
-    private readonly AtlasHelper atlasHelper = new();
+    // public Recorder recorder;
+    // private readonly AtlasHelper atlasHelper = new();
 
     private string username = "";
 
@@ -103,7 +102,7 @@ public class GameManager : MonoBehaviour
 
     public void PacmanEaten()
     {
-        Task.Run(() => atlasHelper!.PersistRecording(recorder!.Recording));
+        // Task.Run(() => atlasHelper!.PersistRecording(recorder!.Recording));
 
         pacman!.DeathSequence();
 
@@ -131,7 +130,7 @@ public class GameManager : MonoBehaviour
 
         if (!HasRemainingPellets())
         {
-            Task.Run(() => atlasHelper!.PersistRecording(recorder!.Recording));
+            // Task.Run(() => atlasHelper!.PersistRecording(recorder!.Recording));
 
             pacman!.gameObject.SetActive(false);
             Invoke(nameof(NewRound), 3f);
