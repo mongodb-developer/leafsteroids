@@ -26,10 +26,13 @@ namespace Game
 
         public void StartButtonPressed()
         {
+            Debug.Log("StartButtonPressed");
             var stackTrace = new StackTrace();
             var methodBase = stackTrace.GetFrame(1)!.GetMethod();
             var methodName = methodBase!.Name;
             Debug.Log(methodName);
+            var typeName = methodBase.DeclaringType!.Name;
+            Debug.Log(typeName);
             recorder!.StartNewRecording();
             NewGame();
         }

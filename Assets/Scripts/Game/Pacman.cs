@@ -45,22 +45,22 @@ namespace Game
         public void ResetState()
         {
             enabled = true;
-            spriteRenderer.enabled = true;
-            collider.enabled = true;
-            deathSequence.enabled = false;
-            deathSequence.spriteRenderer.enabled = false;
-            movement.ResetState();
+            spriteRenderer!.enabled = true;
+            collider!.enabled = true;
+            deathSequence!.enabled = false;
+            deathSequence.spriteRenderer!.enabled = false;
+            movement!.ResetState();
             gameObject.SetActive(true);
         }
 
         public void DeathSequence()
         {
             enabled = false;
-            spriteRenderer.enabled = false;
-            collider.enabled = false;
-            movement.enabled = false;
-            deathSequence.enabled = true;
-            deathSequence.spriteRenderer.enabled = true;
+            spriteRenderer!.enabled = false;
+            collider!.enabled = false;
+            movement!.enabled = false;
+            deathSequence!.enabled = true;
+            deathSequence.spriteRenderer!.enabled = true;
             deathSequence.Restart();
         }
     }
