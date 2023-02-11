@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 namespace Game
 {
@@ -8,6 +10,8 @@ namespace Game
     {
         public Ghost[] ghosts;
         public Pacman pacman;
+        public ReplayGhost[] replayGhosts;
+        public ReplayPacman replayPacman;
         public Transform pellets;
 
         public Text gameOverText;
@@ -20,21 +24,38 @@ namespace Game
         private int Score { get; set; }
         private int Lives { get; set; }
 
-        private void Start()
+        public void StartButtonPressed()
         {
+            var stackTrace = new StackTrace();
+            var methodBase = stackTrace.GetFrame(1)!.GetMethod();
+            var methodName = methodBase!.Name;
+            Debug.Log(methodName);
+            recorder!.StartNewRecording();
             NewGame();
         }
 
-        private void Update()
+        public void ReplayButtonPressed()
         {
-            if (Lives <= 0 && Input.anyKeyDown)
-            {
-                NewGame();
-            }
+            Debug.Log("ReplayButtonPressed");
         }
+
+        private void Awake()
+        {
+            DisablePlayGameObjects();
+            DisableReplayGameObjects();
+        }
+
+        // private void Update()
+        // {
+        //     if (Lives <= 0 && Input.anyKeyDown)
+        //     {
+        //         NewGame();
+        //     }
+        // }
 
         private void NewGame()
         {
+            Debug.Log("NewGame");
             SetScore(0);
             SetLives(3);
             NewRound();
@@ -64,7 +85,16 @@ namespace Game
 
         private void GameOver()
         {
+            DisablePlayGameObjects();
+
             gameOverText!.enabled = true;
+
+            recorder!.PersistRecording();
+        }
+
+        private void DisablePlayGameObjects()
+        {
+            gameOverText!.enabled = false;
 
             for (int i = 0; i < ghosts!.Length; i++)
             {
@@ -72,8 +102,18 @@ namespace Game
             }
 
             pacman!.gameObject.SetActive(false);
+        }
 
-            recorder!.PersistRecording();
+        private void DisableReplayGameObjects()
+        {
+            gameOverText!.enabled = false;
+
+            for (int i = 0; i < replayGhosts!.Length; i++)
+            {
+                replayGhosts[i]!.gameObject.SetActive(false);
+            }
+
+            replayPacman!.gameObject.SetActive(false);
         }
 
         private void SetLives(int lives)
