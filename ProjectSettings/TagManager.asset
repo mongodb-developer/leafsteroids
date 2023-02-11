@@ -3,8 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags:
-  - wall
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -13,10 +12,10 @@ TagManager:
   - Water
   - UI
   - Pacman
-  - 
-  - 
-  - 
-  - 
+  - Ghost
+  - Pellet
+  - Obstacle
+  - Node
   - 
   - 
   - 
