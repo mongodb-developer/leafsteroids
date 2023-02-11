@@ -1,8 +1,6 @@
-using System.Diagnostics;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
-using Debug = UnityEngine.Debug;
 
 namespace Game
 {
@@ -26,39 +24,20 @@ namespace Game
 
         public void StartButtonPressed()
         {
-            Debug.Log("StartButtonPressed");
-            var stackTrace = new StackTrace();
-            var methodBase = stackTrace.GetFrame(1)!.GetMethod();
-            var methodName = methodBase!.Name;
-            Debug.Log(methodName);
-            var typeName = methodBase.DeclaringType!.Name;
-            Debug.Log(typeName);
             recorder!.StartNewRecording();
             NewGame();
         }
 
-        public void ReplayButtonPressed()
-        {
-            Debug.Log("ReplayButtonPressed");
-        }
+        public void ReplayButtonPressed() { }
 
-        private void Awake()
+        private void Start()
         {
             DisablePlayGameObjects();
             DisableReplayGameObjects();
         }
 
-        // private void Update()
-        // {
-        //     if (Lives <= 0 && Input.anyKeyDown)
-        //     {
-        //         NewGame();
-        //     }
-        // }
-
         private void NewGame()
         {
-            Debug.Log("NewGame");
             SetScore(0);
             SetLives(3);
             NewRound();

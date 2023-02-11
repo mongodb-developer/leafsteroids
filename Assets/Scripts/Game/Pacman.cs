@@ -6,15 +6,18 @@ namespace Game
     public class Pacman : MonoBehaviour
     {
         public AnimatedSprite deathSequence;
-        public SpriteRenderer spriteRenderer { get; private set; }
-        public new Collider2D collider { get; private set; }
-        public Movement movement { get; private set; }
+
+        private SpriteRenderer SpriteRenderer { get; set; }
+        private Collider2D Collider { get; set; }
+        private Movement Movement { get; set; }
 
         private void Awake()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
-            collider = GetComponent<Collider2D>();
-            movement = GetComponent<Movement>();
+            SpriteRenderer = GetComponent<SpriteRenderer>();
+            Collider = GetComponent<Collider2D>();
+            Movement = GetComponent<Movement>();
+
+            if (SpriteRenderer == null || Collider == null || Movement == null) Debug.Log("null");
         }
 
         private void Update()
@@ -22,43 +25,43 @@ namespace Game
             // Set the new direction based on the current input
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
             {
-                movement.SetDirection(Vector2.up);
+                Movement!.SetDirection(Vector2.up);
             }
             else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
             {
-                movement.SetDirection(Vector2.down);
+                Movement!.SetDirection(Vector2.down);
             }
             else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                movement.SetDirection(Vector2.left);
+                Movement!.SetDirection(Vector2.left);
             }
             else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
             {
-                movement.SetDirection(Vector2.right);
+                Movement!.SetDirection(Vector2.right);
             }
 
             // Rotate pacman to face the movement direction
-            float angle = Mathf.Atan2(movement.direction.y, movement.direction.x);
+            float angle = Mathf.Atan2(Movement!.direction.y, Movement.direction.x);
             transform.rotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.forward);
         }
 
         public void ResetState()
         {
             enabled = true;
-            spriteRenderer!.enabled = true;
-            collider!.enabled = true;
+            SpriteRenderer!.enabled = true;
+            Collider!.enabled = true;
             deathSequence!.enabled = false;
             deathSequence.spriteRenderer!.enabled = false;
-            movement!.ResetState();
+            Movement!.ResetState();
             gameObject.SetActive(true);
         }
 
         public void DeathSequence()
         {
             enabled = false;
-            spriteRenderer!.enabled = false;
-            collider!.enabled = false;
-            movement!.enabled = false;
+            SpriteRenderer!.enabled = false;
+            Collider!.enabled = false;
+            Movement!.enabled = false;
             deathSequence!.enabled = true;
             deathSequence.spriteRenderer!.enabled = true;
             deathSequence.Restart();
