@@ -8,23 +8,29 @@ public class GhostEyes : MonoBehaviour
     public Sprite left;
     public Sprite right;
 
-    private SpriteRenderer SpriteRenderer { get; set; }
-    private Movement Movement { get; set; }
+    public SpriteRenderer spriteRenderer { get; private set; }
+    public Movement movement { get; private set; }
 
     private void Awake()
     {
-        SpriteRenderer = GetComponent<SpriteRenderer>();
-        Movement = GetComponentInParent<Movement>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        movement = GetComponentInParent<Movement>();
     }
 
     private void Update()
     {
-        if (Movement!.Direction == Vector2.up)
-            SpriteRenderer!.sprite = up;
-        else if (Movement.Direction == Vector2.down)
-            SpriteRenderer!.sprite = down;
-        else if (Movement.Direction == Vector2.left)
-            SpriteRenderer!.sprite = left;
-        else if (Movement.Direction == Vector2.right) SpriteRenderer!.sprite = right;
+        if (movement.direction == Vector2.up) {
+            spriteRenderer.sprite = up;
+        }
+        else if (movement.direction == Vector2.down) {
+            spriteRenderer.sprite = down;
+        }
+        else if (movement.direction == Vector2.left) {
+            spriteRenderer.sprite = left;
+        }
+        else if (movement.direction == Vector2.right) {
+            spriteRenderer.sprite = right;
+        }
     }
+
 }

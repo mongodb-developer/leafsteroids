@@ -4,30 +4,33 @@ public class GhostScatter : GhostBehavior
 {
     private void OnDisable()
     {
-        Ghost!.Chase!.Enable();
+        ghost.chase.Enable();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var node = other!.GetComponent<Node>();
+        Node node = other.GetComponent<Node>();
 
         // Do nothing while the ghost is frightened
-        if (enabled && !Ghost!.Frightened!.enabled)
+        if (node != null && enabled && !ghost.frightened.enabled)
         {
             // Pick a random available direction
-            var index = Random.Range(0, node!.AvailableDirections!.Count);
+            int index = Random.Range(0, node.availableDirections.Count);
 
             // Prefer not to go back the same direction so increment the index to
             // the next available direction
-            if (node.AvailableDirections.Count > 1 && node.AvailableDirections[index] == -Ghost.Movement!.Direction)
+            if (node.availableDirections.Count > 1 && node.availableDirections[index] == -ghost.movement.direction)
             {
                 index++;
 
                 // Wrap the index back around if overflowed
-                if (index >= node.AvailableDirections.Count) index = 0;
+                if (index >= node.availableDirections.Count) {
+                    index = 0;
+                }
             }
 
-            Ghost.Movement!.SetDirection(node.AvailableDirections[index]);
+            ghost.movement.SetDirection(node.availableDirections[index]);
         }
     }
+
 }

@@ -4,26 +4,26 @@ public class GhostChase : GhostBehavior
 {
     private void OnDisable()
     {
-        Ghost!.Scatter!.Enable();
+        ghost.scatter.Enable();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        var node = other!.GetComponent<Node>();
+        Node node = other.GetComponent<Node>();
 
         // Do nothing while the ghost is frightened
-        if (enabled && !Ghost!.Frightened!.enabled)
+        if (node != null && enabled && !ghost.frightened.enabled)
         {
-            var direction = Vector2.zero;
-            var minDistance = float.MaxValue;
+            Vector2 direction = Vector2.zero;
+            float minDistance = float.MaxValue;
 
             // Find the available direction that moves closet to pacman
-            foreach (var availableDirection in node!.AvailableDirections!)
+            foreach (Vector2 availableDirection in node.availableDirections)
             {
                 // If the distance in this direction is less than the current
                 // min distance then this direction becomes the new closest
-                var newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
-                var distance = (Ghost.target!.position - newPosition).sqrMagnitude;
+                Vector3 newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
+                float distance = (ghost.target.position - newPosition).sqrMagnitude;
 
                 if (distance < minDistance)
                 {
@@ -32,7 +32,8 @@ public class GhostChase : GhostBehavior
                 }
             }
 
-            Ghost.Movement!.SetDirection(direction);
+            ghost.movement.SetDirection(direction);
         }
     }
+
 }
