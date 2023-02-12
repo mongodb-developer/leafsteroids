@@ -2,9 +2,9 @@
 {
     public struct Payload
     {
-        public string DataSource;
-        public string Database;
-        public string Collection;
-        public Recording Document;
+        public string dataSource;
+        public string database;
+        public string collection;
+        public Recording document;
     }
 }

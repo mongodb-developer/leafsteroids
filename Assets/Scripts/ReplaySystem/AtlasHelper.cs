@@ -26,10 +26,10 @@ namespace ReplaySystem
         {
             var payload = new Payload
             {
-                DataSource = "Cluster0",
-                Database = "pacman",
-                Collection = "recordings",
-                Document = recording
+                dataSource = "Cluster0",
+                database = "pacman",
+                collection = "recordings",
+                document = recording
             };
             var json = JsonConvert.SerializeObject(payload);
             await PostRequest(DataApiUrlInsertOne, json);

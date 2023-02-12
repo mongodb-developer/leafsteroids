@@ -36,8 +36,8 @@ namespace Game
         private void Eaten()
         {
             eaten = true;
-            ghost.SetPosition(ghost.home.inside.position);
-            ghost.home.Enable(duration);
+            ghost.SetPosition(ghost.Home.inside.position);
+            ghost.Home.Enable(duration);
 
             body.enabled = false;
             eyes.enabled = true;
@@ -58,13 +58,13 @@ namespace Game
         private void OnEnable()
         {
             blue.GetComponent<AnimatedSprite>().Restart();
-            ghost.movement.speedMultiplier = 0.5f;
+            ghost.Movement.speedMultiplier = 0.5f;
             eaten = false;
         }
 
         private void OnDisable()
         {
-            ghost.movement.speedMultiplier = 1f;
+            ghost.Movement.speedMultiplier = 1f;
             eaten = false;
         }
 
@@ -92,7 +92,7 @@ namespace Game
                     }
                 }
 
-                ghost.movement.SetDirection(direction);
+                ghost.Movement.SetDirection(direction);
             }
         }
 

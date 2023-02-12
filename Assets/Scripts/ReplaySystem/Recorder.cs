@@ -14,7 +14,7 @@ namespace ReplaySystem
         [SerializeField] private Ghost hubert;
         [SerializeField] private Ghost dominic;
 
-        private List<Snapshot> Snapshots { get; } = new();
+        public readonly List<Snapshot> Snapshots = new();
         private readonly AtlasHelper atlasHelper = new();
 
         public void StartNewRecording()
@@ -34,25 +34,20 @@ namespace ReplaySystem
 
         private void Start()
         {
-            InvokeRepeating(nameof(CreateSnapshot), 0f, 0.1f);
+            InvokeRepeating(nameof(CreateSnapshot), 0f, Constants.RecordingSpeed);
         }
 
         private void CreateSnapshot()
         {
             var snapshot = new Snapshot
             {
-                PacManPosition = InvertY(pacman!.transform.position),
-                ChuckPosition = InvertY(chuck!.transform.position),
-                NicPosition = InvertY(nic!.transform.position),
-                HubertPosition = InvertY(hubert!.transform.position),
-                DominicPosition = InvertY(dominic!.transform.position)
+                PacManPosition = Helper.InvertY(pacman!.transform.position),
+                ChuckPosition = Helper.InvertY(chuck!.transform.position),
+                NicPosition = Helper.InvertY(nic!.transform.position),
+                HubertPosition = Helper.InvertY(hubert!.transform.position),
+                DominicPosition = Helper.InvertY(dominic!.transform.position)
             };
             Snapshots!.Add(snapshot);
-        }
-
-        private static Vector3 InvertY(Vector3 vector)
-        {
-            return new Vector3(vector.x, -vector.y, vector.z);
         }
     }
 }

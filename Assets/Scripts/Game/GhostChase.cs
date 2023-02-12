@@ -6,7 +6,7 @@ namespace Game
     {
         private void OnDisable()
         {
-            ghost.scatter.Enable();
+            ghost.Scatter.Enable();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -14,7 +14,7 @@ namespace Game
             Node node = other.GetComponent<Node>();
 
             // Do nothing while the ghost is frightened
-            if (node != null && enabled && !ghost.frightened.enabled)
+            if (node != null && enabled && !ghost.Frightened.enabled)
             {
                 Vector2 direction = Vector2.zero;
                 float minDistance = float.MaxValue;
@@ -34,7 +34,7 @@ namespace Game
                     }
                 }
 
-                ghost.movement.SetDirection(direction);
+                ghost.Movement.SetDirection(direction);
             }
         }
     }

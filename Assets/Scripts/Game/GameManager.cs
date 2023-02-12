@@ -17,6 +17,7 @@ namespace Game
         public Text livesText;
 
         [SerializeField] private Recorder recorder;
+        [SerializeField] private Replayer replayer;
 
         private int GhostMultiplier { get; set; } = 1;
         private int Score { get; set; }
@@ -24,16 +25,22 @@ namespace Game
 
         public void StartButtonPressed()
         {
+            DisableAllGameObjects();
+
             recorder!.StartNewRecording();
             NewGame();
         }
 
-        public void ReplayButtonPressed() { }
+        public void ReplayButtonPressed()
+        {
+            DisableAllGameObjects();
+            ToggleReplayGameObjectState(true);
+            replayer!.ReplayGame(recorder!.Snapshots, replayPacman, replayGhosts);
+        }
 
         private void Start()
         {
-            DisablePlayGameObjects();
-            DisableReplayGameObjects();
+            DisableAllGameObjects();
         }
 
         private void NewGame()
@@ -67,14 +74,14 @@ namespace Game
 
         private void GameOver()
         {
-            DisablePlayGameObjects();
+            DisableAllGameObjects();
 
             gameOverText!.enabled = true;
 
             recorder!.PersistRecording();
         }
 
-        private void DisablePlayGameObjects()
+        private void DisableAllGameObjects()
         {
             gameOverText!.enabled = false;
 
@@ -82,20 +89,18 @@ namespace Game
             {
                 ghosts[i]!.gameObject.SetActive(false);
             }
-
             pacman!.gameObject.SetActive(false);
+
+            ToggleReplayGameObjectState(false);
         }
 
-        private void DisableReplayGameObjects()
+        private void ToggleReplayGameObjectState(bool activate)
         {
-            gameOverText!.enabled = false;
-
             for (int i = 0; i < replayGhosts!.Length; i++)
             {
-                replayGhosts[i]!.gameObject.SetActive(false);
+                replayGhosts[i]!.gameObject.SetActive(activate);
             }
-
-            replayPacman!.gameObject.SetActive(false);
+            replayPacman!.gameObject.SetActive(activate);
         }
 
         private void SetLives(int lives)
@@ -152,7 +157,7 @@ namespace Game
         {
             for (int i = 0; i < ghosts!.Length; i++)
             {
-                ghosts[i]!.frightened!.Enable(pellet!.duration);
+                ghosts[i]!.Frightened!.Enable(pellet!.duration);
             }
 
             PelletEaten(pellet);
