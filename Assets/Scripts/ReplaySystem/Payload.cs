@@ -1,10 +1,12 @@
-﻿namespace ReplaySystem
+﻿using Newtonsoft.Json;
+
+namespace ReplaySystem
 {
     public struct Payload
     {
-        public string dataSource;
-        public string database;
-        public string collection;
-        public Recording document;
+        [JsonProperty("dataSource")] public string DataSource;
+        [JsonProperty("database")] public string Database;
+        [JsonProperty("collection")] public string Collection;
+        [JsonProperty("document")] public Recording Document;
     }
 }

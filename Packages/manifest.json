@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.adrenak.mongodb.driver.upm": "1.1.0",
     "com.unity.2d.animation": "7.0.2",
     "com.unity.2d.pixel-perfect": "5.0.1",
     "com.unity.2d.psdimporter": "6.0.1",
@@ -11,7 +12,7 @@
     "com.unity.ide.rider": "3.0.7",
     "com.unity.ide.visualstudio": "2.0.12",
     "com.unity.ide.vscode": "1.2.4",
-    "com.unity.test-framework": "1.1.29",
+    "com.unity.test-framework": "2.0.1-pre.18",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.6.3",
     "com.unity.ugui": "1.0.0",
@@ -54,7 +55,8 @@
       "name": "package.openupm.com",
       "url": "https://package.openupm.com",
       "scopes": [
-        "jillejr.newtonsoft.json-for-unity.converters"
+        "jillejr.newtonsoft.json-for-unity.converters",
+        "com.adrenak.mongodb.driver.upm"
       ]
     }
   ]

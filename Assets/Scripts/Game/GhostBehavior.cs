@@ -5,8 +5,8 @@ namespace Game
     [RequireComponent(typeof(Ghost))]
     public abstract class GhostBehavior : MonoBehaviour
     {
-        protected Ghost Ghost { get; private set; }
         public float duration;
+        protected Ghost Ghost { get; private set; }
 
         private void Awake()
         {

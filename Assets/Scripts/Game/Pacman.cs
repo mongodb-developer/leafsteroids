@@ -16,32 +16,22 @@ namespace Game
             SpriteRenderer = GetComponent<SpriteRenderer>();
             Collider = GetComponent<Collider2D>();
             Movement = GetComponent<Movement>();
-
-            if (SpriteRenderer == null || Collider == null || Movement == null) Debug.Log("null");
         }
 
         private void Update()
         {
             // Set the new direction based on the current input
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
-            {
                 Movement!.SetDirection(Vector2.up);
-            }
             else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
-            {
                 Movement!.SetDirection(Vector2.down);
-            }
             else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
-            {
                 Movement!.SetDirection(Vector2.left);
-            }
             else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
-            {
                 Movement!.SetDirection(Vector2.right);
-            }
 
             // Rotate pacman to face the movement direction
-            float angle = Mathf.Atan2(Movement!.Direction.y, Movement.Direction.x);
+            var angle = Mathf.Atan2(Movement!.Direction.y, Movement.Direction.x);
             transform.rotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.forward);
         }
 

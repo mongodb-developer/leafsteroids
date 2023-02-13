@@ -11,6 +11,54 @@ namespace Game
 
         private bool HasBeenEaten { get; set; }
 
+        private void OnEnable()
+        {
+            blue!.GetComponent<AnimatedSprite>()!.Restart();
+            Ghost!.Movement!.speedMultiplier = 0.5f;
+            HasBeenEaten = false;
+        }
+
+        private void OnDisable()
+        {
+            Ghost!.Movement!.speedMultiplier = 1f;
+            HasBeenEaten = false;
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (collision!.gameObject!.layer == LayerMask.NameToLayer("Pacman"))
+                if (enabled)
+                    Eaten();
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            var node = other!.GetComponent<Node>();
+
+            if (node != null && enabled)
+            {
+                var direction = Vector2.zero;
+                var maxDistance = float.MinValue;
+
+                // Find the available direction that moves farthest from pacman
+                foreach (var availableDirection in node.AvailableDirections!)
+                {
+                    // If the distance in this direction is greater than the current
+                    // max distance then this direction becomes the new farthest
+                    var newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
+                    var distance = (Ghost!.target!.position - newPosition).sqrMagnitude;
+
+                    if (distance > maxDistance)
+                    {
+                        direction = availableDirection;
+                        maxDistance = distance;
+                    }
+                }
+
+                Ghost!.Movement!.SetDirection(direction);
+            }
+        }
+
         public override void Enable(float d)
         {
             base.Enable(d);
@@ -52,58 +100,6 @@ namespace Game
                 blue!.enabled = false;
                 white!.enabled = true;
                 white.GetComponent<AnimatedSprite>()!.Restart();
-            }
-        }
-
-        private void OnEnable()
-        {
-            blue!.GetComponent<AnimatedSprite>()!.Restart();
-            Ghost!.Movement!.speedMultiplier = 0.5f;
-            HasBeenEaten = false;
-        }
-
-        private void OnDisable()
-        {
-            Ghost!.Movement!.speedMultiplier = 1f;
-            HasBeenEaten = false;
-        }
-
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            Node node = other!.GetComponent<Node>();
-
-            if (node != null && enabled)
-            {
-                Vector2 direction = Vector2.zero;
-                float maxDistance = float.MinValue;
-
-                // Find the available direction that moves farthest from pacman
-                foreach (Vector2 availableDirection in node.AvailableDirections!)
-                {
-                    // If the distance in this direction is greater than the current
-                    // max distance then this direction becomes the new farthest
-                    Vector3 newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
-                    float distance = (Ghost!.target!.position - newPosition).sqrMagnitude;
-
-                    if (distance > maxDistance)
-                    {
-                        direction = availableDirection;
-                        maxDistance = distance;
-                    }
-                }
-
-                Ghost!.Movement!.SetDirection(direction);
-            }
-        }
-
-        private void OnCollisionEnter2D(Collision2D collision)
-        {
-            if (collision!.gameObject!.layer == LayerMask.NameToLayer("Pacman"))
-            {
-                if (enabled)
-                {
-                    Eaten();
-                }
             }
         }
     }

@@ -1,13 +1,16 @@
-﻿using UnityEngine;
-
-namespace ReplaySystem
+﻿namespace ReplaySystem
 {
-    public struct Snapshot
+    public class Snapshot
     {
-        public Vector3 PacManPosition;
-        public Vector3 ChuckPosition;
-        public Vector3 NicPosition;
-        public Vector3 HubertPosition;
-        public Vector3 DominicPosition;
+        public Position ChuckPosition { get; set; }
+        public Position DominicPosition { get; set; }
+        public Position HubertPosition { get; set; }
+        public Position NicPosition { get; set; }
+        public Position PacManPosition { get; set; }
+
+        public override string ToString()
+        {
+            return $"\n{PacManPosition}\n{ChuckPosition}\n{NicPosition}\n{HubertPosition}\n{DominicPosition}";
+        }
     }
 }

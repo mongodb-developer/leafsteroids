@@ -6,9 +6,9 @@ namespace ReplaySystem
 {
     public class Replayer : MonoBehaviour
     {
-        private List<Snapshot> snapshots;
-        private ReplayPacman replayPacman;
         private ReplayGhost[] replayGhosts;
+        private ReplayPacman replayPacman;
+        private List<Snapshot> snapshots;
 
         public void ReplayGame(List<Snapshot> s, ReplayPacman rPacman, ReplayGhost[] rGhosts)
         {
@@ -24,11 +24,11 @@ namespace ReplaySystem
 
             var nextSnapshot = snapshots!.First();
 
-            replayPacman!.transform.position = Helper.InvertY(nextSnapshot.PacManPosition);
-            replayGhosts![0]!.transform.position = Helper.InvertY(nextSnapshot.ChuckPosition);
-            replayGhosts![1]!.transform.position = Helper.InvertY(nextSnapshot.NicPosition);
-            replayGhosts![2]!.transform.position = Helper.InvertY(nextSnapshot.HubertPosition);
-            replayGhosts![3]!.transform.position = Helper.InvertY(nextSnapshot.DominicPosition);
+            replayPacman!.transform.position = Helper.InvertY(nextSnapshot.PacManPosition!.ToVector3());
+            replayGhosts![0]!.transform.position = Helper.InvertY(nextSnapshot.ChuckPosition!.ToVector3());
+            replayGhosts![1]!.transform.position = Helper.InvertY(nextSnapshot.NicPosition!.ToVector3());
+            replayGhosts![2]!.transform.position = Helper.InvertY(nextSnapshot.HubertPosition!.ToVector3());
+            replayGhosts![3]!.transform.position = Helper.InvertY(nextSnapshot.DominicPosition!.ToVector3());
 
             snapshots.RemoveAt(0);
         }

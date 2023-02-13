@@ -22,21 +22,12 @@ namespace Game
         private void Update()
         {
             if (Movement!.Direction == Vector2.up)
-            {
                 SpriteRenderer!.sprite = up;
-            }
             else if (Movement.Direction == Vector2.down)
-            {
                 SpriteRenderer!.sprite = down;
-            }
             else if (Movement.Direction == Vector2.left)
-            {
                 SpriteRenderer!.sprite = left;
-            }
-            else if (Movement.Direction == Vector2.right)
-            {
-                SpriteRenderer!.sprite = right;
-            }
+            else if (Movement.Direction == Vector2.right) SpriteRenderer!.sprite = right;
         }
     }
 }

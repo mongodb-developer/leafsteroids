@@ -1,0 +1,385 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Snappier</name>
+    </assembly>
+    <members>
+        <member name="F:Snappier.Internal.Constants.CharTable">
+             <summary>
+             Data stored per entry in lookup table:
+                  Range   Bits-used       Description
+                  ------------------------------------
+                  1..64   0..7            Literal/copy length encoded in opcode byte
+                  0..7    8..10           Copy offset encoded in opcode byte / 256
+                  0..4    11..13          Extra bytes after opcode
+            
+             We use eight bits for the length even though 7 would have sufficed
+             because of efficiency reasons:
+                  (1) Extracting a byte is faster than a bit-field
+                  (2) It properly aligns copy offset so we do not need a &lt;&lt;8
+             </summary>
+        </member>
+        <member name="F:Snappier.Internal.CopyHelpers.PshufbFillPatterns">
+            <summary>
+            This is a table of shuffle control masks that can be used as the source
+            operand for PSHUFB to permute the contents of the destination XMM register
+            into a repeating byte pattern.
+            </summary>
+        </member>
+        <member name="F:Snappier.Internal.CopyHelpers.PatternSizeTable">
+            <summary>
+            j * (16 / j) for all j from 0 to 7. 0 is not actually used.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.CopyHelpers.IncrementalCopy(System.Byte*,System.Byte*,System.Byte*,System.Byte*,System.SByte*)">
+            <summary>
+            Copy [src, src+(opEnd-op)) to [op, (opEnd-op)) but faster than
+            IncrementalCopySlow. buf_limit is the address past the end of the writable
+            region of the buffer. May write past opEnd, but won't write past bufferEnd.
+            </summary>
+            <param name="source">Pointer to the source point in the buffer.</param>
+            <param name="op">Pointer to the destination point in the buffer.</param>
+            <param name="opEnd">Pointer to the end of the area to write in the buffer.</param>
+            <param name="bufferEnd">Pointer past the end of the buffer.</param>
+            <param name="pshufbFillPatterns">Fixed pointer to <see cref="F:Snappier.Internal.CopyHelpers.PshufbFillPatterns"/>.</param>
+            <remarks>
+            Fixing the PshufbFillPatterns array for use in the SSSE3 optimized route is expensive, so we
+            do that in the outer loop in <see cref="M:Snappier.Internal.SnappyDecompressor.DecompressAllTags(System.ReadOnlySpan{System.Byte})"/> and pass the pointer
+            to this method. This makes the logic a bit more confusing, but is a significant performance boost.
+            </remarks>
+        </member>
+        <member name="T:Snappier.Internal.EmptyMemoryOwner">
+            <summary>
+            A fake owner wrapping an empty <see cref="T:System.Memory`1"/>.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.EmptyMemoryOwner.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="P:Snappier.Internal.EmptyMemoryOwner.Memory">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.Internal.Helpers.Log2Floor(System.UInt32)">
+            <summary>
+            Return floor(log2(n)) for positive integer n.  Returns -1 iff n == 0.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.Helpers.Log2FloorNonZero(System.UInt32)">
+            <summary>
+            Return floor(log2(n)) for positive integer n.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.Helpers.FindLsbSetNonZero(System.UInt32)">
+            <summary>
+            Finds the index of the least significant non-zero bit.
+            </summary>
+        </member>
+        <member name="T:Snappier.Internal.SlicedMemoryOwner">
+            <summary>
+            Wraps an inner <see cref="T:System.Buffers.IMemoryOwner`1"/> to have a shorter length.
+            </summary>
+        </member>
+        <member name="P:Snappier.Internal.SlicedMemoryOwner.Memory">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.Internal.SlicedMemoryOwner.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.Internal.SnappyCompressor.FindMatchLength(System.Byte*,System.Byte*,System.Byte*,System.UInt64@)">
+             <summary>
+             Find the largest n such that
+            
+               s1[0,n-1] == s2[0,n-1]
+               and n &lt;= (s2_limit - s2).
+            
+             Return (n, n &lt; 8).
+             Does not read *s2_limit or beyond.
+             Does not read *(s1 + (s2_limit - s2)) or beyond.
+             Requires that s2_limit &gt;= s2.
+            
+             In addition populate *data with the next 5 bytes from the end of the match.
+             This is only done if 8 bytes are available (s2_limit - s2 &gt;= 8). The point is
+             that on some arch's this can be done faster in this routine than subsequent
+             loading from s2 + n.
+             </summary>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.Decompress(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Decompress a portion of the input.
+            </summary>
+            <param name="input">Input to process.</param>
+            <returns>Number of bytes processed from the input.</returns>
+            <remarks>
+            The first call to this method after construction or after a call to <see cref="M:Snappier.Internal.SnappyDecompressor.Reset"/> start at the
+            beginning of a new Snappy block, leading with the encoded block size. It may be called multiple times
+            as more data becomes available. <see cref="P:Snappier.Internal.SnappyDecompressor.AllDataDecompressed"/> will be true once the entire block
+            has been processed.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.ReadUncompressedLength(System.ReadOnlySpan{System.Byte}@)">
+            <summary>
+            Read the uncompressed length stored at the start of the compressed data.
+            </summary>
+            <param name="input">Input data, which should begin with the varint encoded uncompressed length.</param>
+            <returns>The length of the compressed data, or null if the length is not yet complete.</returns>
+            <remarks>
+            This variant is used when reading a stream, and will pause if there aren't enough bytes available
+            in the input. Subsequent calls with more data will resume processing.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.ReadUncompressedLength(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Read the uncompressed length stored at the start of the compressed data.
+            </summary>
+            <param name="input">Input data, which should begin with the varint encoded uncompressed length.</param>
+            <returns>The length of the uncompressed data.</returns>
+            <exception cref="T:System.IO.InvalidDataException">Invalid stream length</exception>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.ThrowInvalidDataException(System.String)">
+            <summary>
+            Throws an <see cref="M:Snappier.Internal.SnappyDecompressor.ThrowInvalidDataException(System.String)"/>. This is in a separate subroutine to allow the
+            calling subroutine to be inlined.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.ExtractData">
+            <summary>
+            Extracts the data from from the block, returning a block of memory and resetting the block.
+            </summary>
+            <returns>An block of memory. Caller is responsible for disposing.</returns>
+            <remarks>
+            This provides a more efficient way to decompress an entire block in scenarios where the caller
+            wants an owned block of memory and isn't going to reuse the SnappyDecompressor. It avoids the
+            need to copy a block of memory calling <see cref="M:Snappier.Internal.SnappyDecompressor.Read(System.Span{System.Byte})"/>.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.WriteToBufferForTest(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Load some data into the output buffer, only used for testing.
+            </summary>
+            <param name="toWrite"></param>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.LoadScratchForTest(System.Byte[],System.UInt32)">
+            <summary>
+            Load a byte array into _scratch, only used for testing.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.SnappyDecompressor.SetExpectedLengthForTest(System.Int32)">
+            <summary>
+            Only used for testing.
+            </summary>
+        </member>
+        <member name="T:Snappier.Internal.SnappyStreamCompressor">
+            <summary>
+            Emits the stream format used for Snappy streams.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.SnappyStreamCompressor.Write(System.ReadOnlySpan{System.Byte},System.IO.Stream)">
+            <summary>
+            Processes some input, potentially returning compressed data. Flush must be called when input is complete
+            to get any remaining compressed data.
+            </summary>
+            <param name="input">Uncompressed data to emit.</param>
+            <param name="stream">Output stream.</param>
+            <returns>A block of memory with compressed data (if any). Must be used before any subsequent call to Write.</returns>
+        </member>
+        <member name="M:Snappier.Internal.SnappyStreamCompressor.WriteAsync(System.ReadOnlyMemory{System.Byte},System.IO.Stream,System.Threading.CancellationToken)">
+            <summary>
+            Processes some input, potentially returning compressed data. Flush must be called when input is complete
+            to get any remaining compressed data.
+            </summary>
+            <param name="input">Uncompressed data to emit.</param>
+            <param name="stream">Output stream.</param>
+            <param name="cancellationToken">Cancellation token.</param>
+            <returns>A block of memory with compressed data (if any). Must be used before any subsequent call to Write.</returns>
+        </member>
+        <member name="M:Snappier.Internal.SnappyStreamCompressor.CompressInput(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Processes up to one entire block from the input, potentially combining with previous input blocks.
+            Fills the compressed data to the output buffer. Will not process more than one output block at a time
+            to avoid overflowing the output buffer.
+            </summary>
+            <param name="input">Input to compress.</param>
+            <returns>Number of bytes consumed.</returns>
+        </member>
+        <member name="T:Snappier.Internal.SnappyStreamDecompressor">
+            <summary>
+            Parses the stream format used for Snappy streams.
+            </summary>
+        </member>
+        <member name="M:Snappier.Internal.SnappyStreamDecompressor.ReadChunkCrc(System.Byte*@,System.Byte*,System.Int32@)">
+            <summary>
+            Assuming that we're at the beginning of a chunk, reads the CRC. If partially read, stores the value in
+            _scratch for subsequent reads. Should not be called if chunkByteProcessed >= 4.
+            </summary>
+        </member>
+        <member name="T:Snappier.Snappy">
+            <summary>
+            Routines for performing Snappy compression and decompression on raw data blocks using <see cref="T:System.Span`1"/>.
+            These routines do not read or write any Snappy framing.
+            </summary>
+        </member>
+        <member name="M:Snappier.Snappy.GetMaxCompressedLength(System.Int32)">
+            <summary>
+            For a given amount of input data, calculate the maximum potential size of the compressed output.
+            </summary>
+            <param name="inputLength">Length of the input data, in bytes.</param>
+            <returns>The maximum potential size of the compressed output.</returns>
+            <remarks>
+            This is useful for allocating a sufficient output buffer before calling <see cref="M:Snappier.Snappy.Compress(System.ReadOnlySpan{System.Byte},System.Span{System.Byte})"/>.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Snappy.Compress(System.ReadOnlySpan{System.Byte},System.Span{System.Byte})">
+            <summary>
+            Compress a block of Snappy data.
+            </summary>
+            <param name="input">Data to compress.</param>
+            <param name="output">Buffer to receive the compressed data.</param>
+            <returns>Number of bytes written to <paramref name="output"/>.</returns>
+            <remarks>
+            The output buffer must be large enough to contain the compressed output.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Snappy.CompressToMemory(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Compress a block of Snappy data.
+            </summary>
+            <param name="input">Data to compress.</param>
+            <returns>An <see cref="T:System.Buffers.IMemoryOwner`1"/> with the decompressed data. The caller is responsible for disposing this object.</returns>
+            <remarks>
+            Failing to dispose of the returned <see cref="T:System.Buffers.IMemoryOwner`1"/> may result in memory leaks.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Snappy.CompressToArray(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Compress a block of Snappy data.
+            </summary>
+            <param name="input">Data to compress.</param>
+            <remarks>
+            The resulting byte array is allocated on the heap. If possible, <see cref="M:Snappier.Snappy.CompressToMemory(System.ReadOnlySpan{System.Byte})"/> should
+            be used instead since it uses a shared buffer pool.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Snappy.GetUncompressedLength(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Get the uncompressed data length from a compressed Snappy block.
+            </summary>
+            <param name="input">Compressed snappy block.</param>
+            <returns>The length of the uncompressed data in the block.</returns>
+            <exception cref="T:System.IO.InvalidDataException">The data in <paramref name="input"/> has an invalid length.</exception>
+            <remarks>
+            This is useful for allocating a sufficient output buffer before calling <see cref="M:Snappier.Snappy.Decompress(System.ReadOnlySpan{System.Byte},System.Span{System.Byte})"/>.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Snappy.Decompress(System.ReadOnlySpan{System.Byte},System.Span{System.Byte})">
+            <summary>
+            Decompress a block of Snappy data. This must be an entire block.
+            </summary>
+            <param name="input">Data to decompress.</param>
+            <param name="output">Buffer to receive the decompressed data.</param>
+            <returns>Number of bytes written to <paramref name="output"/>.</returns>
+            <exception cref="T:System.IO.InvalidDataException">Invalid Snappy block.</exception>
+            <exception cref="T:System.ArgumentException">Output buffer is too small.</exception>
+        </member>
+        <member name="M:Snappier.Snappy.DecompressToMemory(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Decompress a block of Snappy to a new memory buffer. This must be an entire block.
+            </summary>
+            <param name="input">Data to decompress.</param>
+            <returns>An <see cref="T:System.Buffers.IMemoryOwner`1"/> with the decompressed data. The caller is responsible for disposing this object.</returns>
+            <remarks>
+            Failing to dispose of the returned <see cref="T:System.Buffers.IMemoryOwner`1"/> may result in memory leaks.
+            </remarks>
+        </member>
+        <member name="M:Snappier.Snappy.DecompressToArray(System.ReadOnlySpan{System.Byte})">
+            <summary>
+            Decompress a block of Snappy to a new byte array. This must be an entire block.
+            </summary>
+            <param name="input">Data to decompress.</param>
+            <returns>The decompressed data.</returns>
+            <remarks>
+            The resulting byte array is allocated on the heap. If possible, <see cref="M:Snappier.Snappy.DecompressToMemory(System.ReadOnlySpan{System.Byte})"/> should
+            be used instead since it uses a shared buffer pool.
+            </remarks>
+        </member>
+        <member name="T:Snappier.SnappyStream">
+            <summary>
+            Stream which supports compressing or decompressing data using the Snappy compression algorithm.
+            To decompress data, supply a stream to be read. To compress data, provide a stream to be written to.
+            </summary>
+        </member>
+        <member name="M:Snappier.SnappyStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionMode)">
+            <summary>
+            Create a stream which supports compressing or decompressing data using the Snappy compression algorithm.
+            To decompress data, supply a stream to be read. To compress data, provide a stream to be written to.
+            </summary>
+            <param name="stream">Source or destination stream.</param>
+            <param name="mode">Compression or decompression mode.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="stream"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Stream read/write capability doesn't match with <paramref name="mode"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Invalid <paramref name="mode"/>.</exception>
+            <remarks>
+            The stream will be closed when the SnappyStream is closed.
+            </remarks>
+        </member>
+        <member name="M:Snappier.SnappyStream.#ctor(System.IO.Stream,System.IO.Compression.CompressionMode,System.Boolean)">
+            <summary>
+            Create a stream which supports compressing or decompressing data using the Snappy compression algorithm.
+            To decompress data, supply a stream to be read. To compress data, provide a stream to be written to.
+            </summary>
+            <param name="stream">Source or destination stream.</param>
+            <param name="mode">Compression or decompression mode.</param>
+            <param name="leaveOpen">If true, close the stream when the SnappyStream is closed.</param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="stream"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Stream read/write capability doesn't match with <paramref name="mode"/>.</exception>
+            <exception cref="T:System.ArgumentOutOfRangeException">Invalid <paramref name="mode"/>.</exception>
+        </member>
+        <member name="P:Snappier.SnappyStream.BaseStream">
+            <summary>
+            The base stream being read from or written to.
+            </summary>
+        </member>
+        <member name="P:Snappier.SnappyStream.CanRead">
+            <inheritdoc />
+        </member>
+        <member name="P:Snappier.SnappyStream.CanWrite">
+            <inheritdoc />
+        </member>
+        <member name="P:Snappier.SnappyStream.CanSeek">
+            <inheritdoc />
+        </member>
+        <member name="P:Snappier.SnappyStream.Length">
+            <inheritdoc />
+        </member>
+        <member name="P:Snappier.SnappyStream.Position">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.Flush">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.FlushAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.SetLength(System.Int64)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.Read(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="M:Snappier.SnappyStream.Dispose(System.Boolean)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

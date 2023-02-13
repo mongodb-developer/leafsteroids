@@ -22,14 +22,11 @@ namespace Game
 
         private void CheckAvailableDirection(Vector2 direction)
         {
-            RaycastHit2D hit =
+            var hit =
                 Physics2D.BoxCast(transform.position, Vector2.one * 0.5f, 0f, direction, 1f, obstacleLayer);
 
             // If no collider is hit then there is no obstacle in that direction
-            if (hit.collider == null)
-            {
-                AvailableDirections!.Add(direction);
-            }
+            if (hit.collider == null) AvailableDirections!.Add(direction);
         }
     }
 }

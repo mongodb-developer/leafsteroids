@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Game;
-using TMPro;
 using UnityEngine;
 
 namespace ReplaySystem
@@ -14,54 +13,45 @@ namespace ReplaySystem
         [SerializeField] private Ghost hubert;
         [SerializeField] private Ghost dominic;
 
-        [SerializeField] private TMP_Text logTextField;
-        [SerializeField] private AtlasHelper atlasHelper;
-
+        private readonly AtlasHelper atlasHelper = new();
         public readonly List<Snapshot> Snapshots = new();
 
-        private string log = "foo";
+        private void Start()
+        {
+            InvokeRepeating(nameof(CreateSnapshot), 0f, Constants.RecordingSpeed);
+            // var position = new Position(new Vector3(1, 2, 3));
+            // var snapshot = new Snapshot
+            // {
+            //     ChuckPosition = position,
+            //     DominicPosition = position,
+            //     HubertPosition = position,
+            //     NicPosition = position,
+            //     PacManPosition = position
+            // };
+            // var snapshots = new List<Snapshot> { snapshot };
+            // await atlasHelper!.PersistRecording(new Recording { Snapshots = snapshots });
+        }
 
         public void StartNewRecording()
         {
             Snapshots!.Clear();
         }
 
-        public void PersistRecording()
+        public async Task PersistRecording()
         {
-            var recording = new Recording
-            {
-                DateTime = DateTime.Now,
-                Snapshots = Snapshots
-            };
-            Debug.Log("Recorder.PersistRecording");
-            log = atlasHelper!.PersistRecording(recording);
-            Debug.Log(log);
-        }
-
-        private void Start()
-        {
-            Debug.Log(log);
-            InvokeRepeating(nameof(CreateSnapshot), 0f, Constants.RecordingSpeed);
-            PersistRecording();
-        }
-
-        private void Update()
-        {
-            if (logTextField!.text == log) return;
-            logTextField!.text = log;
-
-            Debug.Log(log);
+            var recording = new Recording { Snapshots = Snapshots };
+            await atlasHelper!.PersistRecording(recording);
         }
 
         private void CreateSnapshot()
         {
             var snapshot = new Snapshot
             {
-                PacManPosition = Helper.InvertY(pacman!.transform.position),
-                ChuckPosition = Helper.InvertY(chuck!.transform.position),
-                NicPosition = Helper.InvertY(nic!.transform.position),
-                HubertPosition = Helper.InvertY(hubert!.transform.position),
-                DominicPosition = Helper.InvertY(dominic!.transform.position)
+                ChuckPosition = new Position(Helper.InvertY(chuck!.transform.position)),
+                DominicPosition = new Position(Helper.InvertY(dominic!.transform.position)),
+                HubertPosition = new Position(Helper.InvertY(nic!.transform.position)),
+                NicPosition = new Position(Helper.InvertY(hubert!.transform.position)),
+                PacManPosition = new Position(Helper.InvertY(pacman!.transform.position))
             };
             Snapshots!.Add(snapshot);
         }

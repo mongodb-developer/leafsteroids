@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,6 +24,11 @@ namespace Game
         private int Score { get; set; }
         private int Lives { get; set; }
 
+        private void Start()
+        {
+            DisableAllGameObjects();
+        }
+
         public void StartButtonPressed()
         {
             DisableAllGameObjects();
@@ -38,11 +44,6 @@ namespace Game
             replayer!.ReplayGame(recorder!.Snapshots, replayPacman, replayGhosts);
         }
 
-        private void Start()
-        {
-            DisableAllGameObjects();
-        }
-
         private void NewGame()
         {
             SetScore(0);
@@ -54,41 +55,32 @@ namespace Game
         {
             gameOverText!.enabled = false;
 
-            foreach (Transform pellet in pellets!)
-            {
-                pellet!.gameObject.SetActive(true);
-            }
+            foreach (Transform pellet in pellets!) pellet!.gameObject.SetActive(true);
 
             ResetState();
         }
 
         private void ResetState()
         {
-            for (int i = 0; i < ghosts!.Length; i++)
-            {
-                ghosts[i]!.ResetState();
-            }
+            for (var i = 0; i < ghosts!.Length; i++) ghosts[i]!.ResetState();
 
             pacman!.ResetState();
         }
 
-        private void GameOver()
+        private async Task GameOver()
         {
             DisableAllGameObjects();
 
             gameOverText!.enabled = true;
 
-            recorder!.PersistRecording();
+            await recorder!.PersistRecording();
         }
 
         private void DisableAllGameObjects()
         {
             gameOverText!.enabled = false;
 
-            for (int i = 0; i < ghosts!.Length; i++)
-            {
-                ghosts[i]!.gameObject.SetActive(false);
-            }
+            for (var i = 0; i < ghosts!.Length; i++) ghosts[i]!.gameObject.SetActive(false);
             pacman!.gameObject.SetActive(false);
 
             ToggleReplayGameObjectState(false);
@@ -96,10 +88,7 @@ namespace Game
 
         private void ToggleReplayGameObjectState(bool activate)
         {
-            for (int i = 0; i < replayGhosts!.Length; i++)
-            {
-                replayGhosts[i]!.gameObject.SetActive(activate);
-            }
+            for (var i = 0; i < replayGhosts!.Length; i++) replayGhosts[i]!.gameObject.SetActive(activate);
             replayPacman!.gameObject.SetActive(activate);
         }
 
@@ -115,31 +104,27 @@ namespace Game
             scoreText!.text = score.ToString().PadLeft(2, '0');
         }
 
-        public void PacmanEaten()
+        public async Task PacmanEaten()
         {
             pacman!.DeathSequence();
 
             SetLives(Lives - 1);
 
             if (Lives > 0)
-            {
                 Invoke(nameof(ResetState), 3f);
-            }
             else
-            {
-                GameOver();
-            }
+                await GameOver();
         }
 
         public void GhostEaten(Ghost ghost)
         {
-            int points = ghost!.points * GhostMultiplier;
+            var points = ghost!.points * GhostMultiplier;
             SetScore(Score + points);
 
             GhostMultiplier++;
         }
 
-        public void PelletEaten(Pellet pellet)
+        public async Task PelletEaten(Pellet pellet)
         {
             pellet!.gameObject.SetActive(false);
 
@@ -149,18 +134,15 @@ namespace Game
             {
                 pacman!.gameObject.SetActive(false);
                 Invoke(nameof(NewRound), 3f);
-                recorder!.PersistRecording();
+                await recorder!.PersistRecording();
             }
         }
 
-        public void PowerPelletEaten(PowerPellet pellet)
+        public async Task PowerPelletEaten(PowerPellet pellet)
         {
-            for (int i = 0; i < ghosts!.Length; i++)
-            {
-                ghosts[i]!.Frightened!.Enable(pellet!.duration);
-            }
+            for (var i = 0; i < ghosts!.Length; i++) ghosts[i]!.Frightened!.Enable(pellet!.duration);
 
-            PelletEaten(pellet);
+            await PelletEaten(pellet);
             CancelInvoke(nameof(ResetGhostMultiplier));
             Invoke(nameof(ResetGhostMultiplier), pellet!.duration);
         }
@@ -168,12 +150,8 @@ namespace Game
         private bool HasRemainingPellets()
         {
             foreach (Transform pellet in pellets!)
-            {
                 if (pellet!.gameObject.activeSelf)
-                {
                     return true;
-                }
-            }
 
             return false;
         }
