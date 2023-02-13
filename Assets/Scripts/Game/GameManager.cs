@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
@@ -72,13 +73,13 @@ namespace Game
             pacman!.ResetState();
         }
 
-        private void GameOver()
+        private async Task GameOver()
         {
             DisableAllGameObjects();
 
             gameOverText!.enabled = true;
 
-            recorder!.PersistRecording();
+            await recorder!.PersistRecording();
         }
 
         private void DisableAllGameObjects()
@@ -115,7 +116,7 @@ namespace Game
             scoreText!.text = score.ToString().PadLeft(2, '0');
         }
 
-        public void PacmanEaten()
+        public async Task PacmanEaten()
         {
             pacman!.DeathSequence();
 
@@ -127,7 +128,7 @@ namespace Game
             }
             else
             {
-                GameOver();
+                await GameOver();
             }
         }
 
@@ -139,7 +140,7 @@ namespace Game
             GhostMultiplier++;
         }
 
-        public void PelletEaten(Pellet pellet)
+        public async Task PelletEaten(Pellet pellet)
         {
             pellet!.gameObject.SetActive(false);
 
@@ -149,18 +150,18 @@ namespace Game
             {
                 pacman!.gameObject.SetActive(false);
                 Invoke(nameof(NewRound), 3f);
-                recorder!.PersistRecording();
+                await recorder!.PersistRecording();
             }
         }
 
-        public void PowerPelletEaten(PowerPellet pellet)
+        public async Task PowerPelletEaten(PowerPellet pellet)
         {
             for (int i = 0; i < ghosts!.Length; i++)
             {
                 ghosts[i]!.Frightened!.Enable(pellet!.duration);
             }
 
-            PelletEaten(pellet);
+            await PelletEaten(pellet);
             CancelInvoke(nameof(ResetGhostMultiplier));
             Invoke(nameof(ResetGhostMultiplier), pellet!.duration);
         }

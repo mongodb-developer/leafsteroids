@@ -22,7 +22,7 @@ namespace ReplaySystem
                 "JX0THWuEm9AniPG9fx6B7E8dXg7GhRYcWLS312kvrscu8S0066R16t3TwXqzTQkl");
         }
 
-        public async Task PersistRecording(Recording recording)
+        public async Task<string> PersistRecording(Recording recording)
         {
             var payload = new Payload
             {
@@ -32,10 +32,10 @@ namespace ReplaySystem
                 document = recording
             };
             var json = JsonConvert.SerializeObject(payload);
-            await PostRequest(DataApiUrlInsertOne, json);
+            return await PostRequest(DataApiUrlInsertOne, json);
         }
 
-        private async Task PostRequest(string url, string jsonString)
+        private async Task<string> PostRequest(string url, string jsonString)
         {
             var httpRequest = new HttpRequestMessage(HttpMethod.Post, url);
             var stringContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
@@ -48,6 +48,7 @@ namespace ReplaySystem
             var response = await client!.SendAsync(httpRequest)!;
             var resultString = await response!.Content!.ReadAsStringAsync();
             Debug.Log(resultString);
+            return resultString;
         }
     }
 }

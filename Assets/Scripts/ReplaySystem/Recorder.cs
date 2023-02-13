@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Game;
+using TMPro;
 using UnityEngine;
 
 namespace ReplaySystem
@@ -14,6 +15,9 @@ namespace ReplaySystem
         [SerializeField] private Ghost hubert;
         [SerializeField] private Ghost dominic;
 
+        [SerializeField] private TMP_Text logTextField;
+        private string log = "foo";
+
         public readonly List<Snapshot> Snapshots = new();
         private readonly AtlasHelper atlasHelper = new();
 
@@ -22,19 +26,24 @@ namespace ReplaySystem
             Snapshots!.Clear();
         }
 
-        public void PersistRecording()
+        public async Task PersistRecording()
         {
             var recording = new Recording
             {
                 DateTime = DateTime.Now,
                 Snapshots = Snapshots
             };
-            Task.Run(async () => await atlasHelper!.PersistRecording(recording));
+            log = await atlasHelper!.PersistRecording(recording);
         }
 
         private void Start()
         {
             InvokeRepeating(nameof(CreateSnapshot), 0f, Constants.RecordingSpeed);
+        }
+
+        private void Update()
+        {
+            logTextField!.text = log;
         }
 
         private void CreateSnapshot()

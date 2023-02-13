@@ -41,7 +41,7 @@ namespace Game
             }
 
             // Rotate pacman to face the movement direction
-            float angle = Mathf.Atan2(Movement!.direction.y, Movement.direction.x);
+            float angle = Mathf.Atan2(Movement!.Direction.y, Movement.Direction.x);
             transform.rotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.forward);
         }
 
@@ -51,7 +51,7 @@ namespace Game
             SpriteRenderer!.enabled = true;
             Collider!.enabled = true;
             deathSequence!.enabled = false;
-            deathSequence.spriteRenderer!.enabled = false;
+            deathSequence.SpriteRenderer!.enabled = false;
             Movement!.ResetState();
             gameObject.SetActive(true);
         }
@@ -63,7 +63,7 @@ namespace Game
             Collider!.enabled = false;
             Movement!.enabled = false;
             deathSequence!.enabled = true;
-            deathSequence.spriteRenderer!.enabled = true;
+            deathSequence.SpriteRenderer!.enabled = true;
             deathSequence.Restart();
         }
     }

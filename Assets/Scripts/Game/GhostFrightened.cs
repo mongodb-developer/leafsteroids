@@ -9,68 +9,68 @@ namespace Game
         public SpriteRenderer blue;
         public SpriteRenderer white;
 
-        public bool eaten { get; private set; }
+        private bool HasBeenEaten { get; set; }
 
-        public override void Enable(float duration)
+        public override void Enable(float d)
         {
-            base.Enable(duration);
+            base.Enable(d);
 
-            body.enabled = false;
-            eyes.enabled = false;
-            blue.enabled = true;
-            white.enabled = false;
+            body!.enabled = false;
+            eyes!.enabled = false;
+            blue!.enabled = true;
+            white!.enabled = false;
 
-            Invoke(nameof(Flash), duration / 2f);
+            Invoke(nameof(Flash), d / 2f);
         }
 
         public override void Disable()
         {
             base.Disable();
 
-            body.enabled = true;
-            eyes.enabled = true;
-            blue.enabled = false;
-            white.enabled = false;
+            body!.enabled = true;
+            eyes!.enabled = true;
+            blue!.enabled = false;
+            white!.enabled = false;
         }
 
         private void Eaten()
         {
-            eaten = true;
-            ghost.SetPosition(ghost.Home.inside.position);
-            ghost.Home.Enable(duration);
+            HasBeenEaten = true;
+            Ghost!.SetPosition(Ghost.Home!.inside!.position);
+            Ghost.Home.Enable(duration);
 
-            body.enabled = false;
-            eyes.enabled = true;
-            blue.enabled = false;
-            white.enabled = false;
+            body!.enabled = false;
+            eyes!.enabled = true;
+            blue!.enabled = false;
+            white!.enabled = false;
         }
 
         private void Flash()
         {
-            if (!eaten)
+            if (!HasBeenEaten)
             {
-                blue.enabled = false;
-                white.enabled = true;
-                white.GetComponent<AnimatedSprite>().Restart();
+                blue!.enabled = false;
+                white!.enabled = true;
+                white.GetComponent<AnimatedSprite>()!.Restart();
             }
         }
 
         private void OnEnable()
         {
-            blue.GetComponent<AnimatedSprite>().Restart();
-            ghost.Movement.speedMultiplier = 0.5f;
-            eaten = false;
+            blue!.GetComponent<AnimatedSprite>()!.Restart();
+            Ghost!.Movement!.speedMultiplier = 0.5f;
+            HasBeenEaten = false;
         }
 
         private void OnDisable()
         {
-            ghost.Movement.speedMultiplier = 1f;
-            eaten = false;
+            Ghost!.Movement!.speedMultiplier = 1f;
+            HasBeenEaten = false;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            Node node = other.GetComponent<Node>();
+            Node node = other!.GetComponent<Node>();
 
             if (node != null && enabled)
             {
@@ -78,12 +78,12 @@ namespace Game
                 float maxDistance = float.MinValue;
 
                 // Find the available direction that moves farthest from pacman
-                foreach (Vector2 availableDirection in node.availableDirections)
+                foreach (Vector2 availableDirection in node.AvailableDirections!)
                 {
                     // If the distance in this direction is greater than the current
                     // max distance then this direction becomes the new farthest
                     Vector3 newPosition = transform.position + new Vector3(availableDirection.x, availableDirection.y);
-                    float distance = (ghost.target.position - newPosition).sqrMagnitude;
+                    float distance = (Ghost!.target!.position - newPosition).sqrMagnitude;
 
                     if (distance > maxDistance)
                     {
@@ -92,13 +92,13 @@ namespace Game
                     }
                 }
 
-                ghost.Movement.SetDirection(direction);
+                Ghost!.Movement!.SetDirection(direction);
             }
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision.gameObject.layer == LayerMask.NameToLayer("Pacman"))
+            if (collision!.gameObject!.layer == LayerMask.NameToLayer("Pacman"))
             {
                 if (enabled)
                 {

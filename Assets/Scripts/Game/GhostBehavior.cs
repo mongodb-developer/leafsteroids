@@ -5,12 +5,12 @@ namespace Game
     [RequireComponent(typeof(Ghost))]
     public abstract class GhostBehavior : MonoBehaviour
     {
-        public Ghost ghost { get; private set; }
+        protected Ghost Ghost { get; private set; }
         public float duration;
 
         private void Awake()
         {
-            ghost = GetComponent<Ghost>();
+            Ghost = GetComponent<Ghost>();
         }
 
         public void Enable()
@@ -18,12 +18,12 @@ namespace Game
             Enable(duration);
         }
 
-        public virtual void Enable(float duration)
+        public virtual void Enable(float d)
         {
             enabled = true;
 
             CancelInvoke();
-            Invoke(nameof(Disable), duration);
+            Invoke(nameof(Disable), d);
         }
 
         public virtual void Disable()

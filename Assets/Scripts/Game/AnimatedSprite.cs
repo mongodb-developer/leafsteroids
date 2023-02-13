@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Game
@@ -5,15 +6,15 @@ namespace Game
     [RequireComponent(typeof(SpriteRenderer))]
     public class AnimatedSprite : MonoBehaviour
     {
-        public SpriteRenderer spriteRenderer { get; private set; }
-        public Sprite[] sprites = new Sprite[0];
+        public SpriteRenderer SpriteRenderer { get; private set; }
+        public Sprite[] sprites = Array.Empty<Sprite>();
         public float animationTime = 0.25f;
-        public int animationFrame { get; private set; }
+        private int AnimationFrame { get; set; }
         public bool loop = true;
 
         private void Awake()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            SpriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void Start()
@@ -23,27 +24,27 @@ namespace Game
 
         private void Advance()
         {
-            if (!spriteRenderer.enabled)
+            if (!SpriteRenderer!.enabled)
             {
                 return;
             }
 
-            animationFrame++;
+            AnimationFrame++;
 
-            if (animationFrame >= sprites.Length && loop)
+            if (AnimationFrame >= sprites!.Length && loop)
             {
-                animationFrame = 0;
+                AnimationFrame = 0;
             }
 
-            if (animationFrame >= 0 && animationFrame < sprites.Length)
+            if (AnimationFrame >= 0 && AnimationFrame < sprites.Length)
             {
-                spriteRenderer.sprite = sprites[animationFrame];
+                SpriteRenderer.sprite = sprites[AnimationFrame];
             }
         }
 
         public void Restart()
         {
-            animationFrame = -1;
+            AnimationFrame = -1;
 
             Advance();
         }
