@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Game
@@ -58,18 +57,17 @@ namespace Game
             t.position = position;
         }
 
-        private async Task OnCollisionEnter2D(Collision2D collision)
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision!.gameObject!.layer == LayerMask.NameToLayer("Pacman"))
+            if (collision!.gameObject!.layer != LayerMask.NameToLayer("Pacman")) return;
+
+            if (Frightened!.enabled)
             {
-                if (Frightened!.enabled)
-                {
-                    FindObjectOfType<GameManager>()!.GhostEaten(this);
-                }
-                else
-                {
-                    await FindObjectOfType<GameManager>()!.PacmanEaten();
-                }
+                FindObjectOfType<GameManager>()!.GhostEaten(this);
+            }
+            else
+            {
+                FindObjectOfType<GameManager>()!.PacmanEaten();
             }
         }
     }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Game;
 using TMPro;
 using UnityEngine;
@@ -16,34 +15,42 @@ namespace ReplaySystem
         [SerializeField] private Ghost dominic;
 
         [SerializeField] private TMP_Text logTextField;
-        private string log = "foo";
+        [SerializeField] private AtlasHelper atlasHelper;
 
         public readonly List<Snapshot> Snapshots = new();
-        private readonly AtlasHelper atlasHelper = new();
+
+        private string log = "foo";
 
         public void StartNewRecording()
         {
             Snapshots!.Clear();
         }
 
-        public async Task PersistRecording()
+        public void PersistRecording()
         {
             var recording = new Recording
             {
                 DateTime = DateTime.Now,
                 Snapshots = Snapshots
             };
-            log = await atlasHelper!.PersistRecording(recording);
+            Debug.Log("Recorder.PersistRecording");
+            log = atlasHelper!.PersistRecording(recording);
+            Debug.Log(log);
         }
 
         private void Start()
         {
+            Debug.Log(log);
             InvokeRepeating(nameof(CreateSnapshot), 0f, Constants.RecordingSpeed);
+            PersistRecording();
         }
 
         private void Update()
         {
+            if (logTextField!.text == log) return;
             logTextField!.text = log;
+
+            Debug.Log(log);
         }
 
         private void CreateSnapshot()

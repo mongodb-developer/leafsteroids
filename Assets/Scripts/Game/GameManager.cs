@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,13 +72,13 @@ namespace Game
             pacman!.ResetState();
         }
 
-        private async Task GameOver()
+        private void GameOver()
         {
             DisableAllGameObjects();
 
             gameOverText!.enabled = true;
 
-            await recorder!.PersistRecording();
+            recorder!.PersistRecording();
         }
 
         private void DisableAllGameObjects()
@@ -107,7 +106,7 @@ namespace Game
         private void SetLives(int lives)
         {
             Lives = lives;
-            livesText!.text = "x" + lives.ToString();
+            livesText!.text = $"x{lives}";
         }
 
         private void SetScore(int score)
@@ -116,7 +115,7 @@ namespace Game
             scoreText!.text = score.ToString().PadLeft(2, '0');
         }
 
-        public async Task PacmanEaten()
+        public void PacmanEaten()
         {
             pacman!.DeathSequence();
 
@@ -128,7 +127,7 @@ namespace Game
             }
             else
             {
-                await GameOver();
+                GameOver();
             }
         }
 
@@ -140,7 +139,7 @@ namespace Game
             GhostMultiplier++;
         }
 
-        public async Task PelletEaten(Pellet pellet)
+        public void PelletEaten(Pellet pellet)
         {
             pellet!.gameObject.SetActive(false);
 
@@ -150,18 +149,18 @@ namespace Game
             {
                 pacman!.gameObject.SetActive(false);
                 Invoke(nameof(NewRound), 3f);
-                await recorder!.PersistRecording();
+                recorder!.PersistRecording();
             }
         }
 
-        public async Task PowerPelletEaten(PowerPellet pellet)
+        public void PowerPelletEaten(PowerPellet pellet)
         {
             for (int i = 0; i < ghosts!.Length; i++)
             {
                 ghosts[i]!.Frightened!.Enable(pellet!.duration);
             }
 
-            await PelletEaten(pellet);
+            PelletEaten(pellet);
             CancelInvoke(nameof(ResetGhostMultiplier));
             Invoke(nameof(ResetGhostMultiplier), pellet!.duration);
         }

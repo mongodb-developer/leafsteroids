@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Playground
@@ -6,12 +7,13 @@ namespace Playground
     {
         private void Start()
         {
-            InvokeRepeating(nameof(Log), 0f, 1f);
+            InvokeRepeating(nameof(Log), 0f, 3f);
         }
 
         private void Log()
         {
             Debug.Log("foo");
+            Console.WriteLine("foo");
         }
     }
 }

@@ -1,14 +1,12 @@
-using System.Threading.Tasks;
-
 namespace Game
 {
     public class PowerPellet : Pellet
     {
         public float duration = 8f;
 
-        protected override async Task Eat()
+        protected override void Eat()
         {
-            await FindObjectOfType<GameManager>()!.PowerPelletEaten(this);
+            FindObjectOfType<GameManager>()!.PowerPelletEaten(this);
         }
     }
 }
