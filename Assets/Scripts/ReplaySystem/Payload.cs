@@ -9,4 +9,4 @@ namespace ReplaySystem
         [JsonProperty("collection")] public string Collection;
         [JsonProperty("document")] public Recording Document;
     }
-}ª
+}

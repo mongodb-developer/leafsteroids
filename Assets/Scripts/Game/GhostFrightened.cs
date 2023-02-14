@@ -26,9 +26,8 @@ namespace Game
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (collision!.gameObject!.layer == LayerMask.NameToLayer("Pacman"))
-                if (enabled)
-                    Eaten();
+            if (collision!.gameObject!.layer != LayerMask.NameToLayer("Pacman") || !enabled) return;
+            Eaten();
         }
 
         private void OnTriggerEnter2D(Collider2D other)

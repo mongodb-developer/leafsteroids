@@ -13,23 +13,12 @@ namespace ReplaySystem
         [SerializeField] private Ghost hubert;
         [SerializeField] private Ghost dominic;
 
-        private readonly AtlasHelper atlasHelper = new();
+        private readonly AtlasHelper _atlasHelper = new();
         public readonly List<Snapshot> Snapshots = new();
 
         private void Start()
         {
             InvokeRepeating(nameof(CreateSnapshot), 0f, Constants.RecordingSpeed);
-            // var position = new Position(new Vector3(1, 2, 3));
-            // var snapshot = new Snapshot
-            // {
-            //     ChuckPosition = position,
-            //     DominicPosition = position,
-            //     HubertPosition = position,
-            //     NicPosition = position,
-            //     PacManPosition = position
-            // };
-            // var snapshots = new List<Snapshot> { snapshot };
-            // await atlasHelper!.PersistRecording(new Recording { Snapshots = snapshots });
         }
 
         public void StartNewRecording()
@@ -40,7 +29,7 @@ namespace ReplaySystem
         public async Task PersistRecording()
         {
             var recording = new Recording { Snapshots = Snapshots };
-            await atlasHelper!.PersistRecording(recording);
+            await _atlasHelper!.PersistRecording(recording);
         }
 
         private void CreateSnapshot()

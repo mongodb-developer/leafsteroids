@@ -5,11 +5,11 @@ namespace ReplaySystem
 {
     public class AtlasHelper
     {
-        private readonly MongoClient mongoClient = new(Constants.ConnectionString);
+        private readonly MongoClient _mongoClient = new(Constants.ConnectionString);
 
         public async Task PersistRecording(Recording recording)
         {
-            var database = mongoClient!.GetDatabase(Constants.Database);
+            var database = _mongoClient!.GetDatabase(Constants.Database);
             // await database!.DropCollectionAsync(Constants.RecordingsCollection)!;
             var collection = database!.GetCollection<Recording>(Constants.RecordingsCollection);
             // Debug.Log(recording!.ToString());
