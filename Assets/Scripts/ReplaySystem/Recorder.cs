@@ -13,7 +13,7 @@ namespace ReplaySystem
         [SerializeField] private Ghost hubert;
         [SerializeField] private Ghost dominic;
 
-        private readonly AtlasHelper _atlasHelper = new();
+        private readonly AtlasHelper atlasHelper = new();
         public readonly List<Snapshot> Snapshots = new();
 
         private void Start()
@@ -29,7 +29,7 @@ namespace ReplaySystem
         public async Task PersistRecording()
         {
             var recording = new Recording { Snapshots = Snapshots };
-            await _atlasHelper!.PersistRecording(recording);
+            await atlasHelper!.PersistRecording(recording);
         }
 
         private void CreateSnapshot()
