@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using ReplaySystem;
 using UnityEngine;
 using UnityEngine.UI;
+using Newtonsoft.Json;
 
 namespace Game
 {
@@ -24,8 +25,13 @@ namespace Game
         private int Score { get; set; }
         private int Lives { get; set; }
 
+        private readonly AtlasHelper atlasHelper = new();
+
         private void Start()
         {
+            StartCoroutine(atlasHelper.GetSnapshot("640ba8ed160f99e8826f1040", result => {
+                Debug.Log(JsonConvert.SerializeObject(result));
+            }));
             DisableAllGameObjects();
         }
 
