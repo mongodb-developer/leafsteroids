@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Game;
 using UnityEngine;
+using Newtonsoft.Json;
 
 namespace ReplaySystem
 {
@@ -29,7 +30,13 @@ namespace ReplaySystem
         public async Task PersistRecording()
         {
             var recording = new Recording { Snapshots = Snapshots };
-            await atlasHelper!.PersistRecording(recording);
+            //await atlasHelper!.PersistRecording(recording);
+            StartCoroutine(atlasHelper.RecordSnapshot(JsonConvert.SerializeObject(recording), result => {
+                if(result == true) {
+                    Debug.Log("Saved!");
+                }
+                Debug.Log(result);
+            }));
         }
 
         private void CreateSnapshot()
