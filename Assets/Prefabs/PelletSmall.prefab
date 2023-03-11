@@ -115,6 +115,7 @@ MonoBehaviour:
   currentHealth: 0
   itemRendererInner: {fileID: 2593722868481908437}
   itemRendererOuter: {fileID: 2593722866642334625}
+  gameManager: {fileID: 5648848729763590455, guid: b436aa4164a094fa6984cd6469c89f2d, type: 3}
 --- !u!1 &2593722868481908438
 GameObject:
   m_ObjectHideFlags: 0

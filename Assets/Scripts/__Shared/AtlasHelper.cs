@@ -2,31 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 using _MainScene._ReplaySystem;
-using MongoDB.Driver;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace __Shared
 {
-    public class AtlasHelper
+    public static class AtlasHelper
     {
-        private readonly MongoClient _mongoClient = new(Constants.ConnectionString);
-
-        public async Task PersistRecording(Recording recording)
-        {
-            var database = _mongoClient!.GetDatabase(Constants.DatabaseName);
-            // await database!.DropCollectionAsync(Constants.RecordingsCollectionName)!;
-            var collection = database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
-            // Debug.Log(recording!.ToString());
-            await collection!.InsertOneAsync(recording)!;
-            // var documents = await collection.Find(new BsonDocument()).ToListAsync()!;
-            // Debug.Log(documents);
-        }
-
-        public IEnumerator GetSnapshots(Action<List<Recording>> callback = null)
+        public static IEnumerator GetSnapshots(Action<List<Recording>> callback = null)
         {
             using var request = UnityWebRequest.Get(Constants.DataApiUrlGetMany);
             request!.SetRequestHeader("Content-Type", "application/json");
@@ -43,7 +28,7 @@ namespace __Shared
             }
         }
 
-        public IEnumerator GetSnapshot(string id, Action<Recording> callback = null)
+        public static IEnumerator GetSnapshot(string id, Action<Recording> callback = null)
         {
             using var request = UnityWebRequest.Get(Constants.DataApiUrlGetOne + id);
             request!.SetRequestHeader("Content-Type", "application/json");
@@ -60,7 +45,7 @@ namespace __Shared
             }
         }
 
-        public IEnumerator RecordSnapshot(string data, Action<bool> callback = null)
+        public static IEnumerator RecordSnapshot(string data, Action<bool> callback = null)
         {
             using var request = new UnityWebRequest(Constants.DataApiUrlInsertOne, "POST");
             request.SetRequestHeader("Content-Type", "application/json");

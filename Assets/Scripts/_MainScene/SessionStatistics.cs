@@ -1,6 +1,6 @@
 namespace _MainScene
 {
-    public class Session
+    public class SessionStatistics
     {
         public int ShotsFired;
     }

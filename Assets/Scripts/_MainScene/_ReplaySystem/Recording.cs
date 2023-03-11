@@ -16,7 +16,7 @@ namespace _MainScene._ReplaySystem
         public string? Id { get; set; }
 #nullable disable
 
-        public DateTime DateTime { get; set; } = DateTime.UtcNow;
+        private DateTime DateTime { get; } = DateTime.UtcNow;
         public List<Snapshot> Snapshots { get; set; } = new();
 
         public override string ToString()

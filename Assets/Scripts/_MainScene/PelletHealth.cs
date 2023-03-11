@@ -1,3 +1,5 @@
+using __Shared;
+using _LoadingScene;
 using UnityEngine;
 
 namespace _MainScene
@@ -9,6 +11,15 @@ namespace _MainScene
         public float currentHealth;
         public Renderer itemRendererInner;
         public Renderer itemRendererOuter;
+
+        private GameConfig _gameConfig;
+
+        private void Awake()
+        {
+            _gameConfig = GameConfigLoader.Instance!.GameConfig;
+            Debug.Log(_gameConfig!.RoundDuration);
+        }
+
 
         private void Start()
         {
@@ -37,7 +48,7 @@ namespace _MainScene
             if (bullet == null) return;
 
             // Reduce the item's health by the bullet's damage
-            currentHealth -= bullet.damage;
+            currentHealth -= _gameConfig!.BulletDamage;
 
             // Destroy the bullet
             Destroy(bullet.gameObject);

@@ -1,11 +1,18 @@
 using System.Collections;
+using __Shared;
+using _LoadingScene;
 using UnityEngine;
 
 namespace _MainScene
 {
     public class Bullet : MonoBehaviour
     {
-        public float damage = 15f;
+        private GameConfig _gameConfig;
+
+        private void Awake()
+        {
+            _gameConfig = GameConfigLoader.Instance!.GameConfig;
+        }
 
         private void Start()
         {
@@ -19,7 +26,7 @@ namespace _MainScene
 
         private IEnumerator DestroyBullet()
         {
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(_gameConfig!.BulletLifespan);
             Destroy(gameObject);
         }
     }

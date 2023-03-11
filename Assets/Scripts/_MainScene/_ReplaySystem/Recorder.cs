@@ -9,7 +9,6 @@ namespace _MainScene._ReplaySystem
     {
         [SerializeField] private PlayerController player;
 
-        private readonly AtlasHelper _atlasHelper = new();
         private readonly List<Snapshot> _snapshots = new();
 
         private void Start()
@@ -25,7 +24,7 @@ namespace _MainScene._ReplaySystem
         public void PersistRecording()
         {
             var recording = new Recording { Snapshots = _snapshots };
-            StartCoroutine(_atlasHelper!.RecordSnapshot(JsonConvert.SerializeObject(recording),
+            StartCoroutine(AtlasHelper.RecordSnapshot(JsonConvert.SerializeObject(recording),
                 result => { Debug.Log($"Finished saving recording: {result}"); }));
         }
 

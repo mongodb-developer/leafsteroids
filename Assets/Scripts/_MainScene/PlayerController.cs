@@ -1,14 +1,29 @@
+using __Shared;
+using _LoadingScene;
 using UnityEngine;
 
 namespace _MainScene
 {
     public class PlayerController : MonoBehaviour
     {
-        public float moveSpeed = 5f;
-        public float rotateSpeed = 100f;
+        public float moveSpeed;
+        public float rotateSpeed;
 
         public GameObject bulletPrefab;
         public Transform bulletSpawnPoint;
+
+        private GameConfig _gameConfig;
+
+        private void Awake()
+        {
+            _gameConfig = GameConfigLoader.Instance!.GameConfig;
+        }
+
+        private void Start()
+        {
+            moveSpeed = _gameConfig!.PlayerMoveSpeed;
+            rotateSpeed = _gameConfig.PlayerRotateSpeed;
+        }
 
         private void Update()
         {
@@ -31,7 +46,8 @@ namespace _MainScene
             var bullet = Instantiate(bulletPrefab, bulletSpawnPoint!.position, bulletSpawnPoint.rotation);
 
             // Apply force to the bullet
-            bullet!.GetComponent<Rigidbody>()!.AddForce(bulletSpawnPoint.forward * 500f);
+            bullet!.GetComponent<Rigidbody>()!.AddForce(bulletSpawnPoint.forward *
+                                                        _gameConfig!.BulletSpeed);
         }
     }
 }

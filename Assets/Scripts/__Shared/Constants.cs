@@ -16,8 +16,6 @@
         public const string ConnectionString =
             "mongodb+srv://dbUser:dbUserPassword@cluster0.c8y2i2q.mongodb.net/?retryWrites=true&w=majority";
 
-        public const string DatabaseName = "game";
-        public const string RecordingsCollectionName = "recordings";
 
         public const float RecordingSpeed = 0.1f;
     }
