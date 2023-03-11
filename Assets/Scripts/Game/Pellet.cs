@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Game
@@ -8,14 +7,14 @@ namespace Game
     {
         public int points = 10;
 
-        private async void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other!.gameObject.layer == LayerMask.NameToLayer("Pacman")) await Eat()!;
+            if (other!.gameObject.layer == LayerMask.NameToLayer("Pacman")) Eat();
         }
 
-        protected virtual async Task Eat()
+        protected virtual void Eat()
         {
-            await FindObjectOfType<GameManager>()!.PelletEaten(this);
+            FindObjectOfType<GameManager>()!.PelletEaten(this);
         }
     }
 }

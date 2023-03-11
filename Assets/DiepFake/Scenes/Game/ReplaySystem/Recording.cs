@@ -5,16 +5,18 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
 
-namespace ReplaySystem
+namespace DiepFake.Scenes.Game.ReplaySystem
 {
     public class Recording
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         [JsonProperty("_id", NullValueHandling = NullValueHandling.Ignore)]
+#nullable enable
         public string? Id { get; set; }
+#nullable disable
 
-        public DateTime DateTime { get; set; } = DateTime.Now;
+        public DateTime DateTime { get; set; } = DateTime.UtcNow;
         public List<Snapshot> Snapshots { get; set; } = new();
 
         public override string ToString()

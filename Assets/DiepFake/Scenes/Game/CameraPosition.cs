@@ -1,12 +1,14 @@
-using DiepFake.Scripts;
 using UnityEngine;
 
-public class CameraPosition : MonoBehaviour
+namespace DiepFake.Scenes.Game
 {
-    public PlayerController playerController;
-
-    private void Update()
+    public class CameraPosition : MonoBehaviour
     {
-        transform.position = playerController!.transform.position + new Vector3(0, 11, 0);
+        public PlayerController playerController;
+
+        private void Update()
+        {
+            transform.position = playerController!.transform.position + new Vector3(0, 11, 0);
+        }
     }
 }

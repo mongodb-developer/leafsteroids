@@ -1,8 +1,7 @@
-using System.Threading.Tasks;
-using ReplaySystem;
+using DiepFake.Scenes.Game.ReplaySystem;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
-using Newtonsoft.Json;
 
 namespace Game
 {
@@ -21,17 +20,16 @@ namespace Game
         [SerializeField] private Recorder recorder;
         [SerializeField] private Replayer replayer;
 
+        private readonly AtlasHelper _atlasHelper = new();
+
         private int GhostMultiplier { get; set; } = 1;
         private int Score { get; set; }
         private int Lives { get; set; }
 
-        private readonly AtlasHelper atlasHelper = new();
-
         private void Start()
         {
-            StartCoroutine(atlasHelper.GetSnapshot("640ba8ed160f99e8826f1040", result => {
-                Debug.Log(JsonConvert.SerializeObject(result));
-            }));
+            StartCoroutine(_atlasHelper!.GetSnapshot("640ba8ed160f99e8826f1040",
+                result => { Debug.Log(JsonConvert.SerializeObject(result)); }));
             DisableAllGameObjects();
         }
 
@@ -73,13 +71,13 @@ namespace Game
             pacman!.ResetState();
         }
 
-        private async Task GameOver()
+        private void GameOver()
         {
             DisableAllGameObjects();
 
             gameOverText!.enabled = true;
 
-            await recorder!.PersistRecording();
+            recorder!.PersistRecording();
         }
 
         private void DisableAllGameObjects()
@@ -110,7 +108,7 @@ namespace Game
             scoreText!.text = score.ToString().PadLeft(2, '0');
         }
 
-        public async Task PacmanEaten()
+        public void PacmanEaten()
         {
             pacman!.DeathSequence();
 
@@ -119,7 +117,7 @@ namespace Game
             if (Lives > 0)
                 Invoke(nameof(ResetState), 3f);
             else
-                await GameOver();
+                GameOver();
         }
 
         public void GhostEaten(Ghost ghost)
@@ -130,25 +128,24 @@ namespace Game
             GhostMultiplier++;
         }
 
-        public async Task PelletEaten(Pellet pellet)
+        public void PelletEaten(Pellet pellet)
         {
             pellet!.gameObject.SetActive(false);
 
             SetScore(Score + pellet.points);
 
-            if (!HasRemainingPellets())
-            {
-                pacman!.gameObject.SetActive(false);
-                Invoke(nameof(NewRound), 3f);
-                await recorder!.PersistRecording();
-            }
+            if (HasRemainingPellets()) return;
+
+            pacman!.gameObject.SetActive(false);
+            Invoke(nameof(NewRound), 3f);
+            recorder!.PersistRecording();
         }
 
-        public async Task PowerPelletEaten(PowerPellet pellet)
+        public void PowerPelletEaten(PowerPellet pellet)
         {
             for (var i = 0; i < ghosts!.Length; i++) ghosts[i]!.Frightened!.Enable(pellet!.duration);
 
-            await PelletEaten(pellet);
+            PelletEaten(pellet);
             CancelInvoke(nameof(ResetGhostMultiplier));
             Invoke(nameof(ResetGhostMultiplier), pellet!.duration);
         }

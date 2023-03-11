@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace DiepFake.Scripts
+namespace DiepFake.Scenes.Game
 {
     public class Bullet : MonoBehaviour
     {

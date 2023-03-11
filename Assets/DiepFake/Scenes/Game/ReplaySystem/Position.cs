@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ReplaySystem
+namespace DiepFake.Scenes.Game.ReplaySystem
 {
     public class Position
     {

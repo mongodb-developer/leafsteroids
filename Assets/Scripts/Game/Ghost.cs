@@ -29,14 +29,14 @@ namespace Game
             ResetState();
         }
 
-        private async void OnCollisionEnter2D(Collision2D collision)
+        private void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision!.gameObject!.layer != LayerMask.NameToLayer("Pacman")) return;
 
             if (Frightened!.enabled)
                 FindObjectOfType<GameManager>()!.GhostEaten(this);
             else
-                await FindObjectOfType<GameManager>()!.PacmanEaten();
+                FindObjectOfType<GameManager>()!.PacmanEaten();
         }
 
         public void ResetState()
