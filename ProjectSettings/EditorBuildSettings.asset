@@ -4,11 +4,5 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Pacman.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/DiepFake/Scenes/DiepFake.unity
-    guid: 802b90222dccdca498500dad7f5d2b50
+  m_Scenes: []
   m_configObjects: {}
