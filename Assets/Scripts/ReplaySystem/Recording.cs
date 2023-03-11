@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Globalization;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace ReplaySystem
 {
     public class Recording
     {
-        [BsonId] public ObjectId Id { get; set; } = new();
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        [JsonProperty("_id", NullValueHandling = NullValueHandling.Ignore)]
+        public string? Id { get; set; }
+
         public DateTime DateTime { get; set; } = DateTime.Now;
         public List<Snapshot> Snapshots { get; set; } = new();
 
