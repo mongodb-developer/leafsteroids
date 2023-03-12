@@ -1,14 +1,18 @@
+using System;
 using __Shared;
 using _LoadingScene;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _MainScene
 {
     public class PelletHealth : MonoBehaviour
     {
-        // Variables to control item health and fading
-        public int maxHealth = 100;
-        public float currentHealth;
+        [FormerlySerializedAs("size")] [SerializeField]
+        private PelletSize pelletSize;
+
+        [SerializeField] private float maxHealth;
+        [SerializeField] private float currentHealth;
         public Renderer itemRendererInner;
         public Renderer itemRendererOuter;
 
@@ -17,7 +21,14 @@ namespace _MainScene
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
-            Debug.Log(_gameConfig!.RoundDuration);
+            maxHealth = pelletSize switch
+            {
+                PelletSize.Small => _gameConfig!.PelletHeatlhSmall,
+                PelletSize.Medium => _gameConfig!.PelletHeatlhMedium,
+                PelletSize.Large => _gameConfig!.PelletHeatlhLarge,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            currentHealth = maxHealth;
         }
 
 
@@ -55,6 +66,13 @@ namespace _MainScene
 
             // Destroy the item if its health is depleted
             if (currentHealth <= 0) Destroy(gameObject);
+        }
+
+        private enum PelletSize
+        {
+            Small = 0,
+            Medium = 1,
+            Large = 2
         }
     }
 }

@@ -14,7 +14,6 @@ namespace _MainScene
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
-            Debug.Log(_gameConfig!.RoundDuration);
         }
 
         private void Start()

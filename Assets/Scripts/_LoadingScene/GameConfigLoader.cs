@@ -30,7 +30,6 @@ namespace _LoadingScene
             var database = client.GetDatabase("game");
             var collection = database!.GetCollection<GameConfig>("config");
             GameConfig = collection.Find(_ => true).ToList()!.First();
-            Debug.Log(GameConfig!.RoundDuration);
             SceneManager.LoadScene(2);
         }
     }
