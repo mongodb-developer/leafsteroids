@@ -32,6 +32,7 @@ namespace _3_Main
             PelletsDestroyedSmall = 0f;
             PelletsDestroyedMedium = 0f;
             PelletsDestroyedLarge = 0f;
+            Score = 0f;
         }
 
         public SessionStatisticsPlain GetPlainCopy()

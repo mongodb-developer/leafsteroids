@@ -1,3 +1,4 @@
+using _3_Main;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -33,6 +34,7 @@ namespace _00_Shared
 
         public void SwitchToMainScene()
         {
+            SessionStatistics.Instance!.Reset();
             SceneManager.LoadScene("3_Main");
         }
     }

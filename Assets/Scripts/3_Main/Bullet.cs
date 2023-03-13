@@ -1,5 +1,4 @@
 using System.Collections;
-using _00_Shared;
 using _1_Loading;
 using UnityEngine;
 
@@ -7,7 +6,9 @@ namespace _3_Main
 {
     public class Bullet : MonoBehaviour
     {
-        private GameConfig _gameConfig;
+        public float damage;
+
+        private float _lifespan;
 
         private void Awake()
         {
@@ -16,7 +17,7 @@ namespace _3_Main
 
         private void Start()
         {
-            _gameConfig = GameConfigLoader.Instance!.GameConfig;
+            _lifespan = GameConfigLoader.Instance!.GameConfig!.BulletLifespan;
             StartCoroutine(DestroyBullet());
         }
 
@@ -27,7 +28,7 @@ namespace _3_Main
 
         private IEnumerator DestroyBullet()
         {
-            yield return new WaitForSeconds(_gameConfig!.BulletLifespan);
+            yield return new WaitForSeconds(_lifespan);
             Destroy(gameObject);
         }
     }

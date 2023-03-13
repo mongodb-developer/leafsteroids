@@ -47,7 +47,7 @@ namespace _3_Main
             var bullet = collision!.gameObject!.GetComponent<Bullet>();
             if (bullet == null) return;
 
-            currentHealth -= _gameConfig!.BulletDamage;
+            currentHealth -= bullet.damage;
             SessionStatistics.Instance!.DamageDone += _gameConfig!.BulletDamage;
 
             Destroy(bullet.gameObject);

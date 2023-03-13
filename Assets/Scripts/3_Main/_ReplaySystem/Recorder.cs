@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Globalization;
 using _00_Shared;
 using _1_Loading;
 using Newtonsoft.Json;
@@ -27,7 +26,6 @@ namespace _3_Main._ReplaySystem
         {
             var recording = new Recording
                 { Snapshots = _snapshots, Player = GameConfigLoader.Instance!.GameConfig!.Player };
-            Debug.Log(recording.DateTime.ToString(CultureInfo.InvariantCulture));
             StartCoroutine(AtlasHelper.RecordSnapshot(JsonConvert.SerializeObject(recording),
                 result => { Debug.Log($"Finished saving recording: {result}"); }));
         }

@@ -25,12 +25,13 @@ namespace _3_Main
             playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
             gameOverText!.gameObject.SetActive(false);
             gameOverSubText!.gameObject.SetActive(false);
+            InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
         }
 
         private void Start()
         {
+            Time.timeScale = 1f;
             _timeRemainingS = _gameConfig!.RoundDuration;
-            InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
         }
 
         private void Update()
@@ -49,13 +50,8 @@ namespace _3_Main
             Time.timeScale = 0f;
             gameOverText!.gameObject.SetActive(true);
             gameOverSubText!.gameObject.SetActive(true);
-            PersistRecording();
-        }
-
-        private void PersistRecording()
-        {
             recorder!.PersistRecording();
-            SessionStatistics.Instance!.Reset();
+            recorder!.StartNewRecording();
         }
     }
 }
