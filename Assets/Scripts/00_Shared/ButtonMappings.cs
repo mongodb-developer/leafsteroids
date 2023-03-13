@@ -27,12 +27,14 @@ namespace _00_Shared
 
         public bool CheckRotateLeftKey()
         {
-            return Input.GetKey(KeyCode.Joystick1Button0) || Input.GetKey(KeyCode.LeftArrow);
+            return Input.GetKey(KeyCode.Joystick1Button0) || Input.GetKey(KeyCode.Joystick1Button6) ||
+                   Input.GetKey(KeyCode.LeftArrow);
         }
 
         public bool CheckRotateRightKey()
         {
-            return Input.GetKey(KeyCode.Joystick1Button2) || Input.GetKey(KeyCode.RightArrow);
+            return Input.GetKey(KeyCode.Joystick1Button2) || Input.GetKey(KeyCode.Joystick1Button7) ||
+                   Input.GetKey(KeyCode.RightArrow);
         }
 
         public bool CheckShootKey()

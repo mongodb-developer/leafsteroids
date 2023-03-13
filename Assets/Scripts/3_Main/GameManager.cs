@@ -40,18 +40,23 @@ namespace _3_Main
                 sceneNavigation!.SwitchToPlayerSelection();
         }
 
+        public void GameOver()
+        {
+            Time.timeScale = 0f;
+            gameOverText!.gameObject.SetActive(true);
+            gameOverSubText!.gameObject.SetActive(true);
+            SessionStatistics.Instance!.Score = 0;
+            recorder!.PersistRecording();
+            recorder!.StartNewRecording();
+        }
+
         private void UpdateTimer()
         {
             _timeRemainingS--;
             _timeRemainingS = Mathf.Clamp(_timeRemainingS, 0, _gameConfig!.RoundDuration);
             timeTextField!.text = $"Time remaining: {_timeRemainingS}";
-            if (_timeRemainingS > 0) return;
-
-            Time.timeScale = 0f;
-            gameOverText!.gameObject.SetActive(true);
-            gameOverSubText!.gameObject.SetActive(true);
-            recorder!.PersistRecording();
-            recorder!.StartNewRecording();
+            if (_timeRemainingS <= 0)
+                GameOver();
         }
     }
 }
