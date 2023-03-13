@@ -32,6 +32,12 @@ namespace _3_Main
             InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3))
+                SceneManager.LoadScene("2_PlayerSelection");
+        }
+
         private void UpdateTimer()
         {
             _timeRemainingS--;
@@ -43,9 +49,6 @@ namespace _3_Main
             gameOverText!.gameObject.SetActive(true);
             gameOverSubText!.gameObject.SetActive(true);
             PersistRecording();
-
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3))
-                SceneManager.LoadScene("2_PlayerSelection");
         }
 
         private void PersistRecording()
