@@ -3,10 +3,11 @@
 - Escape Key:
     - game -> player selection
     - player selection -> quite
+- controls on player selection screen
+- keyboard mapping
+
 - Refresh player selection list (or timer)
 - PROD vs. STAGING config
-- keyboard mapping
-- controls on player selection screen
 - show high score next to player name
 - power ups:
   - player speed
