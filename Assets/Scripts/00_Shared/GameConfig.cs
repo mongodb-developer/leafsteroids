@@ -1,6 +1,4 @@
 using JetBrains.Annotations;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace _00_Shared
 {
@@ -9,7 +7,7 @@ namespace _00_Shared
         public float BulletDamage;
         public float BulletLifespan;
         public float BulletSpeed;
-        [BsonId] public ObjectId Id;
+        public string Id;
         public float PelletHeatlhLarge;
         public float PelletHeatlhMedium;
         public float PelletHeatlhSmall;

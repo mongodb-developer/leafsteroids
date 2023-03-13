@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using _00_Shared;
 using _1_Loading;
-using MongoDB.Driver;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -23,13 +22,14 @@ namespace _2_PlayerSelection
 
         private void Awake()
         {
-            var mongoClient = new MongoClient(Constants.ConnectionString);
-            var registrationDatabase = mongoClient.GetDatabase("registration");
-            var playersCollection = registrationDatabase!.GetCollection<RegisteredPlayer>("players");
-            _players = playersCollection.Find(_ => true).ToList();
-            _players!.Sort((x, y) => string.Compare(x!.Nickname!, y!.Nickname, StringComparison.Ordinal));
-
-            UpdatePlayerList();
+            _players = new List<RegisteredPlayer>();
+            StartCoroutine(
+                AtlasHelper.GetPlayers(result => { 
+                    _players = result;
+                    _players!.Sort((x, y) => string.Compare(x!.Nickname!, y!.Nickname, StringComparison.Ordinal));
+                    UpdatePlayerList();
+                })
+            );
         }
 
         private void Update()

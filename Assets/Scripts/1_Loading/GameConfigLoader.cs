@@ -1,6 +1,5 @@
 using System.Linq;
 using _00_Shared;
-using MongoDB.Driver;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,11 +25,12 @@ namespace _1_Loading
         private void Start()
         {
             if (GameConfig != null) return;
-            var client = new MongoClient(Constants.ConnectionString);
-            var database = client.GetDatabase("game");
-            var collection = database!.GetCollection<GameConfig>("config");
-            GameConfig = collection.Find(_ => true).ToList()!.First();
-            SceneManager.LoadScene("2_PlayerSelection");
+            StartCoroutine(
+                AtlasHelper.GetConfig(result => { 
+                    GameConfig = result;
+                    SceneManager.LoadScene("2_PlayerSelection");
+                })
+            );
         }
     }
 }

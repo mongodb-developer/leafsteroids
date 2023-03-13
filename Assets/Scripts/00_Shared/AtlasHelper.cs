@@ -8,10 +8,45 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace _3_Main
+namespace _00_Shared
 {
     public static class AtlasHelper
     {
+
+        public static IEnumerator GetConfig(Action<GameConfig> callback = null)
+        {
+            using var request = UnityWebRequest.Get(Constants.GetConfigEndpoint);
+            request!.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("apiKey", Constants.DataApiKey);
+            yield return request.SendWebRequest();
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request.error);
+                callback?.Invoke(null);
+            }
+            else
+            {
+                callback?.Invoke(JsonConvert.DeserializeObject<GameConfig>(request.downloadHandler!.text!));
+            }
+        }
+
+        public static IEnumerator GetPlayers(Action<List<RegisteredPlayer>> callback = null)
+        {
+            using var request = UnityWebRequest.Get(Constants.GetPlayersEndpoint);
+            request!.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("apiKey", Constants.DataApiKey);
+            yield return request.SendWebRequest();
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request.error);
+                callback?.Invoke(null);
+            }
+            else
+            {
+                callback?.Invoke(JsonConvert.DeserializeObject<List<RegisteredPlayer>>(request.downloadHandler!.text!));
+            }
+        }
+
         public static IEnumerator GetSnapshots(Action<List<Recording>> callback = null)
         {
             using var request = UnityWebRequest.Get(Constants.DataApiUrlGetMany);
