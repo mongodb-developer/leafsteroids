@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "com.adrenak.mongodb.driver.upm": "1.1.0",
     "com.unity.ide.rider": "3.0.18",
     "com.unity.nuget.newtonsoft-json": "3.0.2",
     "com.unity.textmeshpro": "3.0.6",
