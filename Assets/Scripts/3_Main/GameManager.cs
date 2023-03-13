@@ -35,7 +35,7 @@ namespace _3_Main
 
         private void Update()
         {
-            if (buttonMappings!.CheckEscapeKeu())
+            if (buttonMappings!.CheckEscapeKey())
                 sceneNavigation!.SwitchToPlayerSelection();
         }
 
