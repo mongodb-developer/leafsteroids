@@ -33,8 +33,17 @@ namespace _3_Main
         {
             if (other == null) return;
 
-            if (other.GetComponent<PowerUpBulletSpeed>() != null) _bulletSpeed = (float)(_bulletSpeed * 1.2);
-            if (other.GetComponent<PowerUpBulletDamage>() != null) _bulletDamage = (float)(_bulletDamage * 1.5);
+            if (other.GetComponent<PowerUpBulletSpeed>() != null)
+            {
+                _bulletSpeed = (float)(_bulletSpeed * 1.2);
+                SessionStatistics.Instance!.PowerUpBulletSpeedCollected++;
+            }
+
+            if (other.GetComponent<PowerUpBulletDamage>() != null)
+            {
+                _bulletDamage = (float)(_bulletDamage * 1.5);
+                SessionStatistics.Instance!.PowerUpBulletDamageCollected++;
+            }
 
             Destroy(other.gameObject);
         }

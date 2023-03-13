@@ -8,10 +8,14 @@ namespace _3_Main
 
         public int BulletsFired { get; set; }
         public float DamageDone { get; set; }
-        public float PelletsDestroyedSmall { get; set; }
-        public float PelletsDestroyedMedium { get; set; }
-        public float PelletsDestroyedLarge { get; set; }
+        public int PelletsDestroyedSmall { get; set; }
+        public int PelletsDestroyedMedium { get; set; }
+        public int PelletsDestroyedLarge { get; set; }
         public float Score { get; set; }
+        public int PowerUpBulletDamageCollected { get; set; }
+        public int PowerUpBulletSpeedCollected { get; set; }
+        public int PowerUpPlayerSpeedCollected { get; set; }
+
 
         private void Awake()
         {
@@ -29,9 +33,9 @@ namespace _3_Main
         {
             BulletsFired = 0;
             DamageDone = 0f;
-            PelletsDestroyedSmall = 0f;
-            PelletsDestroyedMedium = 0f;
-            PelletsDestroyedLarge = 0f;
+            PelletsDestroyedSmall = 0;
+            PelletsDestroyedMedium = 0;
+            PelletsDestroyedLarge = 0;
             Score = 0f;
         }
 
@@ -44,7 +48,10 @@ namespace _3_Main
                 PelletsDestroyedSmall = PelletsDestroyedSmall,
                 PelletsDestroyedMedium = PelletsDestroyedMedium,
                 PelletsDestroyedLarge = PelletsDestroyedLarge,
-                Score = Score
+                Score = Score,
+                PowerUpBulletDamageCollected = PowerUpBulletDamageCollected,
+                PowerUpBulletSpeedCollected = PowerUpBulletSpeedCollected,
+                PowerUpPlayerSpeedCollected = PowerUpPlayerSpeedCollected
             };
         }
     }

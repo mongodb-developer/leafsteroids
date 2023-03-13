@@ -30,6 +30,8 @@ namespace _3_Main
             if (powerUp == null) return;
 
             moveSpeed = (float)(moveSpeed * 1.2);
+            SessionStatistics.Instance!.PowerUpPlayerSpeedCollected++;
+
             Destroy(other.gameObject);
         }
     }
