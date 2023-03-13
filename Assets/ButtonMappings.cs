@@ -9,7 +9,7 @@ public class ButtonMappings : MonoBehaviour
 
     public bool CheckConfirmKey()
     {
-        return Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Space);
+        return Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return);
     }
 
     public float GetVerticalAxis()
