@@ -1,12 +1,12 @@
 using _00_Shared;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace _1_Loading
 {
     public class GameConfigLoader : MonoBehaviour
     {
         public static GameConfigLoader Instance;
+        [SerializeField] private SceneNavigation sceneNavigation;
         public GameConfig GameConfig;
 
         private void Awake()
@@ -28,7 +28,7 @@ namespace _1_Loading
                 AtlasHelper.GetConfig(result =>
                 {
                     GameConfig = result;
-                    SceneManager.LoadScene("2_PlayerSelection");
+                    sceneNavigation!.SwitchToPlayerSelection();
                 })
             );
         }

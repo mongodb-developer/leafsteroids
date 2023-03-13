@@ -3,12 +3,13 @@ using _1_Loading;
 using _3_Main._ReplaySystem;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace _3_Main
 {
     public class GameManager : MonoBehaviour
     {
+        [SerializeField] private ButtonMappings buttonMappings;
+        [SerializeField] private SceneNavigation sceneNavigation;
         [SerializeField] private TMP_Text timeTextField;
         [SerializeField] private TMP_Text playerTextField;
         [SerializeField] private TMP_Text gameOverText;
@@ -34,8 +35,8 @@ namespace _3_Main
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3))
-                SceneManager.LoadScene("2_PlayerSelection");
+            if (buttonMappings!.CheckEscapeKeu())
+                sceneNavigation!.SwitchToPlayerSelection();
         }
 
         private void UpdateTimer()

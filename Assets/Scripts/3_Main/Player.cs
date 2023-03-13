@@ -6,6 +6,8 @@ namespace _3_Main
 {
     public class Player : MonoBehaviour
     {
+        [SerializeField] private ButtonMappings buttonMappings;
+
         public float moveSpeed;
         public float rotateSpeed;
 
@@ -38,15 +40,15 @@ namespace _3_Main
 
         private void Move()
         {
-            var verticalMovement = Input.GetAxis("Vertical") * moveSpeed * Time.deltaTime;
-            var horizontalMovement = Input.GetAxis("Horizontal") * moveSpeed * Time.deltaTime;
+            var verticalMovement = buttonMappings!.GetVerticalAxis() * moveSpeed * Time.deltaTime;
+            var horizontalMovement = buttonMappings.GetHorizontalAxis() * moveSpeed * Time.deltaTime;
             transform.Translate(horizontalMovement, 0, verticalMovement, Space.World);
         }
 
         private void Rotate()
         {
-            var leftRotatePressed = Input.GetKey(KeyCode.Joystick1Button0);
-            var rightRotatePressed = Input.GetKey(KeyCode.Joystick1Button2);
+            var leftRotatePressed = buttonMappings!.CheckRotateLeftKey();
+            var rightRotatePressed = buttonMappings!.CheckRotateRightKey();
             var rotationDirection = leftRotatePressed ? -1 : rightRotatePressed ? 1 : 0;
             var rotationAmount = rotationDirection * rotateSpeed * Time.deltaTime;
             transform.Rotate(0, rotationAmount, 0);
@@ -54,7 +56,7 @@ namespace _3_Main
 
         private void Shoot()
         {
-            if (!Input.GetKeyDown(KeyCode.Joystick1Button1) && !Input.GetKeyDown(KeyCode.Space)) return;
+            if (!buttonMappings!.CheckShootKey()) return;
 
             var bullet = Instantiate(bulletPrefab, bulletSpawnPoint!.position, bulletSpawnPoint.rotation);
             var bulletForce = bulletSpawnPoint.forward * _gameConfig!.BulletSpeed;

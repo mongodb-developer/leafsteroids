@@ -4,12 +4,14 @@ using _00_Shared;
 using _1_Loading;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace _2_PlayerSelection
 {
     public class PlayerSelection : MonoBehaviour
     {
+        [SerializeField] private SceneNavigation sceneNavigation;
+        [SerializeField] private ButtonMappings buttonMappings;
+
         [SerializeField] private TMP_Text slot1;
         [SerializeField] private TMP_Text slot2;
         [SerializeField] private TMP_Text slot3;
@@ -24,7 +26,8 @@ namespace _2_PlayerSelection
         {
             _players = new List<RegisteredPlayer>();
             StartCoroutine(
-                AtlasHelper.GetPlayers(result => { 
+                AtlasHelper.GetPlayers(result =>
+                {
                     _players = result;
                     _players!.Sort((x, y) => string.Compare(x!.Nickname!, y!.Nickname, StringComparison.Ordinal));
                     UpdatePlayerList();
@@ -34,7 +37,7 @@ namespace _2_PlayerSelection
 
         private void Update()
         {
-            var verticalInput = Input.GetAxis("Vertical");
+            var verticalInput = buttonMappings!.GetVerticalAxis();
             if (verticalInput > 0.5 && !_stickMoved)
             {
                 _currentIndex--;
@@ -53,8 +56,7 @@ namespace _2_PlayerSelection
             _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
             UpdatePlayerList();
 
-            if (Input.GetKeyDown(KeyCode.Joystick1Button1)) SelectPlayer();
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Joystick1Button3)) Application.Quit();
+            if (buttonMappings!.CheckConfirmKey()) SelectPlayer();
         }
 
         private void UpdatePlayerList()
@@ -77,7 +79,7 @@ namespace _2_PlayerSelection
         private void SelectPlayer()
         {
             GameConfigLoader.Instance!.GameConfig!.Player = _players![_currentIndex];
-            SceneManager.LoadScene("3_Main");
+            sceneNavigation!.SwitchToMainScene();
         }
     }
 }
