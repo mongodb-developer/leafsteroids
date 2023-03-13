@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class ButtonMappings : MonoBehaviour
 {
-    public bool CheckEscapeKeu()
+    public bool CheckEscapeKey()
     {
         return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3);
     }
 
     public bool CheckConfirmKey()
     {
-        return Input.GetKeyDown(KeyCode.Joystick1Button1);
+        return Input.GetKeyDown(KeyCode.Joystick1Button1) || Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return);
     }
 
     public float GetVerticalAxis()
@@ -24,12 +24,12 @@ public class ButtonMappings : MonoBehaviour
 
     public bool CheckRotateLeftKey()
     {
-        return Input.GetKey(KeyCode.Joystick1Button0);
+        return Input.GetKey(KeyCode.Joystick1Button0) || Input.GetKey(KeyCode.LeftArrow);
     }
 
     public bool CheckRotateRightKey()
     {
-        return Input.GetKey(KeyCode.Joystick1Button2);
+        return Input.GetKey(KeyCode.Joystick1Button2) || Input.GetKey(KeyCode.RightArrow);
     }
 
     public bool CheckShootKey()
