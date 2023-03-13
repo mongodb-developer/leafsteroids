@@ -18,7 +18,7 @@ namespace _00_Shared
                 case "1_Loading":
                     break;
                 case "2_PlayerSelection":
-                    if (buttonMappings!.CheckEscapeKeu())
+                    if (buttonMappings!.CheckEscapeKey())
                         Application.Quit();
                     break;
                 case "3_Main":
