@@ -3,6 +3,7 @@ using _1_Loading;
 using _3_Main._ReplaySystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _3_Main
 {
@@ -42,6 +43,9 @@ namespace _3_Main
             gameOverText!.gameObject.SetActive(true);
             gameOverSubText!.gameObject.SetActive(true);
             PersistRecording();
+
+            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3))
+                SceneManager.LoadScene("2_PlayerSelection");
         }
 
         private void PersistRecording()

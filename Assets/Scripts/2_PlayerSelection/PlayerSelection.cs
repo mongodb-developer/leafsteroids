@@ -54,6 +54,8 @@ namespace _2_PlayerSelection
             UpdatePlayerList();
 
             if (Input.GetKeyDown(KeyCode.Joystick1Button1)) SelectPlayer();
+
+            if (Input.GetKeyDown(KeyCode.Joystick1Button3)) Application.Quit();
         }
 
         private void UpdatePlayerList()
