@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using _00_Shared;
 using _3_Main._ReplaySystem;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -12,7 +11,6 @@ namespace _00_Shared
 {
     public static class AtlasHelper
     {
-
         public static IEnumerator GetConfig(Action<GameConfig> callback = null)
         {
             using var request = UnityWebRequest.Get(Constants.GetConfigEndpoint);

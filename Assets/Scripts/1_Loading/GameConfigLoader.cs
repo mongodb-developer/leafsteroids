@@ -1,4 +1,3 @@
-using System.Linq;
 using _00_Shared;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +25,8 @@ namespace _1_Loading
         {
             if (GameConfig != null) return;
             StartCoroutine(
-                AtlasHelper.GetConfig(result => { 
+                AtlasHelper.GetConfig(result =>
+                {
                     GameConfig = result;
                     SceneManager.LoadScene("2_PlayerSelection");
                 })
