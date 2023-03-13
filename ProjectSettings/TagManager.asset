@@ -6,6 +6,7 @@ TagManager:
   tags:
   - wall
   - pellet
+  - powerup
   layers:
   - Default
   - TransparentFX
