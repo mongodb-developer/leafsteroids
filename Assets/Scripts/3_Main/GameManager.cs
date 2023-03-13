@@ -45,7 +45,6 @@ namespace _3_Main
             Time.timeScale = 0f;
             gameOverText!.gameObject.SetActive(true);
             gameOverSubText!.gameObject.SetActive(true);
-            SessionStatistics.Instance!.Score = 0;
             recorder!.PersistRecording();
             recorder!.StartNewRecording();
         }

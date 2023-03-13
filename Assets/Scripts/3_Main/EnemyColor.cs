@@ -16,9 +16,7 @@ namespace _3_Main
         private void Update()
         {
             _timer += Time.deltaTime;
-
             if (_timer < colorChangeInterval) return;
-
             _timer = 0f;
             _renderer!.material!.color = new Color(255f, Random.value, Random.value);
         }

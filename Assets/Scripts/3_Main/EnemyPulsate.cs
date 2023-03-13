@@ -1,37 +1,34 @@
 using UnityEngine;
 
-public class EnemyPulsate : MonoBehaviour
+namespace _3_Main
 {
-    public float minScale = 0.7f;
-    public float maxScale = 1.3f;
-    public float pulsateSpeed = 1.5f;
-
-    private float currentScale;
-    private float scaleDirection = 1f;
-    private float startYPosition;
-
-    private void Start()
+    public class EnemyPulsate : MonoBehaviour
     {
-        // Set a random starting scale within the min/max range
-        currentScale = Random.Range(minScale, maxScale);
-        transform.localScale = new Vector3(currentScale, currentScale, currentScale);
+        public float minScale = 0.7f;
+        public float maxScale = 1.3f;
+        public float pulsateSpeed = 1.5f;
 
-        // Save the starting y position
-        startYPosition = transform.position.y;
-    }
+        private float _currentScale;
+        private float _scaleDirection = 1f;
+        private float _startYPosition;
 
-    private void Update()
-    {
-        // Change the current scale by pulsate speed in the current direction
-        currentScale += pulsateSpeed * Time.deltaTime * scaleDirection;
+        private void Start()
+        {
+            _currentScale = Random.Range(minScale, maxScale);
+            var transform1 = transform;
+            transform1.localScale = new Vector3(_currentScale, _currentScale, _currentScale);
+            _startYPosition = transform1.position.y;
+        }
 
-        // If the current scale is greater than the max scale or less than the min scale, reverse the direction
-        if (currentScale > maxScale || currentScale < minScale) scaleDirection *= -1f;
-
-        // Set the scale of the GameObject to the current scale in all dimensions
-        transform.localScale = new Vector3(currentScale, currentScale, currentScale);
-
-        // Ensure the GameObject stays at the same y coordinate
-        transform.position = new Vector3(transform.position.x, startYPosition, transform.position.z);
+        private void Update()
+        {
+            _currentScale += pulsateSpeed * Time.deltaTime * _scaleDirection;
+            if (_currentScale > maxScale || _currentScale < minScale) _scaleDirection *= -1f;
+            var transform1 = transform;
+            transform1.localScale = new Vector3(_currentScale, _currentScale, _currentScale);
+            var position = transform1.position;
+            position = new Vector3(position.x, _startYPosition, position.z);
+            transform1.position = position;
+        }
     }
 }

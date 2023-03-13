@@ -10,6 +10,7 @@ public class PlayerHitsEnemy : MonoBehaviour
         if (collision == null) return;
         if (collision.gameObject == null) return;
         if (collision.gameObject.GetComponent<Enemy>() == null) return;
+        SessionStatistics.Instance!.Score = 0;
         gameManager!.GameOver();
     }
 }

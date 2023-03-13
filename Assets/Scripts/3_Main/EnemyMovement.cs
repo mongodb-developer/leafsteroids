@@ -1,42 +1,34 @@
 using UnityEngine;
 
-public class EnemyMovement : MonoBehaviour
+namespace _3_Main
 {
-    public float moveSpeed = 2.5f;
-    public float minMoveDuration = 0.5f;
-    public float maxMoveDuration = 1.5f;
-
-    private float currentMoveDuration;
-    private Vector3 moveDirection;
-    private float timer;
-
-    private void Start()
+    public class EnemyMovement : MonoBehaviour
     {
-        // Set a random move direction at the start
-        SetRandomMoveDirection();
-    }
+        public float moveSpeed = 2.5f;
+        public float minMoveDuration = 0.5f;
+        public float maxMoveDuration = 1.5f;
 
-    private void Update()
-    {
-        // Move the GameObject in the current direction
-        transform.Translate(moveDirection * moveSpeed * Time.deltaTime);
+        private float _currentMoveDuration;
+        private Vector3 _moveDirection;
+        private float _timer;
 
-        // Increase the timer by the time passed since the last frame
-        timer += Time.deltaTime;
+        private void Start()
+        {
+            SetRandomMoveDirection();
+        }
 
-        // If the timer has exceeded the current move duration, set a new random move direction and duration
-        if (timer > currentMoveDuration) SetRandomMoveDirection();
-    }
+        private void Update()
+        {
+            transform.Translate(_moveDirection * (moveSpeed * Time.deltaTime));
+            _timer += Time.deltaTime;
+            if (_timer > _currentMoveDuration) SetRandomMoveDirection();
+        }
 
-    private void SetRandomMoveDirection()
-    {
-        // Set a new random move direction
-        moveDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
-
-        // Set a new random move duration
-        currentMoveDuration = Random.Range(minMoveDuration, maxMoveDuration);
-
-        // Reset the timer
-        timer = 0f;
+        private void SetRandomMoveDirection()
+        {
+            _moveDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
+            _currentMoveDuration = Random.Range(minMoveDuration, maxMoveDuration);
+            _timer = 0f;
+        }
     }
 }
