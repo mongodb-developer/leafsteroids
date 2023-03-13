@@ -10,6 +10,8 @@ namespace _3_Main
     {
         [SerializeField] private TMP_Text timeTextField;
         [SerializeField] private TMP_Text playerTextField;
+        [SerializeField] private TMP_Text gameOverText;
+        [SerializeField] private TMP_Text gameOverSubText;
         [SerializeField] private Recorder recorder;
 
         private GameConfig _gameConfig;
@@ -18,7 +20,9 @@ namespace _3_Main
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
-            playerTextField!.text = _gameConfig!.Player!.Nickname;
+            playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
+            gameOverText!.gameObject.SetActive(false);
+            gameOverSubText!.gameObject.SetActive(false);
         }
 
         private void Start()
@@ -35,6 +39,8 @@ namespace _3_Main
             if (_timeRemainingS > 0) return;
 
             Time.timeScale = 0f;
+            gameOverText!.gameObject.SetActive(true);
+            gameOverSubText!.gameObject.SetActive(true);
             PersistRecording();
         }
 
