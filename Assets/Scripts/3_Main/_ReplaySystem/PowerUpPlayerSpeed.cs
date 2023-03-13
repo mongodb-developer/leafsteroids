@@ -1,5 +1,8 @@
 using UnityEngine;
 
-public class PowerUpPlayerSpeed : MonoBehaviour
+namespace _3_Main._ReplaySystem
 {
+    public class PowerUpPlayerSpeed : MonoBehaviour
+    {
+    }
 }

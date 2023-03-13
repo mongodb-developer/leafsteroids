@@ -1,5 +1,8 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour
+namespace _3_Main._ReplaySystem
 {
+    public class Player : MonoBehaviour
+    {
+    }
 }
