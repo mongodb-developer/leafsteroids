@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using _00_Shared;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ namespace _3_Main._ReplaySystem
 #nullable disable
 
         public DateTime DateTime { get; } = DateTime.UtcNow;
+        public RegisteredPlayer Player { get; set; }
         public List<Snapshot> Snapshots { get; set; } = new();
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using _00_Shared;
 using _1_Loading;
@@ -15,10 +16,10 @@ namespace _2_PlayerSelection
         [SerializeField] private TMP_Text slot3;
         [SerializeField] private TMP_Text slot4;
         [SerializeField] private TMP_Text slot5;
-
         private int _currentIndex;
 
         private List<RegisteredPlayer> _players;
+        private bool _stickMoved;
 
         private void Awake()
         {
@@ -26,18 +27,29 @@ namespace _2_PlayerSelection
             var registrationDatabase = mongoClient.GetDatabase("registration");
             var playersCollection = registrationDatabase!.GetCollection<RegisteredPlayer>("players");
             _players = playersCollection.Find(_ => true).ToList();
+            _players!.Sort((x, y) => string.Compare(x!.Nickname!, y!.Nickname, StringComparison.Ordinal));
 
             UpdatePlayerList();
         }
 
         private void Update()
         {
-            var leftRotatePressed = Input.GetKeyDown(KeyCode.Joystick1Button0);
-            var rightRotatePressed = Input.GetKeyDown(KeyCode.Joystick1Button2);
-            if (Input.GetKeyDown(KeyCode.UpArrow) || leftRotatePressed)
+            var verticalInput = Input.GetAxis("Vertical");
+            if (verticalInput > 0.5 && !_stickMoved)
+            {
                 _currentIndex--;
-            if (Input.GetKeyDown(KeyCode.DownArrow) || rightRotatePressed)
+                _stickMoved = true;
+            }
+            else if (verticalInput < -0.5 && !_stickMoved)
+            {
                 _currentIndex++;
+                _stickMoved = true;
+            }
+            else if (verticalInput == 0)
+            {
+                _stickMoved = false;
+            }
+
             _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
             UpdatePlayerList();
 
