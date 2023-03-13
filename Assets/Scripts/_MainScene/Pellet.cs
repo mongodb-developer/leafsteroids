@@ -6,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace _MainScene
 {
-    public class PelletHealth : MonoBehaviour
+    public class Pellet : MonoBehaviour
     {
         [FormerlySerializedAs("size")] [SerializeField]
         private PelletSize pelletSize;

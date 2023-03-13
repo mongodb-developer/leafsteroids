@@ -1,14 +1,16 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _MainScene
 {
     public class CameraPosition : MonoBehaviour
     {
-        public PlayerController playerController;
+        [FormerlySerializedAs("playerController")]
+        public Player player;
 
         private void Update()
         {
-            transform.position = playerController!.transform.position + new Vector3(0, 11, 0);
+            transform.position = player!.transform.position + new Vector3(0, 11, 0);
         }
     }
 }

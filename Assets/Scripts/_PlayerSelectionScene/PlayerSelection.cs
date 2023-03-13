@@ -1,60 +1,70 @@
 using System.Collections.Generic;
-using System.Linq;
 using __Shared;
+using _LoadingScene;
 using MongoDB.Driver;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace _PlayerSelectionScene
 {
     public class PlayerSelection : MonoBehaviour
     {
-        public List<GameObject> players;
+        [SerializeField] private TMP_Text slot1;
+        [SerializeField] private TMP_Text slot2;
+        [SerializeField] private TMP_Text slot3;
+        [SerializeField] private TMP_Text slot4;
+        [SerializeField] private TMP_Text slot5;
+
         private int _currentIndex;
-        private IMongoCollection<Player> _teams;
 
-        private void Start()
+        private List<RegisteredPlayer> _players;
+
+        private void Awake()
         {
-            var client = new MongoClient(Constants.ConnectionString);
-            var database = client.GetDatabase("registration");
-            _teams = database!.GetCollection<Player>("players");
+            var mongoClient = new MongoClient(Constants.ConnectionString);
+            var registrationDatabase = mongoClient.GetDatabase("registration");
+            var playersCollection = registrationDatabase!.GetCollection<RegisteredPlayer>("players");
+            _players = playersCollection.Find(_ => true).ToList();
 
-            var teamList = _teams.Find(_ => true).ToList();
-            Debug.Log(teamList!.ToList().ToString());
-            foreach (var team in teamList)
-                Debug.Log($"Nickname: {team!.Nickname}, Team Name: {team.Team}, Slogan: {team.Slogan}");
-
-            for (var i = 0; i < players!.Count; i++)
-            {
-                if (teamList.Count <= i) break;
-                var team = teamList[i];
-                var player = players[i];
-                player!.GetComponent<TMP_Text>()!.text = team!.Nickname;
-            }
-
-            if (players.Count > 0) players[_currentIndex]!.SetActive(true);
+            UpdatePlayerList();
         }
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-                ChangePlayer(-1);
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-                ChangePlayer(1);
-            else if (Input.GetKeyDown(KeyCode.Return)) SelectPlayer();
+            var leftRotatePressed = Input.GetKeyDown(KeyCode.Joystick1Button0);
+            var rightRotatePressed = Input.GetKeyDown(KeyCode.Joystick1Button2);
+            if (Input.GetKeyDown(KeyCode.UpArrow) || leftRotatePressed)
+                _currentIndex--;
+            if (Input.GetKeyDown(KeyCode.DownArrow) || rightRotatePressed)
+                _currentIndex++;
+            _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
+            UpdatePlayerList();
+
+            if (Input.GetKeyDown(KeyCode.Joystick1Button1)) SelectPlayer();
         }
 
-        private void ChangePlayer(int direction)
+        private void UpdatePlayerList()
         {
-            players![_currentIndex]!.SetActive(false);
-            _currentIndex = (_currentIndex + direction + players.Count) % players.Count;
-            players[_currentIndex]!.SetActive(true);
+            var slot1Index = _currentIndex - 2;
+            var slot2Index = _currentIndex - 1;
+            var slot3Index = _currentIndex;
+            var slot4Index = _currentIndex + 1;
+            var slot5Index = _currentIndex + 2;
+
+            slot1!.text = slot1Index >= 0 && slot1Index < _players!.Count ? _players[slot1Index]!.Nickname : "";
+            slot2!.text = slot2Index >= 0 && slot2Index < _players!.Count ? _players[slot2Index]!.Nickname : "";
+            slot3!.text = slot3Index >= 0 && slot3Index < _players!.Count
+                ? $"===> {_players[slot3Index]!.Nickname} <==="
+                : "";
+            slot4!.text = slot4Index >= 0 && slot4Index < _players!.Count ? _players[slot4Index]!.Nickname : "";
+            slot5!.text = slot5Index >= 0 && slot5Index < _players!.Count ? _players[slot5Index]!.Nickname : "";
         }
 
         private void SelectPlayer()
         {
-            Debug.Log("Selected player: " + players![_currentIndex]!.name);
-            // Do whatever you want to do with the selected player
+            GameConfigLoader.Instance!.GameConfig!.Player = _players![_currentIndex];
+            SceneManager.LoadScene("MainScene");
         }
     }
 }

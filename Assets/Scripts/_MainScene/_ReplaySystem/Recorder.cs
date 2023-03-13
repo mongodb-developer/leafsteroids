@@ -7,7 +7,7 @@ namespace _MainScene._ReplaySystem
 {
     public class Recorder : MonoBehaviour
     {
-        [SerializeField] private PlayerController player;
+        [SerializeField] private Player player;
 
         private readonly List<Snapshot> _snapshots = new();
 

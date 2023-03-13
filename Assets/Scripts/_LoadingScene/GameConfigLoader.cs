@@ -30,7 +30,7 @@ namespace _LoadingScene
             var database = client.GetDatabase("game");
             var collection = database!.GetCollection<GameConfig>("config");
             GameConfig = collection.Find(_ => true).ToList()!.First();
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene("PlayerSelectionScene");
         }
     }
 }
