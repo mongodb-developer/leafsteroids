@@ -14,6 +14,7 @@ namespace _3_Main
         [SerializeField] private TMP_Text playerTextField;
         [SerializeField] private TMP_Text gameOverText;
         [SerializeField] private TMP_Text gameOverSubText;
+        [SerializeField] private TMP_Text version;
         [SerializeField] private Recorder recorder;
 
         private GameConfig _gameConfig;
@@ -21,6 +22,7 @@ namespace _3_Main
 
         private void Awake()
         {
+            version!.text = $"Current version: {Constants.Version}";
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
             playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
             gameOverText!.gameObject.SetActive(false);
@@ -31,6 +33,8 @@ namespace _3_Main
         private void Start()
         {
             Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
             _timeRemainingS = _gameConfig!.RoundDuration;
         }
 
