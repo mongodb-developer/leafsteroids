@@ -1,8 +1,10 @@
+using System.Collections;
 using _00_Shared;
 using _1_Loading;
 using _3_Main._ReplaySystem;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace _3_Main
 {
@@ -15,6 +17,11 @@ namespace _3_Main
         [SerializeField] private GameObject blurPanel;
         [SerializeField] private TMP_Text version;
         [SerializeField] private Recorder recorder;
+        [SerializeField] private Canvas canvas;
+        [SerializeField] private Camera mainCamera;
+        [SerializeField] private PlayableDirector timelineDirector;
+        [SerializeField] private Player player;
+        [SerializeField] private GameObject enemies;
 
         private GameConfig _gameConfig;
         private float _timeRemainingS;
@@ -22,14 +29,37 @@ namespace _3_Main
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
-            version!.text = $"Current version: {Constants.Version}";
-            playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
-            ToggleGameOverOverlay(false);
-            InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
         }
 
         private void Start()
         {
+            StartCoroutine(WaitForTimeline());
+        }
+
+        private IEnumerator WaitForTimeline()
+        {
+            while (timelineDirector!.state == PlayState.Playing) yield return null;
+            StartGame();
+        }
+
+        private void StartGame()
+        {
+            version!.text = $"Current version: {Constants.Version}";
+            playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
+            ToggleGameOverOverlay(false);
+
+            // Intro
+            canvas!.gameObject.SetActive(false);
+
+            // Start
+            player!.gameObject!.GetComponent<PlayerMove>()!.enabled = true;
+            player!.gameObject!.GetComponent<PlayerRotate>()!.enabled = true;
+            player!.gameObject!.GetComponent<PlayerShoot>()!.enabled = true;
+            foreach (var enemy in enemies!.gameObject!.GetComponentsInChildren<Enemy>()!)
+                enemy!.gameObject.GetComponent<EnemyMovement>()!.enabled = true;
+            canvas!.gameObject.SetActive(true);
+            mainCamera!.GetComponent<CameraPosition>()!.enabled = true;
+            InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
