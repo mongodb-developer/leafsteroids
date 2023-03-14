@@ -11,6 +11,7 @@ namespace _00_Shared
             switch (SceneManager.GetActiveScene().name!)
             {
                 case "0_Welcome":
+                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
                     if (ButtonMappings.CheckConfirmKey()) SwitchToLoading();
                     break;
                 case "1_Loading":
