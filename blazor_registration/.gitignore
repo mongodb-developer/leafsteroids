@@ -399,3 +399,5 @@ FodyWeavers.xsd
 
 .idea/
 
+# Blazor project package cache
+Library/
