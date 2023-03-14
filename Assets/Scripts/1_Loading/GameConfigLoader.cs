@@ -6,7 +6,6 @@ namespace _1_Loading
     public class GameConfigLoader : MonoBehaviour
     {
         public static GameConfigLoader Instance;
-        [SerializeField] private SceneNavigation sceneNavigation;
         public GameConfig GameConfig;
 
         private void Awake()
@@ -28,7 +27,7 @@ namespace _1_Loading
                 AtlasHelper.GetConfig(result =>
                 {
                     GameConfig = result;
-                    sceneNavigation!.SwitchToPlayerSelection();
+                    SceneNavigation.SwitchToPlayerSelection();
                 })
             );
         }

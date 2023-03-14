@@ -7,8 +7,6 @@ namespace _3_Main
 {
     public class PlayerMove : MonoBehaviour
     {
-        [SerializeField] private ButtonMappings buttonMappings;
-
         public float moveSpeed;
 
         private void Start()
@@ -18,8 +16,8 @@ namespace _3_Main
 
         private void Update()
         {
-            var verticalMovement = buttonMappings!.GetVerticalAxis() * moveSpeed * Time.deltaTime;
-            var horizontalMovement = buttonMappings.GetHorizontalAxis() * moveSpeed * Time.deltaTime;
+            var verticalMovement = ButtonMappings.GetVerticalAxis() * moveSpeed * Time.deltaTime;
+            var horizontalMovement = ButtonMappings.GetHorizontalAxis() * moveSpeed * Time.deltaTime;
             transform.Translate(horizontalMovement, 0, verticalMovement, Space.World);
         }
 

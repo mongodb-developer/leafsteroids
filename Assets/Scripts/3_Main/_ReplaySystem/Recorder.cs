@@ -25,9 +25,15 @@ namespace _3_Main._ReplaySystem
         public void PersistRecording()
         {
             var recording = new Recording
-                { Snapshots = _snapshots, Player = GameConfigLoader.Instance!.GameConfig!.Player };
-            StartCoroutine(AtlasHelper.RecordSnapshot(JsonConvert.SerializeObject(recording),
-                result => { Debug.Log($"Finished saving recording: {result}"); }));
+            {
+                Snapshots = _snapshots,
+                Player = GameConfigLoader.Instance!.GameConfig!.Player
+            };
+            StartCoroutine(
+                AtlasHelper.RecordSnapshot(
+                    JsonConvert.SerializeObject(recording),
+                    _ => { Debug.Log("Recording persisted."); })
+            );
         }
 
         private void CreateSnapshot()

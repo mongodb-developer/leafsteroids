@@ -8,12 +8,11 @@ namespace _3_Main
 {
     public class GameManager : MonoBehaviour
     {
-        [SerializeField] private ButtonMappings buttonMappings;
-        [SerializeField] private SceneNavigation sceneNavigation;
         [SerializeField] private TMP_Text timeTextField;
         [SerializeField] private TMP_Text playerTextField;
         [SerializeField] private TMP_Text gameOverText;
         [SerializeField] private TMP_Text gameOverSubText;
+        [SerializeField] private GameObject blurPanel;
         [SerializeField] private TMP_Text version;
         [SerializeField] private Recorder recorder;
 
@@ -22,11 +21,10 @@ namespace _3_Main
 
         private void Awake()
         {
-            version!.text = $"Current version: {Constants.Version}";
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
+            version!.text = $"Current version: {Constants.Version}";
             playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
-            gameOverText!.gameObject.SetActive(false);
-            gameOverSubText!.gameObject.SetActive(false);
+            ToggleGameOverOverlay(false);
             InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
         }
 
@@ -38,17 +36,10 @@ namespace _3_Main
             _timeRemainingS = _gameConfig!.RoundDuration;
         }
 
-        private void Update()
-        {
-            if (buttonMappings!.CheckEscapeKey())
-                sceneNavigation!.SwitchToPlayerSelection();
-        }
-
         public void GameOver()
         {
             Time.timeScale = 0f;
-            gameOverText!.gameObject.SetActive(true);
-            gameOverSubText!.gameObject.SetActive(true);
+            ToggleGameOverOverlay(true);
             recorder!.PersistRecording();
             recorder!.StartNewRecording();
         }
@@ -60,6 +51,13 @@ namespace _3_Main
             timeTextField!.text = $"Time remaining: {_timeRemainingS}";
             if (_timeRemainingS <= 0)
                 GameOver();
+        }
+
+        private void ToggleGameOverOverlay(bool shouldShow)
+        {
+            gameOverText!.gameObject.SetActive(shouldShow);
+            gameOverSubText!.gameObject.SetActive(shouldShow);
+            blurPanel!.SetActive(shouldShow);
         }
     }
 }

@@ -7,8 +7,6 @@ namespace _3_Main
 {
     public class PlayerShoot : MonoBehaviour
     {
-        [SerializeField] private ButtonMappings buttonMappings;
-
         public GameObject bulletPrefab;
         public Transform bulletSpawnPoint;
         private float _bulletDamage;
@@ -22,7 +20,7 @@ namespace _3_Main
 
         private void Update()
         {
-            if (!buttonMappings!.CheckShootKey()) return;
+            if (!ButtonMappings.CheckShootKey()) return;
 
             var bullet = Instantiate(bulletPrefab, bulletSpawnPoint!.position, bulletSpawnPoint.rotation);
             bullet!.GetComponent<Bullet>()!.damage = _bulletDamage;

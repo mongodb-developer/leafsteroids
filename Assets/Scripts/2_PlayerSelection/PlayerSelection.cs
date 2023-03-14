@@ -9,9 +9,6 @@ namespace _2_PlayerSelection
 {
     public class PlayerSelection : MonoBehaviour
     {
-        [SerializeField] private SceneNavigation sceneNavigation;
-        [SerializeField] private ButtonMappings buttonMappings;
-
         [SerializeField] private TMP_Text slot1;
         [SerializeField] private TMP_Text slot2;
         [SerializeField] private TMP_Text slot3;
@@ -25,6 +22,36 @@ namespace _2_PlayerSelection
         private void Awake()
         {
             _players = new List<RegisteredPlayer>();
+            ReloadPlayerList();
+        }
+
+        private void Update()
+        {
+            if (ButtonMappings.CheckReloadKey()) ReloadPlayerList();
+
+            if (ButtonMappings.CheckAnyUpKey() && !_stickMoved)
+            {
+                _currentIndex--;
+                _stickMoved = true;
+            }
+            else if (ButtonMappings.CheckAnyDownKey() && !_stickMoved)
+            {
+                _currentIndex++;
+                _stickMoved = true;
+            }
+            else if (!ButtonMappings.CheckAnyUpKey() && !ButtonMappings.CheckAnyDownKey())
+            {
+                _stickMoved = false;
+            }
+
+            _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
+            UpdatePlayerList();
+
+            if (ButtonMappings.CheckConfirmKey()) SelectPlayer();
+        }
+
+        private void ReloadPlayerList()
+        {
             StartCoroutine(
                 AtlasHelper.GetPlayers(result =>
                 {
@@ -33,30 +60,6 @@ namespace _2_PlayerSelection
                     UpdatePlayerList();
                 })
             );
-        }
-
-        private void Update()
-        {
-            var verticalInput = buttonMappings!.GetVerticalAxis();
-            if (verticalInput > 0.5 && !_stickMoved)
-            {
-                _currentIndex--;
-                _stickMoved = true;
-            }
-            else if (verticalInput < -0.5 && !_stickMoved)
-            {
-                _currentIndex++;
-                _stickMoved = true;
-            }
-            else if (verticalInput == 0)
-            {
-                _stickMoved = false;
-            }
-
-            _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
-            UpdatePlayerList();
-
-            if (buttonMappings!.CheckConfirmKey()) SelectPlayer();
         }
 
         private void UpdatePlayerList()
@@ -79,7 +82,7 @@ namespace _2_PlayerSelection
         private void SelectPlayer()
         {
             GameConfigLoader.Instance!.GameConfig!.Player = _players![_currentIndex];
-            sceneNavigation!.SwitchToMainScene();
+            SceneNavigation.SwitchToMainScene();
         }
     }
 }
