@@ -1,0 +1,34 @@
+.foo {
+    color: #0b5ed7;
+}
+
+
+.input-group-prepend {
+    margin-right: -1px;
+    display: flex;
+    box-sizing: border-box;
+    max-width: 40px;
+}
+
+.input-group-text {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #00ed64;
+}
+
+.input-group {
+    margin: 10px 0 10px 0;
+}
+
+.mongodb_logo {
+
+}
+
+.card {
+    border-radius: 40px;
+    max-width: 500px;
+
+    margin: 0 auto; /* Added */
+    float: none; /* Added */
+    margin-bottom: 10px; /* Added */
+}
