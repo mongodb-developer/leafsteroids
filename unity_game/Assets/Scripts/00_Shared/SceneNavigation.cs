@@ -15,16 +15,22 @@ namespace _00_Shared
                     if (ButtonMappings.CheckConfirmKey()) SwitchToLoading();
                     break;
                 case "1_Loading":
+                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
                     break;
                 case "2_PlayerSelection":
                     if (ButtonMappings.CheckEscapeKey()) Application.Quit();
                     break;
-                case "3_Main":
-                    if (ButtonMappings.CheckReloadKey()) SwitchToMainScene();
+                case "3_Instructions":
                     if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
+                    if (ButtonMappings.CheckConfirmKey()) SwitchToMain();
+                    break;
+                case "4_Main":
+                    if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
+                    if (ButtonMappings.CheckReloadKey()) SwitchToMain();
                     break;
             }
         }
+
 
         private static void SwitchToLoading()
         {
@@ -36,10 +42,15 @@ namespace _00_Shared
             SceneManager.LoadScene("2_PlayerSelection");
         }
 
-        public static void SwitchToMainScene()
+        public static void SwitchToInstructions()
+        {
+            SceneManager.LoadScene("3_Instructions");
+        }
+
+        public static void SwitchToMain()
         {
             SessionStatistics.Instance!.Reset();
-            SceneManager.LoadScene("3_Main");
+            SceneManager.LoadScene("4_Main");
         }
     }
 }

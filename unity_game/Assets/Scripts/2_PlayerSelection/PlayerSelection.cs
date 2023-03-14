@@ -82,7 +82,7 @@ namespace _2_PlayerSelection
         private void SelectPlayer()
         {
             GameConfigLoader.Instance!.GameConfig!.Player = _players![_currentIndex];
-            SceneNavigation.SwitchToMainScene();
+            SceneNavigation.SwitchToInstructions();
         }
     }
 }

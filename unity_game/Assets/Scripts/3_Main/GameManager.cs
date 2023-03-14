@@ -15,6 +15,8 @@ namespace _3_Main
         [SerializeField] private GameObject blurPanel;
         [SerializeField] private TMP_Text version;
         [SerializeField] private Recorder recorder;
+        [SerializeField] private Canvas canvas;
+        [SerializeField] private Camera mainCamera;
 
         private GameConfig _gameConfig;
         private float _timeRemainingS;
@@ -22,14 +24,21 @@ namespace _3_Main
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
-            version!.text = $"Current version: {Constants.Version}";
-            playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
-            ToggleGameOverOverlay(false);
-            InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
         }
 
         private void Start()
         {
+            version!.text = $"Current version: {Constants.Version}";
+            playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
+            ToggleGameOverOverlay(false);
+
+            // Intro
+            canvas!.gameObject.SetActive(false);
+
+            // Start
+            canvas!.gameObject.SetActive(true);
+            mainCamera!.GetComponent<CameraPosition>()!.enabled = true;
+            InvokeRepeating(nameof(UpdateTimer), 0f, 1f);
             Time.timeScale = 1f;
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;

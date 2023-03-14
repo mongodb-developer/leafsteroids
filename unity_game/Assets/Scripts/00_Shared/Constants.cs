@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        public const string Version = "v1.0";
+        public const string Version = "v1.0-RC2";
 
         public const string DataApiUrlInsertOne =
             "https://eu-west-1.aws.data.mongodb-api.com/app/gdc_2023-tzwoy/endpoint/snapshot";
