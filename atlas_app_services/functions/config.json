@@ -1,0 +1,27 @@
+[
+    {
+        "name": "createSnapshot",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "getSnapshots",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "getSnapshot",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "getPlayers",
+        "private": false,
+        "disable_arg_logs": true
+    },
+    {
+        "name": "getConfig",
+        "private": false,
+        "disable_arg_logs": true
+    }
+]

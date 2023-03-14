@@ -1,0 +1,79 @@
+﻿@* @page "/" *@
+@* *@
+@* <PageTitle>MongoDB Registration</PageTitle> *@
+@* *@
+@* <h1>Welcome to the MongoDB booth at GDC '23</h1> *@
+@* *@
+@* <p>Please enter your name:</p> *@
+@* *@
+@* <input type="text" @bind-value="@Name" /> *@
+@* *@
+@* <p>Your name is: @Name</p> *@
+@* *@
+@* @code { *@
+@*     private string Name { get; set; } *@
+@* } *@
+
+
+@page "/"
+@using MongoDB.Driver
+
+@inject NavigationManager NavigationManager
+@inject IMongoCollection<Team> Teams
+
+<style>
+    body {
+        background-color: #023430;
+    }
+</style>
+
+<div class="card bg-white" >
+    <article class="card-body mx-auto" style="max-width: 400px;">
+        <h1 class="text-center">MongoDB Booth Registration</h1>
+        @* <h4 class="card-title mt-3 text-center">Create a Team</h4> *@
+     
+        <form>
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                </div>
+                <input id="nickname" @bind="Team.Nickname" name="" class="form-control" placeholder="Nickname" type="text">
+            </div> <!-- form-group// -->
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-users"></i> </span>
+                </div>
+                <input id="teamname" @bind="Team.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
+            </div> <!-- form-group// -->
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
+                </div>
+                <input id="slogan" @bind="Team.Slogan" name="" class="form-control" placeholder="Slogan (optional)" type="text">
+            </div> <!-- form-group// -->
+
+           
+            <div class="form-group">
+                <div class="text-center">
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreateTeam"> Create Player </button>
+                </div>
+            </div> <!-- form-group// -->
+           
+        </form>
+    </article>
+</div> <!-- card.// -->
+
+
+
+
+@code {
+    private Team Team { get; set; } = new Team();
+
+    private async Task CreateTeam()
+    {
+        await Teams.InsertOneAsync(Team);
+        NavigationManager.NavigateTo("/done");
+    }
+}
