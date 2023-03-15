@@ -15,10 +15,10 @@ namespace _00_Shared
                     if (ButtonMappings.CheckConfirmKey()) SwitchToLoading();
                     break;
                 case "1_Loading":
-                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
+                    if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
                     break;
                 case "2_PlayerSelection":
-                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
+                    if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
                     break;
                 case "3_Instructions":
                     if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
@@ -31,6 +31,10 @@ namespace _00_Shared
             }
         }
 
+        private static void SwitchToWelcome()
+        {
+            SceneManager.LoadScene("0_Welcome");
+        }
 
         private static void SwitchToLoading()
         {
