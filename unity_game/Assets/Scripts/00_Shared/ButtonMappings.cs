@@ -33,6 +33,8 @@ namespace _00_Shared
 {
     public class ButtonMappings : MonoBehaviour
     {
+        public static DetectedInputDevice DetectedInputDevice;
+
         public static bool CheckEscapeKey()
         {
             return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3);
@@ -45,8 +47,21 @@ namespace _00_Shared
 
         public static bool CheckConfirmKey()
         {
-            return Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space) ||
-                   Input.GetKeyDown(KeyCode.Return);
+            if (Input.GetKeyDown(KeyCode.JoystickButton1))
+            {
+                Debug.Log("Joystick detected.");
+                DetectedInputDevice = DetectedInputDevice.Joystick;
+                return true;
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+            {
+                Debug.Log("Keyboard detected.");
+                DetectedInputDevice = DetectedInputDevice.Keyboard;
+                return true;
+            }
+
+            return false;
         }
 
         public static float GetVerticalAxis()
