@@ -7,7 +7,7 @@
     margin-right: -1px;
     display: flex;
     box-sizing: border-box;
-    max-width: 40px;
+    min-width: 48px
 }
 
 .input-group-text {
@@ -31,4 +31,9 @@
     margin: 0 auto; /* Added */
     float: none; /* Added */
     margin-bottom: 10px; /* Added */
+}
+
+
+.fa, .fas {
+    min-width: 20px;
 }
