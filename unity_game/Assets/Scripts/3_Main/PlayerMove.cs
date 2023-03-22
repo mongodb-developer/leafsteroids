@@ -20,7 +20,7 @@ namespace _3_Main
             Invoke(nameof(ShowInstructions), 1f);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             var verticalMovement = ButtonMappings.GetVerticalAxis() * moveSpeed * Time.deltaTime;
             var horizontalMovement = ButtonMappings.GetHorizontalAxis() * moveSpeed * Time.deltaTime;
