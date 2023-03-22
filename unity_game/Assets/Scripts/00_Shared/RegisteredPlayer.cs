@@ -1,10 +1,12 @@
+using JetBrains.Annotations;
+
 namespace _00_Shared
 {
     public class RegisteredPlayer
     {
+        [CanBeNull] public string Email;
         public string Id;
         public string Nickname;
-        public string Slogan;
-        public string TeamName;
+        [CanBeNull] public string TeamName;
     }
 }
