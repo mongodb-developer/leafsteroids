@@ -37,7 +37,7 @@ namespace _00_Shared
 
         public static bool CheckEscapeKey()
         {
-            return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton3);
+            return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton9);
         }
 
         public static bool CheckReloadKey()
@@ -86,14 +86,12 @@ namespace _00_Shared
 
         public static bool CheckRotateLeftKey()
         {
-            return Input.GetKey(KeyCode.JoystickButton0) || Input.GetKey(KeyCode.JoystickButton6) ||
-                   Input.GetKey(KeyCode.LeftArrow);
+            return Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.LeftArrow);
         }
 
         public static bool CheckRotateRightKey()
         {
-            return Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.JoystickButton7) ||
-                   Input.GetKey(KeyCode.RightArrow);
+            return Input.GetKey(KeyCode.JoystickButton3) || Input.GetKey(KeyCode.RightArrow);
         }
 
         public static bool CheckShootKey()
