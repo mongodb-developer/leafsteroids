@@ -28,7 +28,7 @@ namespace _3_Main
 
         private void Start()
         {
-            version!.text = $"Current version: {Constants.Version}";
+            // version!.text = $"Current version: {Constants.Version}";
             playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
             ToggleGameOverOverlay(false);
 
