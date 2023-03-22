@@ -37,7 +37,7 @@ namespace _00_Shared
 
         public static bool CheckEscapeKey()
         {
-            return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton9);
+            return Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.JoystickButton4);
         }
 
         public static bool CheckReloadKey()
