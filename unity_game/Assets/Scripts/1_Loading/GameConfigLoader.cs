@@ -22,7 +22,14 @@ namespace _1_Loading
 
         private void Start()
         {
-            if (GameConfig != null) return;
+            InvokeRepeating(nameof(LoadConfig), 0f, 3f);
+        }
+
+        private void LoadConfig()
+        {
+            Debug.Log(nameof(LoadConfig));
+            if (Instance != null && Instance.GameConfig != null) return;
+
             StartCoroutine(
                 AtlasHelper.GetConfig(result =>
                 {

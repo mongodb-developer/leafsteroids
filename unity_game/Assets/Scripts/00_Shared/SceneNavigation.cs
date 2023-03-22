@@ -1,3 +1,4 @@
+using _1_Loading;
 using _3_Main;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,6 +39,8 @@ namespace _00_Shared
 
         private static void SwitchToLoading()
         {
+            if (GameConfigLoader.Instance != null)
+                GameConfigLoader.Instance.GameConfig = null;
             SceneManager.LoadScene("1_Loading");
         }
 

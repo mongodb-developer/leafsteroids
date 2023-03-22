@@ -13,6 +13,7 @@ namespace _00_Shared
     {
         public static IEnumerator GetConfig(Action<GameConfig> callback = null)
         {
+            Debug.Log(nameof(GetConfig));
             using var request = UnityWebRequest.Get(Constants.GetConfigEndpoint);
             request!.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("apiKey", Constants.DataApiKey);
@@ -30,6 +31,7 @@ namespace _00_Shared
 
         public static IEnumerator GetPlayers(Action<List<RegisteredPlayer>> callback = null)
         {
+            Debug.Log(nameof(GetPlayers));
             using var request = UnityWebRequest.Get(Constants.GetPlayersEndpoint);
             request!.SetRequestHeader("Content-Type", "application/json");
             request.SetRequestHeader("apiKey", Constants.DataApiKey);
