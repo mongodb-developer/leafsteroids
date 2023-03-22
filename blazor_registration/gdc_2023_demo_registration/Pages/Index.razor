@@ -17,6 +17,7 @@
 
 @page "/"
 @using MongoDB.Driver
+@using gdc_2023_demo_registration.Data
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Team> Teams
@@ -51,7 +52,7 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
                 </div>
-                <input id="slogan" @bind="Team.Slogan" name="" class="form-control" placeholder="Slogan (optional)" type="text">
+                <input id="email" @bind="Team.Email" name="" class="form-control" placeholder="E-Mail for prizes (optional)" type="text">
             </div> <!-- form-group// -->
 
            
@@ -73,7 +74,7 @@
 
     private async Task CreateTeam()
     {
-        await Teams.InsertOneAsync(Team);
-        NavigationManager.NavigateTo("/done");
+        await Teams!.InsertOneAsync(Team)!;
+        NavigationManager!.NavigateTo("/done");
     }
 }
