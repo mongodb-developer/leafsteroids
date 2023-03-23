@@ -13,7 +13,14 @@ namespace _00_Shared
             {
                 case "0_Welcome":
                     if (ButtonMappings.CheckEscapeKey()) Application.Quit();
-                    if (ButtonMappings.CheckConfirmKey()) SwitchToLoading();
+                    if (ButtonMappings.CheckConfirmKey())
+                    {
+                        if (GameConfigLoader.Instance == null || GameConfigLoader.Instance.GameConfig == null)
+                            SwitchToLoading();
+                        else
+                            SwitchToPlayerSelection();
+                    }
+
                     break;
                 case "1_Loading":
                     if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
@@ -39,8 +46,8 @@ namespace _00_Shared
 
         private static void SwitchToLoading()
         {
-            if (GameConfigLoader.Instance != null)
-                GameConfigLoader.Instance.GameConfig = null;
+            // if (GameConfigLoader.Instance != null)
+            //     GameConfigLoader.Instance.GameConfig = null;
             SceneManager.LoadScene("1_Loading");
         }
 
