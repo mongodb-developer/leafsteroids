@@ -1,7 +1,5 @@
 # GDC 2023 Demo
 
-TBD
-
 ## The Requirements
 
 To reproduce and publish this project, there are a few software requirements that must be met:
@@ -36,24 +34,15 @@ namespace _00_Shared
 {
     public static class Constants
     {
-        public const string Version = "v1.0";
+        public const string Version = "v1.0-RC2";
 
-        public const string DataApiUrlInsertOne =
-            "https://YOUR_ENDPOINT_PATH/endpoint/snapshot";
+        public const string DataApiUrlInsertOne = "https://eu-west-1.aws.data.mongodb-api.com/app/<YOUR_APP_ID>/endpoint/snapshot";
+        public const string DataApiUrlGetMany = "https://eu-west-1.aws.data.mongodb-api.com/app/<YOUR_APP_ID>/endpoint/snapshots";
+        public const string DataApiUrlGetOne = "https://eu-west-1.aws.data.mongodb-api.com/app/<YOUR_APP_ID>/endpoint/snapshot?id=";
+        public const string GetPlayersEndpoint = "https://eu-west-1.aws.data.mongodb-api.com/app/<YOUR_APP_ID>/endpoint/players";
+        public const string GetConfigEndpoint = "https://eu-west-1.aws.data.mongodb-api.com/app/<YOUR_APP_ID>/endpoint/config";
 
-        public const string DataApiUrlGetMany =
-            "https://YOUR_ENDPOINT_PATH/endpoint/snapshots";
-
-        public const string DataApiUrlGetOne =
-            "https://YOUR_ENDPOINT_PATH/endpoint/snapshot?id=";
-
-        public const string GetPlayersEndpoint =
-            "https://YOUR_ENDPOINT_PATH/endpoint/players";
-
-        public const string GetConfigEndpoint =
-            "https://YOUR_ENDPOINT_PATH/endpoint/config";
-
-        public const string DataApiKey = "YOUR_API_KEY_HERE";
+        public const string DataApiKey = "<YOUR_API_KEY>";
 
         public const float RecordingSpeed = 0.1f;
     }
@@ -62,8 +51,18 @@ namespace _00_Shared
 
 The Unity game will now be able to communicate with MongoDB Atlas through the HTTPS Endpoints and Functions that were previously deployed.
 
+## Demo Registration
+
+The Demo Registration page uses the MongoDB Drivers for which you need to adjust the `ConnectionString` in the `appsettings.json` file.
+
+```csharp
+"ConnectionStrings": {
+    "MongoDB": "<YOUR_CONNECTION_STRING>"
+  }
+```
+
 ## Contributors
 
-- [Dominic Frei](https://)
+- [Dominic Frei](https://linktr.ee/dominicfrei)
 - [Hubert Nguyen](https://)
 - [Nic Raboy](https://www.nraboy.com)
