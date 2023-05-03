@@ -2,7 +2,7 @@
 @* *@
 @* <PageTitle>MongoDB Registration</PageTitle> *@
 @* *@
-@* <h1>Welcome to the MongoDB booth at GDC '23</h1> *@
+@* <h1>Welcome to EVENT</h1> *@
 @* *@
 @* <p>Please enter your name:</p> *@
 @* *@
@@ -17,10 +17,12 @@
 
 @page "/"
 @using MongoDB.Driver
+@using MongoDB.Bson
 @using gdc_2023_demo_registration.Data
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Team> Teams
+@inject IMongoCollection<Player> Players
+@inject IMongoCollection<Event> Events
 
 <style>
     body {
@@ -28,40 +30,40 @@
     }
 </style>
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
-<div class="card bg-white" >
+<div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Booth Registration</h2>
-        @* <h4 class="card-title mt-3 text-center">Create a Team</h4> *@
-     
+        <h2 class="text-center">Player Registration</h2>
+        <h4 class="card-title mt-3 text-center"><b>@Event.name</b></h4>
+
         <form>
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                 </div>
-                <input id="nickname" @bind="Team.Nickname" name="" class="form-control" placeholder="Nickname" type="text">
+                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="Nickname" type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-users"></i> </span>
                 </div>
-                <input id="teamname" @bind="Team.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
+                <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
                 </div>
-                <input id="email" @bind="Team.Email" name="" class="form-control" placeholder="E-Mail for prizes (optional)" type="text">
+                <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="E-Mail for prizes (optional)" type="text">
             </div> <!-- form-group// -->
 
-           
+
             <div class="form-group">
                 <div class="text-center">
-                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreateTeam"> Create Player </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreatePlayer"> Create Player </button>
                 </div>
             </div> <!-- form-group// -->
-           
+
         </form>
     </article>
 </div> <!-- card.// -->
@@ -70,11 +72,51 @@
 
 
 @code {
-    private Team Team { get; set; } = new Team();
+    private Player Player { get; set; } = new Player();
 
-    private async Task CreateTeam()
+    private Event Event { get; set; } = new Event()
     {
-        await Teams!.InsertOneAsync(Team)!;
-        NavigationManager!.NavigateTo("/done");
+        // default. Get from appsettings
+        Id = "mdb-2023-local-socal",
+        name = "MongoDB .local SoCal 2023",
+        location = "US-CA"
+    };
+
+    Dictionary<string, string>? queryParameters;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            var uri = new Uri(NavigationManager.Uri);
+
+            queryParameters = uri.Query.TrimStart('?')
+                .Split('&')
+                .ToDictionary(
+                    x => Uri.UnescapeDataString(x.Split('=')[0]),
+                    x => Uri.UnescapeDataString(x.Split('=')[1])
+                );
+
+            var filter = new BsonDocument("_id", queryParameters["event"]);
+
+            Event = Events.FindSync(filter).Single<Event>();
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+
     }
+
+    private async Task CreatePlayer()
+    {
+        Player.location = Event.location; // Inject location of event for new player
+
+        await Players!.InsertOneAsync(Player)!;
+
+        NavigationManager!.NavigateTo("/done");
+
+    }
+
 }
