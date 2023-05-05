@@ -1,21 +1,4 @@
-﻿@* @page "/" *@
-@* *@
-@* <PageTitle>MongoDB Registration</PageTitle> *@
-@* *@
-@* <h1>Welcome to EVENT</h1> *@
-@* *@
-@* <p>Please enter your name:</p> *@
-@* *@
-@* <input type="text" @bind-value="@Name" /> *@
-@* *@
-@* <p>Your name is: @Name</p> *@
-@* *@
-@* @code { *@
-@*     private string Name { get; set; } *@
-@* } *@
-
-
-@page "/playerHome"
+﻿@page "/playerHome"
 @using MongoDB.Driver
 @using MongoDB.Bson
 @using gdc_2023_demo_registration.Data
@@ -34,7 +17,7 @@
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Player Registration & Login</h2>
+        <h2 class="text-center">Player Dashboard</h2>
         <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
 
         <form>
@@ -60,45 +43,22 @@
             </div> <!-- form-group// -->
         </form>
     </article>
-
-
-
-    @if (recordings == null)
-    {
-        <p>
-            <em>Loading...</em>
-        </p>
-    }
-    else
-    {
-        <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Score</th>
-                    <th>Bullets Fired</th>
-                    <th>Damage</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var recording in recordings)
-                {
-                    <tr>
-                        <td>@recording.DateTime.ToLongDateString()</td>
-                        <td>@recording.SessionStatisticsPlain.Score</td>
-                        <td>@recording.SessionStatisticsPlain.BulletsFired</td>
-                        <td>@recording.SessionStatisticsPlain.DamageDone</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-
-
-
 </div> <!-- card.// -->
+
+<p></p>
+<p></p>
+<p></p>
+
+@if (chartUrl.Length == 0)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
+}
 
 
 @code {
@@ -132,18 +92,20 @@
             Console.WriteLine(location);
             Console.WriteLine(Nickname);
 
-            chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=light&autoRefresh=true&maxDataAge=3600&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27}";
+            chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=dark&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=scale&scalingHeight=scale&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27}";
 
             Player = Players
-                .Find(player => player.location.Equals(location) &&
-                                player.Nickname.Equals(Nickname))
-                .First<Player>();
+        .Find(player => player.location.Equals(location) &&
+                        player.Nickname.Equals(Nickname))
+        .First<Player>();
 
+            /*
             recordings = Recordings
                 .Find(rec => rec.location.Equals(location) &&
                              rec.Player.Nickname.Equals(Nickname))
                 .Sort(new BsonDocument("DateTime", -1))
                 .ToList<Recording>();
+            */
         }
         catch (Exception ex)
         {
@@ -153,4 +115,4 @@
 
     }
 
-    }
+}

@@ -1,21 +1,4 @@
-﻿@* @page "/" *@
-@* *@
-@* <PageTitle>MongoDB Registration</PageTitle> *@
-@* *@
-@* <h1>Welcome to EVENT</h1> *@
-@* *@
-@* <p>Please enter your name:</p> *@
-@* *@
-@* <input type="text" @bind-value="@Name" /> *@
-@* *@
-@* <p>Your name is: @Name</p> *@
-@* *@
-@* @code { *@
-@*     private string Name { get; set; } *@
-@* } *@
-
-
-@page "/"
+﻿@page "/"
 @using MongoDB.Driver
 @using MongoDB.Bson
 @using gdc_2023_demo_registration.Data
@@ -66,18 +49,16 @@
                 </div>
             </div> <!-- form-group// -->
 
+            <p></p>
+            <p></p>
+
+            <center>
+                <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="350" height="600" src="https://charts.mongodb.com/charts-global_shared-jebkk/embed/charts?id=6453fb66-c2fc-4483-8890-4ab8365f1ac6&maxDataAge=60&theme=light&autoRefresh=true"></iframe>
+            </center>
+
         </form>
     </article>
-
-    <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="640" height="480" src="https://charts.mongodb.com/charts-global_shared-jebkk/embed/charts?id=6453fb66-c2fc-4483-8890-4ab8365f1ac6&maxDataAge=300&theme=dark&autoRefresh=true"></iframe>
-
-
-
-
 </div> <!-- card.// -->
-
-
-
 
 
 
@@ -85,74 +66,75 @@
 
     private string message = "";
 
-    private Player Player { get; set; } = new Player();
+        private Player Player { get; set; } = new Player();
 
-    private Event Event { get; set; } = new Event()
-    {
-        // default. Get from appsettings
-        Id = "mdb-2023-local-socal",
-        name = "MongoDB .local SoCal 2023",
-        location = "US-CA"
-    };
-
-    Dictionary<string, string>? queryParameters;
-
-    protected override void OnInitialized()
-    {
-        try
+        private Event Event { get; set; } = new Event()
         {
-            var uri = new Uri(NavigationManager.Uri);
+            // default. Get from appsettings
+            Id = "mdb-2023-local-socal",
+            name = "MongoDB .local SoCal 2023",
+            location = "US-CA"
+        };
 
-            queryParameters = uri.Query.TrimStart('?')
-                .Split('&')
-                .ToDictionary(
-                    x => Uri.UnescapeDataString(x.Split('=')[0]),
-                    x => Uri.UnescapeDataString(x.Split('=')[1])
-                );
+        Dictionary<string, string>? queryParameters;
 
-            var filter = new BsonDocument("_id", queryParameters["event"]);
+        protected override void OnInitialized()
+        {
+            try
+            {
+                var uri = new Uri(NavigationManager.Uri);
 
-            Event = Events.FindSync(filter).Single<Event>();
+                queryParameters = uri.Query.TrimStart('?')
+                    .Split('&')
+                    .ToDictionary(
+                        x => Uri.UnescapeDataString(x.Split('=')[0]),
+                        x => Uri.UnescapeDataString(x.Split('=')[1])
+                    );
+
+                var filter = new BsonDocument("_id", queryParameters["event"]);
+
+                Event = Events.FindSync(filter).Single<Event>();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
         }
-        catch (Exception ex)
+
+        private async Task CreatePlayer()
         {
-            Console.WriteLine(ex.ToString());
+            message = "";
+            var filter = new BsonDocument("Nickname", Player.Nickname);
+
+            if (Players.Find<Player>(filter).Any<Player>())
+            {
+                message = "[" + Player.Nickname + "] exists! Login instead?";
+            }
+            else
+            {
+                Player.location = Event.location; // Inject location of event for new player
+
+                await Players!.InsertOneAsync(Player)!;
+
+                //NavigationManager!.NavigateTo("/done");
+                NavigationManager!.NavigateTo("/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname);
+            }
+        }
+
+        private async Task LoginPlayer()
+        {
+
+            message = "";
+            var filter = new BsonDocument("Nickname", Player.Nickname);
+            Player existingPlayer = Players.Find<Player>(filter).First<Player>();
+
+            if (existingPlayer != null) {
+                NavigationManager!.NavigateTo("/playerHome?location="+ existingPlayer.location+"&Nickname="+existingPlayer.Nickname);
+            } else {
+                message = "[" + Player.Nickname + "] not found. Register instead?";
+            }
         }
 
     }
-
-    private async Task CreatePlayer()
-    {
-
-        message = "";
-        var filter = new BsonDocument("Nickname", Player.Nickname);
-        if (Players.Find<Player>(filter).Any<Player>())
-        {
-            message = "[" + Player.Nickname + "] exists! Login instead?";
-            return;
-        }
-
-        Player.location = Event.location; // Inject location of event for new player
-
-        await Players!.InsertOneAsync(Player)!;
-
-        NavigationManager!.NavigateTo("/done");
-
-    }
-
-    private async Task LoginPlayer()
-    {
-
-        message = "";
-        var filter = new BsonDocument("Nickname", Player.Nickname);
-        Player existingPlayer = Players.Find<Player>(filter).First<Player>();
-
-        if (existingPlayer != null) {
-            NavigationManager!.NavigateTo("/playerHome?location="+ existingPlayer.location+"&Nickname="+existingPlayer.Nickname);
-        } else {
-            message = "[" + Player.Nickname + "] not found. Register instead?";
-        }
-    }
-
-}
