@@ -1,0 +1,156 @@
+﻿@* @page "/" *@
+@* *@
+@* <PageTitle>MongoDB Registration</PageTitle> *@
+@* *@
+@* <h1>Welcome to EVENT</h1> *@
+@* *@
+@* <p>Please enter your name:</p> *@
+@* *@
+@* <input type="text" @bind-value="@Name" /> *@
+@* *@
+@* <p>Your name is: @Name</p> *@
+@* *@
+@* @code { *@
+@*     private string Name { get; set; } *@
+@* } *@
+
+
+@page "/playerHome"
+@using MongoDB.Driver
+@using MongoDB.Bson
+@using gdc_2023_demo_registration.Data
+
+@inject NavigationManager NavigationManager
+@inject IMongoCollection<Player> Players
+@inject IMongoCollection<Recording> Recordings
+
+<style>
+    body {
+        background-color: #023430;
+    }
+</style>
+
+
+<img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+<div class="card bg-white">
+    <article class="card-body mx-auto" style="max-width: 400px;">
+        <h2 class="text-center">Player Registration & Login</h2>
+        <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
+
+        <form>
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                </div>
+                <span>@Player.Nickname</span>
+            </div> <!-- form-group// -->
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-users"></i> </span>
+                </div>
+                <span>@Player.TeamName</span>
+            </div> <!-- form-group// -->
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
+                </div>
+                <span>@Player.Email</span>
+            </div> <!-- form-group// -->
+        </form>
+    </article>
+
+
+
+    @if (recordings == null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Score</th>
+                    <th>Bullets Fired</th>
+                    <th>Damage</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var recording in recordings)
+                {
+                    <tr>
+                        <td>@recording.DateTime.ToLongDateString()</td>
+                        <td>@recording.SessionStatisticsPlain.Score</td>
+                        <td>@recording.SessionStatisticsPlain.BulletsFired</td>
+                        <td>@recording.SessionStatisticsPlain.DamageDone</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+
+
+</div> <!-- card.// -->
+
+
+@code {
+
+    private string message = "";
+    private string chartUrl = "";
+    private string location = "";
+    private string Nickname = "";
+
+    private Player Player { get; set; } = new Player();
+    private List<Recording>? recordings;
+
+    Dictionary<string, string>? queryParameters;
+
+    protected override void OnInitialized()
+    {
+        try
+        {
+            var uri = new Uri(NavigationManager.Uri);
+
+            queryParameters = uri.Query.TrimStart('?')
+                .Split('&')
+                .ToDictionary(
+                    x => Uri.UnescapeDataString(x.Split('=')[0]),
+                    x => Uri.UnescapeDataString(x.Split('=')[1])
+                );
+
+            location = queryParameters["location"];
+            Nickname = queryParameters["Nickname"];
+
+            Console.WriteLine(location);
+            Console.WriteLine(Nickname);
+
+            chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=light&autoRefresh=true&maxDataAge=3600&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27}";
+
+            Player = Players
+                .Find(player => player.location.Equals(location) &&
+                                player.Nickname.Equals(Nickname))
+                .First<Player>();
+
+            recordings = Recordings
+                .Find(rec => rec.location.Equals(location) &&
+                             rec.Player.Nickname.Equals(Nickname))
+                .Sort(new BsonDocument("DateTime", -1))
+                .ToList<Recording>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+            message = "PLAYER NOT FOUND";
+        }
+
+    }
+
+    }

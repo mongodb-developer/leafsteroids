@@ -32,15 +32,16 @@
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Player Registration</h2>
+        <h2 class="text-center">Player Registration & Login</h2>
         <h4 class="card-title mt-3 text-center"><b>@Event.name</b></h4>
+        <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
 
         <form>
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                 </div>
-                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="Nickname" type="text">
+                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="Nickname (case sensitive!)" type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -60,18 +61,30 @@
 
             <div class="form-group">
                 <div class="text-center">
-                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreatePlayer"> Create Player </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreatePlayer"> Register </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="LoginPlayer"> Login </button>
                 </div>
             </div> <!-- form-group// -->
 
         </form>
     </article>
+
+    <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="640" height="480" src="https://charts.mongodb.com/charts-global_shared-jebkk/embed/charts?id=6453fb66-c2fc-4483-8890-4ab8365f1ac6&maxDataAge=300&theme=dark&autoRefresh=true"></iframe>
+
+
+
+
 </div> <!-- card.// -->
 
 
 
 
+
+
 @code {
+
+    private string message = "";
+
     private Player Player { get; set; } = new Player();
 
     private Event Event { get; set; } = new Event()
@@ -111,12 +124,35 @@
 
     private async Task CreatePlayer()
     {
+
+        message = "";
+        var filter = new BsonDocument("Nickname", Player.Nickname);
+        if (Players.Find<Player>(filter).Any<Player>())
+        {
+            message = "[" + Player.Nickname + "] exists! Login instead?";
+            return;
+        }
+
         Player.location = Event.location; // Inject location of event for new player
 
         await Players!.InsertOneAsync(Player)!;
 
         NavigationManager!.NavigateTo("/done");
 
+    }
+
+    private async Task LoginPlayer()
+    {
+
+        message = "";
+        var filter = new BsonDocument("Nickname", Player.Nickname);
+        Player existingPlayer = Players.Find<Player>(filter).First<Player>();
+
+        if (existingPlayer != null) {
+            NavigationManager!.NavigateTo("/playerHome?location="+ existingPlayer.location+"&Nickname="+existingPlayer.Nickname);
+        } else {
+            message = "[" + Player.Nickname + "] not found. Register instead?";
+        }
     }
 
 }
