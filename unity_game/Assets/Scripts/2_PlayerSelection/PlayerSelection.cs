@@ -81,6 +81,7 @@ namespace _2_PlayerSelection
 
         private void SelectPlayer()
         {
+            if (_players == null || _players.Count == 0) return;
             GameConfigLoader.Instance!.GameConfig!.Player = _players![_currentIndex];
             SceneNavigation.SwitchToInstructions();
         }

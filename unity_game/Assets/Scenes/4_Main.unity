@@ -34115,13 +34115,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 828040517}
     m_Modifications:
+    - target: {fileID: 282280017, guid: 7b1632f9d86c84484a5403ce11dc9f46, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5392928070156930385, guid: 7b1632f9d86c84484a5403ce11dc9f46, type: 3}
       propertyPath: m_Name
       value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 5392928070156930387, guid: 7b1632f9d86c84484a5403ce11dc9f46, type: 3}
-      propertyPath: m_Enabled
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5392928070156930399, guid: 7b1632f9d86c84484a5403ce11dc9f46, type: 3}
       propertyPath: m_RootOrder

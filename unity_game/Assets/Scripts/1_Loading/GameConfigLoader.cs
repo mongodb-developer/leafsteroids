@@ -22,7 +22,8 @@ namespace _1_Loading
 
         private void Start()
         {
-            InvokeRepeating(nameof(LoadConfig), 0f, 3f);
+            // InvokeRepeating(nameof(LoadConfig), 0f, 3f);
+            LoadConfig();
         }
 
         private void LoadConfig()

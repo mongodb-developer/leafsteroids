@@ -6,7 +6,7 @@ namespace _3_Main
     {
         public float minScale = 0.7f;
         public float maxScale = 1.3f;
-        public float pulsateSpeed = 1.5f;
+        public float pulsateSpeed = 1f;
 
         private float _currentScale;
         private float _scaleDirection = 1f;
