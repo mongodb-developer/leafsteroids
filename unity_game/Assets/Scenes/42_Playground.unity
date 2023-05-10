@@ -1083,6 +1083,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 1450427304171549812, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
+      propertyPath: m_Color.a
+      value: 0.2509804
+      objectReference: {fileID: 0}
     - target: {fileID: 1450427304408637228, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -1090,6 +1094,14 @@ PrefabInstance:
     - target: {fileID: 1450427304408637228, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1450427304594769477, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
+      propertyPath: m_Color.a
+      value: 0.2509804
+      objectReference: {fileID: 0}
+    - target: {fileID: 1450427304758784000, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6867481591959052377, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
       propertyPath: m_Name

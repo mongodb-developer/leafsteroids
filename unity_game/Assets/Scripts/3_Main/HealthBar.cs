@@ -20,6 +20,7 @@ namespace _3_Main
         {
             slider!.value = health;
             fill!.color = gradient!.Evaluate(slider.normalizedValue);
+            gameObject.SetActive(slider.value < slider.maxValue);
         }
 
         private void Start()
