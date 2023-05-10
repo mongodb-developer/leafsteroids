@@ -9,6 +9,7 @@ namespace _3_Main
     {
         public Renderer itemRendererInner;
         public Renderer itemRendererOuter;
+        public HealthBar healthBar;
 
         [SerializeField] private PelletSize pelletSize;
         [SerializeField] private float maxHealth;
@@ -27,6 +28,7 @@ namespace _3_Main
                 _ => throw new ArgumentOutOfRangeException()
             };
             currentHealth = maxHealth;
+            healthBar!.SetMaxHealth(maxHealth);
         }
 
         private void Update()
@@ -48,13 +50,14 @@ namespace _3_Main
             if (bullet == null) return;
 
             currentHealth -= bullet.damage;
+            healthBar!.SetCurrentHealth(currentHealth);
             SessionStatistics.Instance!.DamageDone += _gameConfig!.BulletDamage;
 
             Destroy(bullet.gameObject);
 
             if (currentHealth > 0) return;
 
-            Destroy(gameObject);
+            Destroy(transform.parent!.gameObject);
             SessionStatistics.Instance.Score += maxHealth;
             switch (pelletSize)
             {

@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/4_Main.unity
     guid: 802b90222dccdca498500dad7f5d2b50
+  - enabled: 1
+    path: Assets/Scenes/42_Playground.unity
+    guid: 8d40ae567a80c43e7b61a7280eb64efe
   m_configObjects: {}

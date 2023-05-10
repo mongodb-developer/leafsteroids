@@ -19,5 +19,15 @@
         public const string DataApiKey = "QwUdPAFQHXnUtgrpNe4Ymq1uuWF93tiV3GBn3LujQxDRi9kGii0ZL8DS7Syf6duU";
 
         public const float RecordingSpeed = 0.1f;
+
+        public static class SceneNames
+        {
+            public const string Welcome = "0_Welcome";
+            public const string Loading = "1_Loading";
+            public const string PlayerSelection = "2_PlayerSelection";
+            public const string Instructions = "3_Instructions";
+            public const string Main = "4_Main";
+            public const string Playground = "42_Playground";
+        }
     }
 }
