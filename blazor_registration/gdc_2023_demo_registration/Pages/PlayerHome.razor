@@ -57,7 +57,7 @@
 }
 else
 {
-    <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
+<iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
 }
 
 
@@ -67,6 +67,7 @@ else
     private string chartUrl = "";
     private string location = "";
     private string Nickname = "";
+    private string EventId = "";
 
     private Player Player { get; set; } = new Player();
     private List<Recording>? recordings;
@@ -88,24 +89,19 @@ else
 
             location = queryParameters["location"];
             Nickname = queryParameters["Nickname"];
+            EventId = queryParameters["EventId"];
 
             Console.WriteLine(location);
             Console.WriteLine(Nickname);
+            Console.WriteLine(EventId);
 
-            chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=dark&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=scale&scalingHeight=scale&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27}";
+            chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=dark&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
+            chartUrl += "&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27,%27Event._id%27:%27" + EventId + "%27}";
 
             Player = Players
-        .Find(player => player.location.Equals(location) &&
-                        player.Nickname.Equals(Nickname))
-        .First<Player>();
-
-            /*
-            recordings = Recordings
-                .Find(rec => rec.location.Equals(location) &&
-                             rec.Player.Nickname.Equals(Nickname))
-                .Sort(new BsonDocument("DateTime", -1))
-                .ToList<Recording>();
-            */
+                .Find(player => player.location.Equals(location) &&
+                                player.Nickname.Equals(Nickname))
+                .First<Player>();
         }
         catch (Exception ex)
         {

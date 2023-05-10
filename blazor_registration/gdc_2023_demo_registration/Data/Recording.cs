@@ -9,6 +9,7 @@ public class Recording
     public SessionStatisticsPlain? SessionStatisticsPlain { get; set; }
     public DateTime DateTime { get; set; }
     public Player? Player { get; set; }
+    public Event? Event { get; set; }
     public List<Snapshot>? Snapshots { get; set; }
 }
 

@@ -1,147 +1,152 @@
 [
-{
-    "_id": "mdb-2023-local-socal",
-    "name": "MongoDB .local SoCal 2023",
-    "location": "US-CA"
-},
-{
-    "_id": "mdb-2023-local-mexico-city",
-    "name": "MongoDB .local Mexico City 2023",
-    "location": "MX"
-},
-{
-    "_id": "mdb-2023-local-new-york",
-    "name": "MongoDB .local New York 2023",
-    "location": "US-NY"
-},
-{
-    "_id": "mdb-2023-local-sao-paulo",
-    "name": "MongoDB .local São Paulo 2023",
-    "location": "BR-SP"
-},
-{
-    "_id": "mdb-2023-local-tel-aviv",
-    "name": "MongoDB .local Tel Aviv 2023",
-    "location": "IL"
-},
-{
-    "_id": "mdb-2023-local-washington-dc",
-    "name": "MongoDB .local Washington DC 2023",
-    "location": "US-DC"
-},
-{
-    "_id": "mdb-2023-local-chicago",
-    "name": "MongoDB .local Chicago 2023",
-    "location": "US-IL"
-},
-{
-    "_id": "mdb-2023-local-sydney",
-    "name": "MongoDB .local Sydney 2023",
-    "location": "AU-NSW"
-},
-{
-    "_id": "mdb-2023-local-auckland",
-    "name": "MongoDB .local Auckland 2023",
-    "location": "NZ"
-},
-{
-    "_id": "mdb-2023-local-beijing",
-    "name": "MongoDB .local Beijing 2023",
-    "location": "CN-11"
-},
-{
-    "_id": "mdb-2023-local-shenzhen",
-    "name": "MongoDB .local Shenzhen 2023",
-    "location": "CN-44"
-},
-{
-    "_id": "mdb-2023-local-hong-kong",
-    "name": "MongoDB .local Hong Kong 2023",
-    "location": "HK"
-},
-{
-    "_id": "mdb-2023-local-taipei",
-    "name": "MongoDB .local Taipei 2023",
-    "location": "TW-TPE"
-},
-{
-    "_id": "mdb-2023-local-kuala-lumpur",
-    "name": "MongoDB .local Kuala Lumpur 2023",
-    "location": "MY"
-},
-{
-    "_id": "mdb-2023-local-seoul",
-    "name": "MongoDB .local Seoul 2023",
-    "location": "KR-11"
-},
-{
-    "_id": "mdb-2023-local-bangkok",
-    "name": "MongoDB .local Bangkok 2023",
-    "location": "TH"
-},
-{
-    "_id": "mdb-2023-local-jakarta",
-    "name": "MongoDB .local Jakarta 2023",
-    "location": "ID-JK"
-},
-{
-    "_id": "mdb-2023-local-frankfurt",
-    "name": "MongoDB .local Frankfurt 2023",
-    "location": "DE-NW"
-},
-{
-    "_id": "mdb-2023-local-singapore",
-    "name": "MongoDB .local Singapore 2023",
-    "location": "SG-01"
-},
-{
-    "_id": "mdb-2023-local-london",
-    "name": "MongoDB .local London 2023",
-    "location": "GB-ENG"
-},
-{
-    "_id": "mdb-2023-local-delhi",
-    "name": "MongoDB .local Delhi 2023",
-    "location": "IN-DL"
-},
-{
-    "_id": "mdb-2023-local-milan",
-    "name": "MongoDB .local Milan 2023",
-    "location": "IT-25"
-},
-{
-    "_id": "mdb-2023-local-boston",
-    "name": "MongoDB .local Boston 2023",
-    "location": "US-MA"
-},
-{
-    "_id": "mdb-2023-local-dallas",
-    "name": "MongoDB .local Dallas 2023",
-    "location": "US-TX"
-},
-{
-    "_id": "mdb-2023-local-atlanta",
-    "name": "MongoDB .local Atlanta 2023",
-    "location": "US-GA"
-},
-{
-    "_id": "mdb-2023-local-paris",
-    "name": "MongoDB .local Paris 2023",
-    "location": "FR-J"
-},
-{
-    "_id": "mdb-2023-local-bangalore",
-    "name": "MongoDB .local Bangalore 2023",
-    "location": "IN-KA"
-},
-{
-    "_id": "mdb-2023-local-mumbai",
-    "name": "MongoDB .local Mumbai 2023",
-    "location": "IN-MH"
-},
-{
-    "_id": "mdb-2023-local-stockholm",
-    "name": "MongoDB .local Stockholm 2023",
-    "location": "SE-AB"
-}
+    {
+        "_id": "gdc-2023-sf",
+        "name": "GDC 2023 San Francisco",
+        "location": "US-CA"
+    },
+    {
+        "_id": "mdb-local-2023-socal",
+        "name": "MongoDB .local SoCal 2023",
+        "location": "US-CA"
+    },
+    {
+        "_id": "mdb-local-2023-mexico-city",
+        "name": "MongoDB .local Mexico City 2023",
+        "location": "MX"
+    },
+    {
+        "_id": "mdb-local-2023-new-york",
+        "name": "MongoDB .local New York 2023",
+        "location": "US-NY"
+    },
+    {
+        "_id": "mdb-local-2023-sao-paulo",
+        "name": "MongoDB .local São Paulo 2023",
+        "location": "BR-SP"
+    },
+    {
+        "_id": "mdb-local-2023-tel-aviv",
+        "name": "MongoDB .local Tel Aviv 2023",
+        "location": "IL"
+    },
+    {
+        "_id": "mdb-local-2023-washington-dc",
+        "name": "MongoDB .local Washington DC 2023",
+        "location": "US-DC"
+    },
+    {
+        "_id": "mdb-local-2023-chicago",
+        "name": "MongoDB .local Chicago 2023",
+        "location": "US-IL"
+    },
+    {
+        "_id": "mdb-local-2023-sydney",
+        "name": "MongoDB .local Sydney 2023",
+        "location": "AU-NSW"
+    },
+    {
+        "_id": "mdb-local-2023-auckland",
+        "name": "MongoDB .local Auckland 2023",
+        "location": "NZ"
+    },
+    {
+        "_id": "mdb-local-2023-beijing",
+        "name": "MongoDB .local Beijing 2023",
+        "location": "CN-11"
+    },
+    {
+        "_id": "mdb-local-2023-shenzhen",
+        "name": "MongoDB .local Shenzhen 2023",
+        "location": "CN-44"
+    },
+    {
+        "_id": "mdb-local-2023-hong-kong",
+        "name": "MongoDB .local Hong Kong 2023",
+        "location": "HK"
+    },
+    {
+        "_id": "mdb-local-2023-taipei",
+        "name": "MongoDB .local Taipei 2023",
+        "location": "TW-TPE"
+    },
+    {
+        "_id": "mdb-local-2023-kuala-lumpur",
+        "name": "MongoDB .local Kuala Lumpur 2023",
+        "location": "MY"
+    },
+    {
+        "_id": "mdb-local-2023-seoul",
+        "name": "MongoDB .local Seoul 2023",
+        "location": "KR-11"
+    },
+    {
+        "_id": "mdb-local-2023-bangkok",
+        "name": "MongoDB .local Bangkok 2023",
+        "location": "TH"
+    },
+    {
+        "_id": "mdb-local-2023-jakarta",
+        "name": "MongoDB .local Jakarta 2023",
+        "location": "ID-JK"
+    },
+    {
+        "_id": "mdb-local-2023-frankfurt",
+        "name": "MongoDB .local Frankfurt 2023",
+        "location": "DE-NW"
+    },
+    {
+        "_id": "mdb-local-2023-singapore",
+        "name": "MongoDB .local Singapore 2023",
+        "location": "SG-01"
+    },
+    {
+        "_id": "mdb-local-2023-london",
+        "name": "MongoDB .local London 2023",
+        "location": "GB-ENG"
+    },
+    {
+        "_id": "mdb-local-2023-delhi",
+        "name": "MongoDB .local Delhi 2023",
+        "location": "IN-DL"
+    },
+    {
+        "_id": "mdb-local-2023-milan",
+        "name": "MongoDB .local Milan 2023",
+        "location": "IT-25"
+    },
+    {
+        "_id": "mdb-local-2023-boston",
+        "name": "MongoDB .local Boston 2023",
+        "location": "US-MA"
+    },
+    {
+        "_id": "mdb-local-2023-dallas",
+        "name": "MongoDB .local Dallas 2023",
+        "location": "US-TX"
+    },
+    {
+        "_id": "mdb-local-2023-atlanta",
+        "name": "MongoDB .local Atlanta 2023",
+        "location": "US-GA"
+    },
+    {
+        "_id": "mdb-local-2023-paris",
+        "name": "MongoDB .local Paris 2023",
+        "location": "FR-J"
+    },
+    {
+        "_id": "mdb-local-2023-bangalore",
+        "name": "MongoDB .local Bangalore 2023",
+        "location": "IN-KA"
+    },
+    {
+        "_id": "mdb-local-2023-mumbai",
+        "name": "MongoDB .local Mumbai 2023",
+        "location": "IN-MH"
+    },
+    {
+        "_id": "mdb-local-2023-stockholm",
+        "name": "MongoDB .local Stockholm 2023",
+        "location": "SE-AB"
+    }
 ]
