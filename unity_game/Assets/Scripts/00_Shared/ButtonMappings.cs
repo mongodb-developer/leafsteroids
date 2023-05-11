@@ -42,7 +42,7 @@ namespace _00_Shared
 
         public static bool CheckReloadKey()
         {
-            return Input.GetKeyDown(KeyCode.JoystickButton5) || Input.GetKeyDown(KeyCode.R);
+            return Input.GetKeyDown(KeyCode.JoystickButton6) || Input.GetKeyDown(KeyCode.R);
         }
 
         public static bool CheckConfirmKey()
@@ -86,7 +86,7 @@ namespace _00_Shared
 
         public static bool CheckRotateLeftKey()
         {
-            return Input.GetKey(KeyCode.JoystickButton2) || Input.GetKey(KeyCode.LeftArrow);
+            return Input.GetKey(KeyCode.JoystickButton0) || Input.GetKey(KeyCode.LeftArrow);
         }
 
         public static bool CheckRotateRightKey()
