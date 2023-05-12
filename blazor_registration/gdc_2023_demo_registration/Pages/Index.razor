@@ -11,6 +11,12 @@
     body {
         background-color: #023430;
     }
+
+    .myiframe {
+        background: #F1F5F4;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);
+        width: 80%;
+        height: 90vh;
+    }
 </style>
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 <div class="card bg-white">
@@ -52,22 +58,27 @@
             <p></p>
             <p></p>
 
-            @if (chartUrl.Length == 0)
-            {
-                <p>
-                    <em>Loading...</em>
-                </p>
-            }
-            else
-            {
-                <center>
-                    <iframe style="background: #F1F5F4;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
-                </center>
-            }
+
             
         </form>
+
     </article>
+    
+
+    @if (chartUrl.Length == 0)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <center>
+            <iframe class="myiframe" src="@chartUrl"></iframe>
+        </center>
+    }
 </div> <!-- card.// -->
+
 
 
 

@@ -11,6 +11,22 @@
     body {
         background-color: #023430;
     }
+
+    .foo {
+        color: #0b5ed7;
+    }
+
+    .atlascharts_iframe {
+        /*background: #21313C; */
+        border: none;
+        border-radius: 2px;
+        /* box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2); */
+        width: 85%;
+        height: 200vh;
+        margin: auto;
+    }
+}
+
 </style>
 
 
@@ -25,39 +41,42 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                 </div>
-                <span>@Player.Nickname</span>
+                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="" type="text" disabled>
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-users"></i> </span>
                 </div>
-                <span>@Player.TeamName</span>
+                <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="" type="text" disabled>
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
                 </div>
-                <span>@Player.Email</span>
+                <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
             </div> <!-- form-group// -->
         </form>
+       
     </article>
 </div> <!-- card.// -->
 
-<p></p>
-<p></p>
-<p></p>
+
 
 @if (chartUrl.Length == 0)
 {
-    <p>
-        <em>Loading...</em>
-    </p>
+    <div class="card bg-white">
+        <p>
+            <em>Loading...</em>
+        </p>
+    </div>
 }
 else
 {
-<iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
+    <div class="card bg-white">
+            <iframe class="atlascharts_iframe" src="@chartUrl"></iframe>
+    </div>
 }
 
 
