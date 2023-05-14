@@ -5,6 +5,7 @@
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
+@inject IMongoCollection<PlayerUnique> PlayerUniques
 @inject IMongoCollection<Event> Events
 
 <style>
@@ -13,7 +14,10 @@
     }
 
     .myiframe {
-        background: #F1F5F4;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);
+        background: #F1F5F4;
+        border: none;
+        border-radius: 2px;
+        box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);
         width: 80%;
         height: 90vh;
     }
@@ -59,11 +63,11 @@
             <p></p>
 
 
-            
+
         </form>
 
     </article>
-    
+
 
     @if (chartUrl.Length == 0)
     {
@@ -88,6 +92,7 @@
     private string chartUrl = "";
 
     private Player Player { get; set; } = new Player();
+    private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
 
     BsonDocument eventFilter = new BsonDocument("_id", "gdc-2023-sf"); // TODO: GET FROM A CONFIG FILE
     private Event? Event;
@@ -126,7 +131,7 @@
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
 
-        if (Players.Find<Player>(filter).Any<Player>())
+        if (PlayerUniques.Find<PlayerUnique>(filter).Any<PlayerUnique>())
         {
             message = "[" + Player.Nickname + "] exists! Login instead?";
         }
@@ -135,6 +140,13 @@
             Player.location = Event.location; // Inject location of event for new player
 
             await Players!.InsertOneAsync(Player)!;
+            await PlayerUniques!.InsertOneAsync(new PlayerUnique
+                {
+                    Id = Player.Id,
+                    Nickname = Player.Nickname,
+                    location = Player.location
+                }
+            )!;
 
             //NavigationManager!.NavigateTo("/done");
             NavigationManager!.NavigateTo("/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
@@ -146,7 +158,7 @@
 
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
-        Player existingPlayer = Players.Find<Player>(filter).First<Player>();
+        PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).First<PlayerUnique>();
 
         if (existingPlayer != null)
         {

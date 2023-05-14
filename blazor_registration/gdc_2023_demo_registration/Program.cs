@@ -21,6 +21,7 @@ static void ConfigureServices(IServiceCollection services)
     services.AddSingleton<IMongoClient>(new MongoClient(config.GetConnectionString("MongoDB")));
     services.AddSingleton<IMongoDatabase>(x => x.GetRequiredService<IMongoClient>().GetDatabase("Leafsteroids"));
     services.AddSingleton<IMongoCollection<Player>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Player>("players"));
+    services.AddSingleton<IMongoCollection<PlayerUnique>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<PlayerUnique>("players_unique"));
     services.AddSingleton<IMongoCollection<Event>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Event>("events"));
     services.AddSingleton<IMongoCollection<Recording>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Recording>("recordings"));
 }
