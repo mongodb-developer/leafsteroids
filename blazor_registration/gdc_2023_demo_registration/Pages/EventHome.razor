@@ -5,6 +5,7 @@
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Recording> Recordings
+@inject IMongoCollection<Event> Events
 
 <style>
     body {
@@ -13,6 +14,12 @@
 </style>
 
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+<div class="card bg-white">
+    <article class="card-body mx-auto" style="max-width: 400px;">
+        <h2 class="text-center">Event Dashboard</h2>
+        <h4 class="card-title mt-3 text-center"><b>@Event.name</b></h4>
+    </article>
+</div> 
 
 <p></p>
 <p></p>
@@ -33,6 +40,8 @@ else
     private string location = "US-CA";
     private string EventId = "mdb-local-2023-socal";
 
+    private Event? Event { get; set; }
+
     Dictionary<string, string>? queryParameters;
 
     protected override void OnInitialized()
@@ -50,6 +59,10 @@ else
 
             location = queryParameters["location"];
             EventId = queryParameters["EventId"];
+
+            Event = Events
+                .Find(e => e.Id.Equals(EventId))
+                .First<Event>();
 
             Console.WriteLine(location);
             Console.WriteLine(EventId);

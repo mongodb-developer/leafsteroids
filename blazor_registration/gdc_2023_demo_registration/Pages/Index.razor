@@ -34,7 +34,21 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                 </div>
-                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="Nickname (case sensitive!)" type="text">
+                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="Nickname (case sensitive!)" type="text" @oninput="AutoCompleteNickname">
+                <span>
+                    @if (suggestedNicknames.Count > 0)
+                    {
+                        <ul class="options">
+                            @foreach (var nickname in suggestedNicknames)
+                            {
+                                <li class="option" @onclick=@(_ => SelectNickname(nickname))>
+                                    <span class="option-text">@nickname</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </span>
+
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -94,10 +108,12 @@
     private Player Player { get; set; } = new Player();
     private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
 
-    BsonDocument eventFilter = new BsonDocument("_id", "gdc-2023-sf"); // TODO: GET FROM A CONFIG FILE
+    BsonDocument eventFilter = new BsonDocument("_id", "mdb-local-2023-socal"); // TODO: GET FROM A CONFIG FILE
     private Event? Event;
 
     Dictionary<string, string>? queryParameters;
+
+    private List<string> suggestedNicknames = new List<string>();
 
     protected override void OnInitialized()
     {
@@ -141,11 +157,11 @@
 
             await Players!.InsertOneAsync(Player)!;
             await PlayerUniques!.InsertOneAsync(new PlayerUnique
-                {
-                    Id = Player.Id,
-                    Nickname = Player.Nickname,
-                    location = Player.location
-                }
+            {
+                Id = Player.Id,
+                Nickname = Player.Nickname,
+                location = Player.location
+            }
             )!;
 
             //NavigationManager!.NavigateTo("/done");
@@ -168,6 +184,36 @@
         {
             message = "[" + Player.Nickname + "] not found. Register instead?";
         }
+    }
+
+    private async Task AutoCompleteNickname(ChangeEventArgs e)
+    {
+        string input = e.Value.ToString();
+
+        if (input.Length >= 2)
+        {
+
+            var nicknames = await PlayerUniques.Aggregate()
+                .Search(Builders<PlayerUnique>
+                    .Search.Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
+                .Project<PlayerUnique>(Builders<PlayerUnique>
+                    .Projection
+                    .Include(p => p.Nickname)
+                    .Exclude(p => p.Id))
+                .Limit(10)
+                .ToListAsync();
+
+            suggestedNicknames = nicknames.Select(p => p.Nickname).ToList();
+        }
+        else
+        {
+            suggestedNicknames.Clear();
+        }
+    }
+
+    void SelectNickname(string Nickname)
+    {
+        Player.Nickname = Nickname;
     }
 
 }
