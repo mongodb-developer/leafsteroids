@@ -28,7 +28,31 @@ namespace _2_PlayerSelection
         private void Update()
         {
             if (ButtonMappings.CheckReloadKey()) ReloadPlayerList();
+            CheckJoystickInput();
+            CheckKeyboardInput();
+            UpdatePlayerList();
+            if (ButtonMappings.CheckConfirmKey()) SelectPlayer();
+        }
 
+        private void CheckKeyboardInput()
+        {
+            if (Input.inputString != null
+                && Input.inputString.Length == 1)
+            {
+                char pressedCharacter = Input.inputString[0];
+             
+                if (char.IsLetter(pressedCharacter)
+                    && _players != null
+                    && _players.Count > 0)
+                {
+                    Debug.Log("Detected key code: " + pressedCharacter);
+                    _currentIndex = _players.FindIndex(p => p.Nickname.StartsWith(pressedCharacter));
+                }
+            }
+        }
+
+        private void CheckJoystickInput()
+        {
             if (ButtonMappings.CheckAnyUpKey() && !_stickMoved)
             {
                 _currentIndex--;
@@ -45,9 +69,6 @@ namespace _2_PlayerSelection
             }
 
             _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
-            UpdatePlayerList();
-
-            if (ButtonMappings.CheckConfirmKey()) SelectPlayer();
         }
 
         private void ReloadPlayerList()
