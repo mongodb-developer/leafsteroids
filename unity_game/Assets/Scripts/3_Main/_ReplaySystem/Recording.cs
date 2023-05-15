@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using _00_Shared;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace _3_Main._ReplaySystem
 {
     public class Recording
     {
-        public SessionStatisticsPlain SessionStatisticsPlain = SessionStatistics.Instance!.GetPlainCopy();
         [JsonProperty("_id", NullValueHandling = NullValueHandling.Ignore)]
-#nullable enable
-        public string? Id { get; set; }
-#nullable disable
-
+        [CanBeNull] public string Id { get; set; }
+        public SessionStatisticsPlain SessionStatisticsPlain = SessionStatistics.Instance!.GetPlainCopy();
         public DateTime DateTime { get; } = DateTime.UtcNow;
         public RegisteredPlayer Player { get; set; }
         public List<Snapshot> Snapshots { get; set; } = new();
+        [JsonProperty("location")]
+        [CanBeNull] public string Location { get; set; }
+        [CanBeNull] public Event Event { get; set; }
     }
 }

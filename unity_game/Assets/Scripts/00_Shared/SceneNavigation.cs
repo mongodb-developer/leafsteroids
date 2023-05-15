@@ -11,60 +11,68 @@ namespace _00_Shared
         {
             switch (SceneManager.GetActiveScene().name!)
             {
-                case "0_Welcome":
+                case Constants.SceneNames.Loading:
+                    if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
+                    break;
+                case Constants.SceneNames.Welcome:
                     if (ButtonMappings.CheckEscapeKey()) Application.Quit();
-                    if (ButtonMappings.CheckConfirmKey())
-                    {
-                        if (GameConfigLoader.Instance == null || GameConfigLoader.Instance.GameConfig == null)
-                            SwitchToLoading();
-                        else
-                            SwitchToPlayerSelection();
-                    }
-
+                    if (ButtonMappings.CheckConfirmKey()) SwitchToPlayerSelection();
                     break;
-                case "1_Loading":
+                case Constants.SceneNames.PlayerSelection:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
                     break;
-                case "2_PlayerSelection":
-                    if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
-                    break;
-                case "3_Instructions":
+                case Constants.SceneNames.Instructions:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
                     if (ButtonMappings.CheckConfirmKey()) SwitchToMain();
                     break;
-                case "4_Main":
+                case Constants.SceneNames.Main:
+                    if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
+                    if (ButtonMappings.CheckReloadKey()) SwitchToMain();
+                    break;
+                case Constants.SceneNames.Playground:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
                     if (ButtonMappings.CheckReloadKey()) SwitchToMain();
                     break;
             }
         }
 
-        private static void SwitchToWelcome()
+        public static void SwitchToEventSelection()
         {
-            SceneManager.LoadScene("0_Welcome");
+            SceneManager.LoadScene(Constants.SceneNames.EventSelection);
+        }
+
+        public static void SwitchToWelcome()
+        {
+            SceneManager.LoadScene(Constants.SceneNames.Welcome);
         }
 
         private static void SwitchToLoading()
         {
             // if (GameConfigLoader.Instance != null)
             //     GameConfigLoader.Instance.GameConfig = null;
-            SceneManager.LoadScene("1_Loading");
+            SceneManager.LoadScene(Constants.SceneNames.Loading);
         }
 
         public static void SwitchToPlayerSelection()
         {
-            SceneManager.LoadScene("2_PlayerSelection");
+            SceneManager.LoadScene(Constants.SceneNames.PlayerSelection);
         }
 
         public static void SwitchToInstructions()
         {
-            SceneManager.LoadScene("3_Instructions");
+            SceneManager.LoadScene(Constants.SceneNames.Instructions);
         }
 
         public static void SwitchToMain()
         {
             SessionStatistics.Instance!.Reset();
-            SceneManager.LoadScene("4_Main");
+            SceneManager.LoadScene(Constants.SceneNames.Main);
+        }
+
+        public static void SwitchToPlayground()
+        {
+            SessionStatistics.Instance!.Reset();
+            SceneManager.LoadScene(Constants.SceneNames.Playground);
         }
     }
 }

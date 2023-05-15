@@ -13,7 +13,6 @@ namespace _3_Main
         [SerializeField] private TMP_Text gameOverText;
         [SerializeField] private TMP_Text gameOverSubText;
         [SerializeField] private GameObject blurPanel;
-        [SerializeField] private TMP_Text version;
         [SerializeField] private Recorder recorder;
         [SerializeField] private Canvas canvas;
         [SerializeField] private Camera mainCamera;
@@ -28,7 +27,6 @@ namespace _3_Main
 
         private void Start()
         {
-            // version!.text = $"Current version: {Constants.Version}";
             playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
             ToggleGameOverOverlay(false);
 

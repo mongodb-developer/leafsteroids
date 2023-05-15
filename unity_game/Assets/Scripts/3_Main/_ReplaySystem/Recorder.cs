@@ -27,7 +27,9 @@ namespace _3_Main._ReplaySystem
             var recording = new Recording
             {
                 Snapshots = _snapshots,
-                Player = GameConfigLoader.Instance!.GameConfig!.Player
+                Player = GameConfigLoader.Instance!.GameConfig!.Player,
+                Event = GameConfigLoader.Instance!.GameConfig.Event,
+                Location = GameConfigLoader.Instance!.GameConfig.Event!.Location
             };
             StartCoroutine(
                 AtlasHelper.RecordSnapshot(

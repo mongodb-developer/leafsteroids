@@ -5,6 +5,15 @@ namespace _1_Loading
 {
     public class GameConfigLoader : MonoBehaviour
     {
+        public enum SceneName
+        {
+            EventSelection,
+            Welcome,
+            PlayerSelection,
+            Playground
+        }
+
+        public SceneName sceneToSwitchTo;
         public static GameConfigLoader Instance;
         public GameConfig GameConfig;
 
@@ -22,7 +31,8 @@ namespace _1_Loading
 
         private void Start()
         {
-            InvokeRepeating(nameof(LoadConfig), 0f, 3f);
+            // InvokeRepeating(nameof(LoadConfig), 0f, 3f);
+            LoadConfig();
         }
 
         private void LoadConfig()
@@ -34,7 +44,21 @@ namespace _1_Loading
                 AtlasHelper.GetConfig(result =>
                 {
                     GameConfig = result;
-                    SceneNavigation.SwitchToPlayerSelection();
+                    switch (sceneToSwitchTo)
+                    {
+                        case SceneName.EventSelection:
+                            SceneNavigation.SwitchToEventSelection();
+                            break;
+                        case SceneName.Welcome:
+                            SceneNavigation.SwitchToWelcome();
+                            break;
+                        case SceneName.PlayerSelection:
+                            SceneNavigation.SwitchToPlayerSelection();
+                            break;
+                        case SceneName.Playground:
+                            SceneNavigation.SwitchToPlayground();
+                            break;
+                    }
                 })
             );
         }
