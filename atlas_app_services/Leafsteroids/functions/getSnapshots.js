@@ -12,7 +12,7 @@ exports = async function({ query, headers, body}, response) {
       }
     }
 
-    const docs = await context.services.get("mongodb-atlas").db("game").collection("recordings").find(filter).toArray();
+    const docs = await context.services.get("mongodb-atlas").db("Leafsteroids").collection("recordings").find(filter).toArray();
 
     return  docs;
     

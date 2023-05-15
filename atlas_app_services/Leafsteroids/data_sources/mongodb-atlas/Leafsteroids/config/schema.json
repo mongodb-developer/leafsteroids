@@ -1,0 +1,35 @@
+{
+    "properties": {
+        "BulletDamage": {
+            "bsonType": "double"
+        },
+        "BulletLifespan": {
+            "bsonType": "double"
+        },
+        "BulletSpeed": {
+            "bsonType": "double"
+        },
+        "PelletHeatlhLarge": {
+            "bsonType": "double"
+        },
+        "PelletHeatlhMedium": {
+            "bsonType": "double"
+        },
+        "PelletHeatlhSmall": {
+            "bsonType": "double"
+        },
+        "PlayerMoveSpeed": {
+            "bsonType": "double"
+        },
+        "PlayerRotateSpeed": {
+            "bsonType": "double"
+        },
+        "RoundDuration": {
+            "bsonType": "double"
+        },
+        "_id": {
+            "bsonType": "objectId"
+        }
+    },
+    "title": "config"
+}

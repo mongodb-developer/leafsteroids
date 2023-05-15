@@ -1,0 +1,20 @@
+{
+    "properties": {
+        "Email": {
+            "bsonType": "string"
+        },
+        "Nickname": {
+            "bsonType": "string"
+        },
+        "TeamName": {
+            "bsonType": "string"
+        },
+        "_id": {
+            "bsonType": "objectId"
+        },
+        "location": {
+            "bsonType": "string"
+        }
+    },
+    "title": "player"
+}
