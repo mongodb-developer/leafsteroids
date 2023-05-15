@@ -1,8 +1,0 @@
-{
-    "app_id": "<YOUR_APP_ID>",
-    "config_version": 20210101,
-    "name": "gdc_2023",
-    "location": "IE",
-    "provider_region": "aws-eu-west-1",
-    "deployment_model": "LOCAL"
-}

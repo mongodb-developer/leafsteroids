@@ -14,7 +14,7 @@ exports = async function({ query, headers, body}, response) {
     
     filter._id = BSON.ObjectId(id);
 
-    const docs = await context.services.get("mongodb-atlas").db("game").collection("recordings").findOne(filter);
+    const docs = await context.services.get("mongodb-atlas").db("Leafsteroids").collection("recordings").findOne(filter);
 
     return  docs;
     

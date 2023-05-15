@@ -1,6 +1,6 @@
 {
-    "collection": "config",
-    "database": "game",
+    "collection": "recordings",
+    "database": "Leafsteroids",
     "roles": [
         {
             "name": "readAndWriteAll",

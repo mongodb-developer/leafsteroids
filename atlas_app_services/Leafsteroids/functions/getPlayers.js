@@ -11,8 +11,15 @@ exports = async function({ query, headers, body}, response) {
         "$lte": new Date(end_date)
       }
     }
-
-    const docs = await context.services.get("mongodb-atlas").db("registration").collection("players").find(filter).toArray();
+  
+    // TO-DO: Use player_uniques collection 
+    const docs = await context.services
+      .get("mongodb-atlas")
+      .db("Leafsteroids")
+      .collection("players")
+        .find(filter)
+        .sort({Nickname:1})
+        .toArray();
 
     return docs;
     
