@@ -1,0 +1,14 @@
+[{
+  "_id": {
+    "$oid": "640ce9f8e98101ac554aa9ef"
+  },
+  "RoundDuration": 60,
+  "BulletDamage": 15,
+  "BulletSpeed": 500,
+  "PlayerMoveSpeed": 5,
+  "PlayerRotateSpeed": 100,
+  "BulletLifespan": 1,
+  "PelletHeatlhSmall": 50,
+  "PelletHeatlhLarge": 150,
+  "PelletHeatlhMedium": 75
+}]
