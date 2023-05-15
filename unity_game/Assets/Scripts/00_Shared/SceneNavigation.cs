@@ -11,19 +11,12 @@ namespace _00_Shared
         {
             switch (SceneManager.GetActiveScene().name!)
             {
-                case Constants.SceneNames.Welcome:
-                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
-                    if (ButtonMappings.CheckConfirmKey())
-                    {
-                        if (GameConfigLoader.Instance == null || GameConfigLoader.Instance.GameConfig == null)
-                            SwitchToLoading();
-                        else
-                            SwitchToPlayerSelection();
-                    }
-
-                    break;
                 case Constants.SceneNames.Loading:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
+                    break;
+                case Constants.SceneNames.Welcome:
+                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
+                    if (ButtonMappings.CheckConfirmKey()) SwitchToPlayerSelection();
                     break;
                 case Constants.SceneNames.PlayerSelection:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
@@ -43,7 +36,12 @@ namespace _00_Shared
             }
         }
 
-        private static void SwitchToWelcome()
+        public static void SwitchToEventSelection()
+        {
+            SceneManager.LoadScene(Constants.SceneNames.EventSelection);
+        }
+
+        public static void SwitchToWelcome()
         {
             SceneManager.LoadScene(Constants.SceneNames.Welcome);
         }

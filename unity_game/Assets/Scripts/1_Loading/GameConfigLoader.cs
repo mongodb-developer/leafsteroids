@@ -7,6 +7,8 @@ namespace _1_Loading
     {
         public enum SceneName
         {
+            EventSelection,
+            Welcome,
             PlayerSelection,
             Playground
         }
@@ -44,6 +46,12 @@ namespace _1_Loading
                     GameConfig = result;
                     switch (sceneToSwitchTo)
                     {
+                        case SceneName.EventSelection:
+                            SceneNavigation.SwitchToEventSelection();
+                            break;
+                        case SceneName.Welcome:
+                            SceneNavigation.SwitchToWelcome();
+                            break;
                         case SceneName.PlayerSelection:
                             SceneNavigation.SwitchToPlayerSelection();
                             break;

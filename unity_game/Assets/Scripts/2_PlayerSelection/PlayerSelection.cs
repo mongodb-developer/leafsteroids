@@ -41,12 +41,10 @@ namespace _2_PlayerSelection
             {
                 char pressedCharacter = Input.inputString[0];
              
-                if (char.IsLetter(pressedCharacter)
-                    && _players != null
-                    && _players.Count > 0)
+                if (char.IsLetter(pressedCharacter) && _players is { Count: > 0 })
                 {
                     Debug.Log("Detected key code: " + pressedCharacter);
-                    _currentIndex = _players.FindIndex(p => p.Nickname.StartsWith(pressedCharacter));
+                    _currentIndex = _players.FindIndex(p => p!.Nickname!.StartsWith(pressedCharacter));
                 }
             }
         }

@@ -5,11 +5,12 @@ namespace _00_Shared
 {
     public class RegisteredPlayer
     {
-        [CanBeNull] public string Email;
         [JsonProperty("_id")]
         public string Id;
-        // [CanBeNull] public string location;
-        public string Nickname;
+        public string Nickname { get; set; }
+        [JsonProperty("location")]
+        [CanBeNull] public string Location;
         [CanBeNull] public string TeamName;
+        [CanBeNull] public string Email;
     }
 }

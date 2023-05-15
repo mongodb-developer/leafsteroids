@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using _00_Shared;
 using _1_Loading;
-using CandyCoded.env;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -28,21 +27,10 @@ namespace _3_Main._ReplaySystem
             var recording = new Recording
             {
                 Snapshots = _snapshots,
-                Player = GameConfigLoader.Instance!.GameConfig!.Player
+                Player = GameConfigLoader.Instance!.GameConfig!.Player,
+                Event = GameConfigLoader.Instance!.GameConfig.Event,
+                Location = GameConfigLoader.Instance!.GameConfig.Event!.Location
             };
-            if (
-                env.TryParseEnvironmentVariable(Constants.DotEnvFileKeys.EventId, out string eventId)
-                && env.TryParseEnvironmentVariable(Constants.DotEnvFileKeys.EventName, out string eventName)
-                && env.TryParseEnvironmentVariable(Constants.DotEnvFileKeys.EventLocation, out string eventLocation)
-            )
-            {
-                recording.Event = new Event()
-                {
-                    Id = eventId,
-                    Name = eventName,
-                    Location = eventLocation
-                };
-            }
             StartCoroutine(
                 AtlasHelper.RecordSnapshot(
                     JsonConvert.SerializeObject(recording),

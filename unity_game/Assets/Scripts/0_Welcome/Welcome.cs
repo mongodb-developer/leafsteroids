@@ -1,5 +1,4 @@
-using _00_Shared;
-using CandyCoded.env;
+using _1_Loading;
 using TMPro;
 using UnityEngine;
 
@@ -11,10 +10,7 @@ namespace _0_Welcome
 
         private void Start()
         {
-            if (env.TryParseEnvironmentVariable(Constants.DotEnvFileKeys.EventName, out string eventName))
-            {
-                welcomeTextField!.text = $"Welcome to\n{eventName}";
-            }
+            welcomeTextField!.text = $"Welcome to\n{GameConfigLoader.Instance!.GameConfig!.Event!.Name}";
         }
     }
 }

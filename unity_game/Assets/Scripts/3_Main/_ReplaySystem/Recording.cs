@@ -16,6 +16,6 @@ namespace _3_Main._ReplaySystem
         public List<Snapshot> Snapshots { get; set; } = new();
         [JsonProperty("location")]
         [CanBeNull] public string Location { get; set; }
-        public Event Event { get; set; }
+        [CanBeNull] public Event Event { get; set; }
     }
 }

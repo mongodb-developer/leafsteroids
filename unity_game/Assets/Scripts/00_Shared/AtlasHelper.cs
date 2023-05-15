@@ -6,6 +6,7 @@ using _3_Main._ReplaySystem;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
+using Event = _3_Main._ReplaySystem.Event;
 
 namespace _00_Shared
 {
@@ -26,6 +27,24 @@ namespace _00_Shared
             else
             {
                 callback?.Invoke(JsonConvert.DeserializeObject<GameConfig>(request.downloadHandler!.text!));
+            }
+        }
+        
+        public static IEnumerator GetEvents(Action<List<Event>> callback = null)
+        {
+            Debug.Log(nameof(GetEvents));
+            using var request = UnityWebRequest.Get(Constants.GetEventsEndpoint);
+            request!.SetRequestHeader("Content-Type", "application/json");
+            request.SetRequestHeader("apiKey", Constants.DataApiKey);
+            yield return request.SendWebRequest();
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request.error);
+                callback?.Invoke(null);
+            }
+            else
+            {
+                callback?.Invoke(JsonConvert.DeserializeObject<List<Event>>(request.downloadHandler!.text!));
             }
         }
 

@@ -1,3 +1,4 @@
+using _3_Main._ReplaySystem;
 using JetBrains.Annotations;
 
 namespace _00_Shared
@@ -12,6 +13,7 @@ namespace _00_Shared
         public float PelletHeatlhMedium;
         public float PelletHeatlhSmall;
         [CanBeNull] public RegisteredPlayer Player;
+        [CanBeNull] public Event Event;
         public float PlayerMoveSpeed;
         public float PlayerRotateSpeed;
         public float RoundDuration;
