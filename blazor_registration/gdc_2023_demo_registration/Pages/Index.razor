@@ -34,21 +34,28 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                 </div>
-                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="Nickname (case sensitive!)" type="text" @oninput="AutoCompleteNickname">
-                <span>
-                    @if (suggestedNicknames.Count > 0)
-                    {
+                <input  id="nickname"
+                        type="text"
+                        class="form-control" 
+                        placeholder="Nickname (case sensitive!)" 
+                        @bind="Player.Nickname" name=""  
+                        @oninput="AutoCompleteNickname">
+                @if (suggestedNicknames.Count > 0)
+                {
+                    <div class="autocomplete" >
                         <ul class="options">
                             @foreach (var nickname in suggestedNicknames)
                             {
-                                <li class="option" @onclick=@(_ => SelectNickname(nickname))>
-                                    <span class="option-text">@nickname</span>
+                                <li id="option_@nickname" 
+                                    class="option"
+                                    @onclick=@(_ => SelectNickname(nickname))
+                                >
+                                    @nickname <!-- visible suggestion -->
                                 </li>
                             }
                         </ul>
-                    }
-                </span>
-
+                    </div>
+                }                
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -83,21 +90,14 @@
     </article>
 
 
-    @if (chartUrl.Length == 0)
-    {
-        <p>
-            <em>Loading...</em>
-        </p>
+    @if (chartUrl.Length == 0) {
+        <p><em>Loading...</em></p>
     }
-    else
-    {
-        <center>
-            <iframe class="myiframe" src="@chartUrl"></iframe>
-        </center>
+    else {
+        <center><iframe class="myiframe" src="@chartUrl"></iframe></center>
     }
 </div> <!-- card.// -->
-
-
+@inject IJSRuntime jsRuntime
 
 
 @code {
@@ -114,6 +114,7 @@
     Dictionary<string, string>? queryParameters;
 
     private List<string> suggestedNicknames = new List<string>();
+    public int FocusedSuggestionIndex { get; set; } = -1;
 
     protected override void OnInitialized()
     {
@@ -136,7 +137,6 @@
         }
 
         Event = Events.FindSync(eventFilter).Single<Event>();
-
 
         chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=645abbc7-2258-4908-8eb4-94bbe0c6d324&theme=light&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
         chartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}";
@@ -208,12 +208,34 @@
         else
         {
             suggestedNicknames.Clear();
+            FocusedSuggestionIndex = -1;
         }
     }
+
+
 
     void SelectNickname(string Nickname)
     {
         Player.Nickname = Nickname;
+        // reset
+        suggestedNicknames.Clear();
+        FocusedSuggestionIndex = -1;
     }
 
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "ArrowUp") {
+            if (FocusedSuggestionIndex > 0) {
+                FocusedSuggestionIndex--;
+            }
+        }
+        else if (e.Key == "ArrowDown") {
+            if (FocusedSuggestionIndex < suggestedNicknames.Count - 1) {
+                FocusedSuggestionIndex++;
+            }            
+        }
+        else if (e.Key == "Enter" && FocusedSuggestionIndex >= 0) {
+            // SelectSuggestion(Suggestions[FocusedSuggestionIndex]);
+        }
+    }
 }
