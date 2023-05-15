@@ -1,80 +1,241 @@
-﻿@* @page "/" *@
-@* *@
-@* <PageTitle>MongoDB Registration</PageTitle> *@
-@* *@
-@* <h1>Welcome to the MongoDB booth at GDC '23</h1> *@
-@* *@
-@* <p>Please enter your name:</p> *@
-@* *@
-@* <input type="text" @bind-value="@Name" /> *@
-@* *@
-@* <p>Your name is: @Name</p> *@
-@* *@
-@* @code { *@
-@*     private string Name { get; set; } *@
-@* } *@
-
-
-@page "/"
+﻿@page "/"
 @using MongoDB.Driver
+@using MongoDB.Bson
 @using gdc_2023_demo_registration.Data
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Team> Teams
+@inject IMongoCollection<Player> Players
+@inject IMongoCollection<PlayerUnique> PlayerUniques
+@inject IMongoCollection<Event> Events
 
 <style>
     body {
         background-color: #023430;
     }
+
+    .myiframe {
+        background: #F1F5F4;
+        border: none;
+        border-radius: 2px;
+        box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);
+        width: 80%;
+        height: 90vh;
+    }
 </style>
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
-<div class="card bg-white" >
+<div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Booth Registration</h2>
-        @* <h4 class="card-title mt-3 text-center">Create a Team</h4> *@
-     
+        <h2 class="text-center">Player Registration & Login</h2>
+        <h4 class="card-title mt-3 text-center"><b>@Event.name</b></h4>
+        <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
+
         <form>
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-user"></i> </span>
                 </div>
-                <input id="nickname" @bind="Team.Nickname" name="" class="form-control" placeholder="Nickname" type="text">
+                <input  id="nickname"
+                        type="text"
+                        class="form-control" 
+                        placeholder="Nickname (case sensitive!)" 
+                        @bind="Player.Nickname" name=""  
+                        @oninput="AutoCompleteNickname">
+                @if (suggestedNicknames.Count > 0)
+                {
+                    <div class="autocomplete" >
+                        <ul class="options">
+                            @foreach (var nickname in suggestedNicknames)
+                            {
+                                <li id="option_@nickname" 
+                                    class="option"
+                                    @onclick=@(_ => SelectNickname(nickname))
+                                >
+                                    @nickname <!-- visible suggestion -->
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }                
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-users"></i> </span>
                 </div>
-                <input id="teamname" @bind="Team.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
+                <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
                 </div>
-                <input id="email" @bind="Team.Email" name="" class="form-control" placeholder="E-Mail for prizes (optional)" type="text">
+                <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="E-Mail for prizes (optional)" type="text">
             </div> <!-- form-group// -->
 
-           
+
             <div class="form-group">
                 <div class="text-center">
-                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreateTeam"> Create Player </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreatePlayer"> Register </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="LoginPlayer"> Login </button>
                 </div>
             </div> <!-- form-group// -->
-           
+
+            <p></p>
+            <p></p>
+
+
+
         </form>
+
     </article>
+
+
+    @if (chartUrl.Length == 0) {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <center><iframe class="myiframe" src="@chartUrl"></iframe></center>
+    }
 </div> <!-- card.// -->
-
-
+@inject IJSRuntime jsRuntime
 
 
 @code {
-    private Team Team { get; set; } = new Team();
 
-    private async Task CreateTeam()
+    private string message = "";
+    private string chartUrl = "";
+
+    private Player Player { get; set; } = new Player();
+    private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
+
+    BsonDocument eventFilter = new BsonDocument("_id", "mdb-local-2023-socal"); // TODO: GET FROM A CONFIG FILE
+    private Event? Event;
+
+    Dictionary<string, string>? queryParameters;
+
+    private List<string> suggestedNicknames = new List<string>();
+    public int FocusedSuggestionIndex { get; set; } = -1;
+
+    protected override void OnInitialized()
     {
-        await Teams!.InsertOneAsync(Team)!;
-        NavigationManager!.NavigateTo("/done");
+        try
+        {
+            var uri = new Uri(NavigationManager.Uri);
+
+            queryParameters = uri.Query.TrimStart('?')
+                .Split('&')
+                .ToDictionary(
+                    x => Uri.UnescapeDataString(x.Split('=')[0]),
+                    x => Uri.UnescapeDataString(x.Split('=')[1])
+                );
+
+            eventFilter = new BsonDocument("_id", queryParameters["event"]);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
+
+        Event = Events.FindSync(eventFilter).Single<Event>();
+
+        chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=645abbc7-2258-4908-8eb4-94bbe0c6d324&theme=light&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
+        chartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}";
+    }
+
+    private async Task CreatePlayer()
+    {
+        message = "";
+        var filter = new BsonDocument("Nickname", Player.Nickname);
+
+        if (PlayerUniques.Find<PlayerUnique>(filter).Any<PlayerUnique>())
+        {
+            message = "[" + Player.Nickname + "] exists! Login instead?";
+        }
+        else
+        {
+            Player.location = Event.location; // Inject location of event for new player
+
+            await Players!.InsertOneAsync(Player)!;
+            await PlayerUniques!.InsertOneAsync(new PlayerUnique
+            {
+                Id = Player.Id,
+                Nickname = Player.Nickname,
+                location = Player.location
+            }
+            )!;
+
+            //NavigationManager!.NavigateTo("/done");
+            NavigationManager!.NavigateTo("/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
+        }
+    }
+
+    private async Task LoginPlayer()
+    {
+
+        message = "";
+        var filter = new BsonDocument("Nickname", Player.Nickname);
+        PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).First<PlayerUnique>();
+
+        if (existingPlayer != null)
+        {
+            NavigationManager!.NavigateTo("/playerHome?location=" + existingPlayer.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id);
+        }
+        else
+        {
+            message = "[" + Player.Nickname + "] not found. Register instead?";
+        }
+    }
+
+    private async Task AutoCompleteNickname(ChangeEventArgs e)
+    {
+        string input = e.Value.ToString();
+
+        if (input.Length >= 2)
+        {
+
+            var nicknames = await PlayerUniques.Aggregate()
+                .Search(Builders<PlayerUnique>
+                    .Search.Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
+                .Project<PlayerUnique>(Builders<PlayerUnique>
+                    .Projection
+                    .Include(p => p.Nickname)
+                    .Exclude(p => p.Id))
+                .Limit(10)
+                .ToListAsync();
+
+            suggestedNicknames = nicknames.Select(p => p.Nickname).ToList();
+        }
+        else
+        {
+            suggestedNicknames.Clear();
+            FocusedSuggestionIndex = -1;
+        }
+    }
+
+
+
+    void SelectNickname(string Nickname)
+    {
+        Player.Nickname = Nickname;
+        // reset
+        suggestedNicknames.Clear();
+        FocusedSuggestionIndex = -1;
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "ArrowUp") {
+            if (FocusedSuggestionIndex > 0) {
+                FocusedSuggestionIndex--;
+            }
+        }
+        else if (e.Key == "ArrowDown") {
+            if (FocusedSuggestionIndex < suggestedNicknames.Count - 1) {
+                FocusedSuggestionIndex++;
+            }            
+        }
+        else if (e.Key == "Enter" && FocusedSuggestionIndex >= 0) {
+            // SelectSuggestion(Suggestions[FocusedSuggestionIndex]);
+        }
     }
 }

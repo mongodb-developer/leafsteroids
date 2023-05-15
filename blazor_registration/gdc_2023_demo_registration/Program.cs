@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
 
 static void ConfigureServices(IServiceCollection services)
 {
@@ -20,8 +19,11 @@ static void ConfigureServices(IServiceCollection services)
         .Build();
 
     services.AddSingleton<IMongoClient>(new MongoClient(config.GetConnectionString("MongoDB")));
-    services.AddSingleton<IMongoDatabase>(x => x.GetRequiredService<IMongoClient>().GetDatabase("registration"));
-    services.AddSingleton<IMongoCollection<Team>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Team>("players"));
+    services.AddSingleton<IMongoDatabase>(x => x.GetRequiredService<IMongoClient>().GetDatabase("Leafsteroids"));
+    services.AddSingleton<IMongoCollection<Player>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Player>("players"));
+    services.AddSingleton<IMongoCollection<PlayerUnique>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<PlayerUnique>("players_unique"));
+    services.AddSingleton<IMongoCollection<Event>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Event>("events"));
+    services.AddSingleton<IMongoCollection<Recording>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Recording>("recordings"));
 }
 
 ConfigureServices(builder.Services);

@@ -66,3 +66,89 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+
+
+/*
+    Custom CSS added by DevRel
+*/
+
+.input-group-prepend {
+    margin-right: -1px;
+    display: flex;
+    box-sizing: border-box;
+    min-width: 48px
+}
+
+.input-group-text {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: #00ed64 !important; 
+}
+
+.input-group {
+    margin: 10px 0 10px 0;
+}
+
+.mongodb_logo {
+}
+
+.card {
+    border-radius: 40px;
+    max-width: 500px;
+    margin: 0 auto; /* Added */
+    float: none; /* Added */
+    margin-bottom: 10px; /* Added */
+}
+
+
+.fa, .fas {
+    min-width: 20px;
+}
+
+
+/*
+    Custom CSS added by DevRel -- Autocomplete CSS
+*/
+
+.autocomplete {
+    position: static;
+}
+
+    .autocomplete .options {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        background: #ecfae8;
+        /* background-color: #ecfae8; */
+        width: 100%;
+        padding: 0;
+        z-index: 10;
+        border: 1px solid #ced4da;
+        border-radius: 0.5rem;
+        box-shadow: 0 30px 25px 8px rgba(0, 0, 0, 0.1);
+    }
+
+.autocomplete .option {
+    display: block;
+    padding: 0.25rem;
+}
+
+.autocomplete .option .option-text {
+    padding: 0.25rem 0.5rem;
+}
+
+.autocomplete .option:hover {
+    background: #1E90FF;
+    color: #fff;
+}
+
+.autocomplete .option.disabled {
+    background-color: lightgrey;
+    cursor: not-allowed;
+}
+
+.autocomplete .option.disabled:hover {
+    background: lightgrey;
+    color: var(--bs-body);
+}
