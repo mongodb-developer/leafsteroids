@@ -11,6 +11,16 @@
     body {
         background-color: #023430;
     }
+
+    .atlascharts_iframe {
+        /*background: #21313C; */
+        border: none;
+        border-radius: 2px;
+        /* box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2); */
+        width: 92vh;
+        height: 200vh;
+        margin: auto;
+    }
 </style>
 
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
@@ -21,9 +31,6 @@
     </article>
 </div> 
 
-<p></p>
-<p></p>
-<p></p>
 
 @if (chartUrl.Length == 0)
 {
@@ -31,7 +38,9 @@
 }
 else
 {
-    <iframe style="background: #21313C;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);width: 100vw;height: 100vh;" src="@chartUrl"></iframe>
+    <div class="row">
+        <iframe class="atlascharts_iframe" src="@chartUrl"></iframe>
+    </div>
 }
 
 @code {
