@@ -18,7 +18,9 @@ static void ConfigureServices(IServiceCollection services)
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build();
 
-    services.AddSingleton<IMongoClient>(new MongoClient(config.GetConnectionString("MongoDB")));
+    var connectionString = config.GetConnectionString("MongoDB");
+    var mongoClient = new MongoClient(connectionString);
+    services.AddSingleton<IMongoClient>(mongoClient);
     services.AddSingleton<IMongoDatabase>(x => x.GetRequiredService<IMongoClient>().GetDatabase("Leafsteroids"));
     services.AddSingleton<IMongoCollection<Player>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Player>("players"));
     services.AddSingleton<IMongoCollection<PlayerUnique>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<PlayerUnique>("players_unique"));
