@@ -29,5 +29,12 @@
             public const string Main = "4_Main";
             public const string Playground = "42_Playground";
         }
+
+        public static class DotEnvFileKeys
+        {
+            public const string EventId = "EVENT_ID";
+            public const string EventName = "EVENT_NAME";
+            public const string EventLocation = "EVENT_LOCATION";
+        }
     }
 }

@@ -60,6 +60,13 @@
       "dependencies": {},
       "url": "https://package.openupm.com"
     },
+    "xyz.candycoded.env": {
+      "version": "https://github.com/CandyCoded/env.git#v1.1.0",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c6951bc02488dbe99f48509a9e289ee73c74acda"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,

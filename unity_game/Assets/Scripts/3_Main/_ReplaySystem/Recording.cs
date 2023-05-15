@@ -14,6 +14,8 @@ namespace _3_Main._ReplaySystem
         public DateTime DateTime { get; } = DateTime.UtcNow;
         public RegisteredPlayer Player { get; set; }
         public List<Snapshot> Snapshots { get; set; } = new();
-        [CanBeNull] public string location { get; set; }
+        [JsonProperty("location")]
+        [CanBeNull] public string Location { get; set; }
+        public Event Event { get; set; }
     }
 }

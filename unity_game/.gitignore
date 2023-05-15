@@ -74,3 +74,5 @@ crashlytics-build.properties
 # Custom part
 .idea
 .DS_Store
+
+.env
