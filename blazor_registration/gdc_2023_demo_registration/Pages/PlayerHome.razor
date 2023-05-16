@@ -9,6 +9,7 @@
 @inject IMongoCollection<Event> Events
 
 <style>
+    /* this in inside the body tag */
     body {
         background-color: #023430;
     }
@@ -22,7 +23,7 @@
         border: none;
         border-radius: 2px;
         /* box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2); */
-        width: 85%;
+        width: 100%;
         height: 200vh;
         margin: auto;
     }
@@ -30,7 +31,6 @@
 </style>
 
 
-<img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
         <h2 class="text-center">Player Dashboard</h2>
@@ -64,21 +64,16 @@
 </div> <!-- card.// -->
 
 
-
-@if (chartUrl.Length == 0)
-{
-    <div class="card bg-white">
+<div class="card bg-white">
+    @if (chartUrl.Length == 0){
         <p>
             <em>Loading...</em>
         </p>
-    </div>
-}
-else
-{
-    <div class="card bg-white">
+    }
+    else {
         <iframe class="atlascharts_iframe" src="@chartUrl"></iframe>
-    </div>
-}
+    }
+</div>
 
 
 @code {
@@ -117,8 +112,8 @@ else
             Console.WriteLine(Nickname);
             Console.WriteLine(EventId);
 
-            chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=dark&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
-            chartUrl += "&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27,%27Event._id%27:%27" + EventId + "%27}";
+            //chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=dark&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
+            //chartUrl += "&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27,%27Event._id%27:%27" + EventId + "%27}";
 
             Event = Events
                 .Find(e => e.Id.Equals(EventId))
@@ -128,6 +123,23 @@ else
                 .Find(p => p.location.Equals(location) &&
                            p.Nickname.Equals(Nickname))
                 .First<Player>();
+
+            string atlasChartEmbedDashboardURL = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards";
+            string atlasChartID = "64540ea3-f8b8-4211-8c3b-cff2506301a4"; // Player home dashboard
+
+            string tmpchartUrl = atlasChartEmbedDashboardURL;
+
+            tmpchartUrl += "?id=" + atlasChartID; // FIRST parameter. This typically changed for each route of the website
+            tmpchartUrl += "&theme=light"; // or dark
+            tmpchartUrl += "&autoRefresh=true";
+            tmpchartUrl += "&maxDataAge=60";
+            tmpchartUrl += "&showTitleAndDesc=false";
+            tmpchartUrl += "&scalingWidth=100%25"; // 100% url-encoded
+            tmpchartUrl += "&scalingHeight=fixed";
+            tmpchartUrl += "&showAttribution=false";
+            tmpchartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
+
+            chartUrl = tmpchartUrl;
         }
         catch (Exception ex)
         {
