@@ -27,7 +27,20 @@
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
         <h2 class="text-center">Player Registration & Login</h2>
-        <h4 class="card-title mt-3 text-center"><b>@Event.name</b></h4>
+        <h4 class="card-title mt-3 text-center">
+            <b>
+                @if ( (@Event!=null) ) 
+                {
+                    if ((@Event.Id != null) && (@Event.location != null) && (@Event.name != null))
+                    {
+                        <a href="/eventHome/?location=@Event.location&EventId=@Event.Id">@Event.name</a>
+                    } else
+                    {
+                        @Event.name
+                    }
+                }                 
+            </b>
+        </h4>
         <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
 
         <form>
