@@ -1,3 +1,4 @@
+using System;
 using _1_Loading;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,9 @@ namespace _0_Welcome
 
         private void Start()
         {
+            // var foo = Environment.GetEnvironmentVariable("foo");
+            // Debug.Log(foo);
+            // Environment.SetEnvironmentVariable("foo", "bar");
             welcomeTextField!.text = $"Welcome to\n{GameConfigLoader.Instance!.GameConfig!.Event!.Name}";
         }
     }
