@@ -171,7 +171,7 @@
         tmpchartUrl += "&showTitleAndDesc=false";
         tmpchartUrl += "&scalingWidth=100%25"; // 100% url-encoded
         tmpchartUrl += "&scalingHeight=fixed";
-        tmpchartUrl += "&showAttribution=false";    // removes the logo inside the iframe = tighter fit
+        tmpchartUrl += "&attribution=false";    // removes the logo inside the iframe = tighter fit
         tmpchartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
 
         chartUrl = tmpchartUrl; // in the future, consider assembling the non-encoded URL, then encode it with HttpUtility.UrlEncode(); 
