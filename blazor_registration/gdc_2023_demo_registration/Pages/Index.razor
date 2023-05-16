@@ -197,8 +197,7 @@
 
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
-        PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).First<PlayerUnique>();
-
+        PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
         if (existingPlayer != null)
         {
             NavigationManager!.NavigateTo("/playerHome?location=" + existingPlayer.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id);
