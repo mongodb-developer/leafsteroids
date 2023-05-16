@@ -3,11 +3,13 @@
 @using MongoDB.Bson
 @using System.Web
 @using gdc_2023_demo_registration.Data
+@using Microsoft.AspNetCore.Components.Forms
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
 @inject IMongoCollection<PlayerUnique> PlayerUniques
 @inject IMongoCollection<Event> Events
+
 
 <style>
     body {
@@ -50,11 +52,12 @@
                 </div>
                 <input  id="nickname"
                         type="text"
-                        pattern="[a-zA-Z0-9]*"
                         class="form-control" 
                         placeholder="Nickname (case sensitive!)" 
                         @bind="Player.Nickname" name=""  
-                        @oninput="AutoCompleteNickname">
+                        @oninput="AutoCompleteNickname"
+                        required>
+
                 @if (suggestedNicknames.Count > 0)
                 {
                     <div class="autocomplete" >
@@ -99,7 +102,6 @@
                 </div>
             </div> <!-- form-group// -->
         </form>
-
     </article>
 </div> <!-- card.// -->
 
@@ -121,7 +123,6 @@
 
 
 @code {
-
     private string message = "";
     private string chartUrl = "";
 
@@ -160,7 +161,7 @@
 
         string atlasChartEmbedDashboardURL = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards";
         string atlasChartID = "645abbc7-2258-4908-8eb4-94bbe0c6d324";
-        
+
         string tmpchartUrl = atlasChartEmbedDashboardURL;
 
         tmpchartUrl += "?id=" + atlasChartID; // FIRST parameter. This typically changed for each route of the website
@@ -172,14 +173,20 @@
         tmpchartUrl += "&scalingHeight=fixed";
         tmpchartUrl += "&showAttribution=false";    // removes the logo inside the iframe = tighter fit
         tmpchartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
-        
+
         chartUrl = tmpchartUrl; // in the future, consider assembling the non-encoded URL, then encode it with HttpUtility.UrlEncode(); 
-        // additional iframe options
-        // https://www.mongodb.com/docs/charts/embedded-chart-options/#std-label-embedded-chart-options
+                                // additional iframe options
+                                // https://www.mongodb.com/docs/charts/embedded-chart-options/#std-label-embedded-chart-options
     }
 
     private async Task CreatePlayer()
     {
+        // basic checks
+        if ((Player == null) || (Player.Nickname == null) || (Event == null) || (Event.location== null) ) {
+            message = "[please fill out the form]";
+            return;
+        }        
+
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
 
@@ -200,20 +207,28 @@
             }
             )!;
 
+            var new_dest = "/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id;
+            NavigationManager!.NavigateTo( new_dest );
             //NavigationManager!.NavigateTo("/done");
-            NavigationManager!.NavigateTo("/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
         }
     }
 
     private async Task LoginPlayer()
     {
+        // basic checks
+        if ( (Player == null) || (Player.Nickname == null) )
+        {
+            message = "[enter your nickname]";
+            return;
+        }    
 
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
         PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
         if (existingPlayer != null)
         {
-            NavigationManager!.NavigateTo("/playerHome?location=" + existingPlayer.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id);
+            var new_dest = "/playerHome?location=" + existingPlayer.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id;
+            NavigationManager!.NavigateTo( new_dest );
         }
         else
         {
