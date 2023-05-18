@@ -60,7 +60,7 @@ namespace _3_Main
             if (!_hasShoot)
                 shootInstructions!.text = ButtonMappings.DetectedInputDevice switch
                 {
-                    DetectedInputDevice.Joystick => "Shoot with B!",
+                    DetectedInputDevice.Joystick => "Shoot with A!",
                     DetectedInputDevice.Keyboard => "Shoot using Space / Enter / Up Arrow!",
                     _ => shootInstructions!.text
                 };
