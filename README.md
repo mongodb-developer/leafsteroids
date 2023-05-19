@@ -1,4 +1,4 @@
-# GDC 2023 Demo
+# Leafsteroids
 
 <img width="2056" alt="Screenshot 2023-05-18 at 16 15 09" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/e32ade66-493e-422e-91d3-3744efb578f7">
 <img width="2056" alt="Screenshot 2023-05-18 at 16 15 16" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/23b366c0-9586-46fd-8e4a-54fb825d4b4b">
