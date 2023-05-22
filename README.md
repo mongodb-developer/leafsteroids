@@ -120,3 +120,4 @@ The application can be accessed at http://localhost:5002
 - [Dominic Frei](https://linktr.ee/dominicfrei)
 - [Hubert Nguyen](https://)
 - [Nic Raboy](https://www.nraboy.com)
+- [Sig Narváez](https://www.linkedin.com/in/signarvaez/)
