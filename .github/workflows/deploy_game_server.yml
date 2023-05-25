@@ -1,4 +1,4 @@
-name: Deploy game server to AWS Beanstalk
+name: Deploy game server to AWS Beanstalk from main branch
 
 on:
   push:
