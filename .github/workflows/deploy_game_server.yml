@@ -18,6 +18,7 @@ jobs:
 
       - name: Install pytest
         run: |
+          cd game_server
           pip install --upgrade pip
           pip install -r requirements.txt
           echo ${{ steps.commit.outputs.hash }}
