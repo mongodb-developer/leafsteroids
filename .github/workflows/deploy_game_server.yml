@@ -33,7 +33,7 @@ jobs:
           API_KEY: ${{ secrets.API_KEY }}
 
       - name: Generate deployment package
-        run: zip -r deploy.zip . -x '*.git*'
+        run: zip -r deploy.zip game_server -x '*.git*'
 
       - name: Deploy to AWS Beanstealk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -43,5 +43,5 @@ jobs:
           application_name: leafsteroids
           environment_name: Leafsteroids-leafsteroids
           version_label: GAME_SERVER_${{ steps.commit.outputs.hash }}
-          region: ap-northeast-1
+          region: us-east-1
           deployment_package: deploy.zip
