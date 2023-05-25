@@ -25,6 +25,8 @@ jobs:
 
       - name: Run tests with pytest
         run: pytest
+        with:
+          API_KEY: ${{ secrets.API_KEY }}
 
       - name: Generate deployment package
         run: zip -r deploy.zip . -x '*.git*'
