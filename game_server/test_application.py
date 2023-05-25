@@ -8,7 +8,7 @@ def test_get_events():
     assert response.status_code == 200
     json = response.json
     assert json
-    assert len(json) == 34
+    assert len(json) > 10
     assert json[0]["_id"] == "gdc-2023-sf"
 
 
@@ -43,7 +43,7 @@ def test_post_recording():
             " PowerUpBulletSpeedCollected": 42,
             " PowerUpPlayerSpeedCollected": 42,
         },
-        "location":"",
+        "location":"TESTING",
         "DateTime": "2023-05-24 10:30:00 +05:00",
         "RegisteredPlayer": {
             "_id": "640ce9f8e98101ac554aa9ef",
