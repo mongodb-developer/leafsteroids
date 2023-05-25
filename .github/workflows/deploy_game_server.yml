@@ -1,0 +1,40 @@
+name: Deploy game server to AWS Beanstalk
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - id: commit
+        uses: pr-mpt/actions-commit-hash@v2
+
+      - name: Install pytest
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          echo ${{ steps.commit.outputs.hash }}
+
+      - name: Run tests with pytest
+        run: pytest
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip . -x '*.git*'
+
+      - name: Deploy to AWS Beanstealk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: leafsteroids
+          environment_name: Leafsteroids-leafsteroids
+          version_label: GAME_SERVER_${{ steps.commit.outputs.hash }}
+          region: ap-northeast-1
+          deployment_package: deploy.zip
