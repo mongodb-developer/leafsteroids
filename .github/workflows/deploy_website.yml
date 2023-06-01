@@ -1,0 +1,40 @@
+name: Deploy website to AWS Beanstalk from main branch
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - id: commit
+        uses: pr-mpt/actions-commit-hash@v2
+
+      - name: Set up environment variables
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+
+      - name: Generate deployment package
+        run: |
+          cd blazor_registration
+          cd gdc_2023_demo_registration
+          dotnet publish -o output
+          cd output
+          zip -r ../deploy.zip .
+
+      - name: Deploy to AWS Beanstealk
+        uses: einaregilsson/beanstalk-deploy@v21
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: leafsteroids-website
+          environment_name: Leafsteroids-website-env-2
+          version_label: WEBSITE_${{ steps.commit.outputs.hash }}
+          region: us-east-1
+          deployment_package: deploy.zip
