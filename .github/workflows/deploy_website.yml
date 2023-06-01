@@ -26,7 +26,7 @@ jobs:
           cd gdc_2023_demo_registration
           dotnet publish -o output
           cd output
-          zip -r ../../deploy.zip .
+          zip -r ../deploy.zip .
 
       - name: Deploy to AWS Beanstealk
         uses: einaregilsson/beanstalk-deploy@v21
@@ -37,4 +37,4 @@ jobs:
           environment_name: Leafsteroids-website-env-2
           version_label: WEBSITE_${{ steps.commit.outputs.hash }}
           region: us-east-1
-          deployment_package: deploy.zip
+          deployment_package: ./blazor_registration/deploy.zip
