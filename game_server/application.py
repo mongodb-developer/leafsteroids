@@ -15,6 +15,11 @@ logging.basicConfig(level=logging.DEBUG)
 app.logger.setLevel(logging.DEBUG)
 
 
+@app.route('/', methods=['GET'])
+def get_root():
+    return "I'm alive."
+
+
 @app.route('/events', methods=['GET'])
 def get_events():
     return send_request('events', ENDPOINT_GET_EVENTS)
