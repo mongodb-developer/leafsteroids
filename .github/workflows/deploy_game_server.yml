@@ -26,7 +26,7 @@ jobs:
       - name: Set up environment variables
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
-  
+
       - name: Run tests with pytest
         run: pytest
         env:
@@ -41,7 +41,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: leafsteroids-v2-rest-server
-          environment_name: leafsteroids-v2-rest-server
+          environment_name: leafsteroids-v2-rest-server-prod
           version_label: leafsteroids-v2-rest-server-${{ steps.commit.outputs.hash }}
           region: us-east-1
           deployment_package: deploy.zip
