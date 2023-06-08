@@ -40,8 +40,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: leafsteroids-test
-          environment_name: leafsteroids-test
-          version_label: leafsteroids-test-${{ steps.commit.outputs.hash }}
+          application_name: leafsteroids-v2-rest-server
+          environment_name: leafsteroids-v2-rest-server
+          version_label: leafsteroids-v2-rest-server-${{ steps.commit.outputs.hash }}
           region: us-east-1
           deployment_package: deploy.zip

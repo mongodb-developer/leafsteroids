@@ -4,13 +4,13 @@
     {
         public const string Version = "v1.0-RC2";
 
-        public const string DataApiUrlInsertOne = "http://leafsteroids.us-east-1.elasticbeanstalk.com/recording";
+        public const string DataApiUrlInsertOne = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/recording";
 
-        // public const string DataApiUrlGetMany = "http://leafsteroids.us-east-1.elasticbeanstalk.com/snapshots";
-        // public const string DataApiUrlGetOne = "http://leafsteroids.us-east-1.elasticbeanstalk.com/snapshot?id=";
-        public const string GetPlayersEndpoint = "http://leafsteroids.us-east-1.elasticbeanstalk.com/players";
-        public const string GetEventsEndpoint = "http://leafsteroids.us-east-1.elasticbeanstalk.com/events";
-        public const string GetConfigEndpoint = "http://leafsteroids.us-east-1.elasticbeanstalk.com/config";
+        // public const string DataApiUrlGetMany = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/snapshots";
+        // public const string DataApiUrlGetOne = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/snapshot?id=";
+        public const string GetPlayersEndpoint = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/players";
+        public const string GetEventsEndpoint = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/events";
+        public const string GetConfigEndpoint = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/config";
 
         public const float RecordingSpeed = 0.1f;
 
