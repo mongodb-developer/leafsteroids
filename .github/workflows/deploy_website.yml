@@ -29,8 +29,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: leafsteroids-website
-          environment_name: Leafsteroids-website-env-2
-          version_label: WEBSITE_${{ steps.commit.outputs.hash }}
+          application_name: leafsteroids-v2-website
+          environment_name: leafsteroids-v2-website-prod
+          version_label: leafsteroids-v2-website-${{ steps.commit.outputs.hash }}
           region: us-east-1
           deployment_package: ./blazor_registration/gdc_2023_demo_registration/deploy.zip
