@@ -4,13 +4,15 @@
     {
         public const string Version = "v1.0-RC2";
 
-        public const string DataApiUrlInsertOne = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/recording";
+        private const string BaseUrl = "http://3.229.247.46:8000";
 
-        // public const string DataApiUrlGetMany = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/snapshots";
-        // public const string DataApiUrlGetOne = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/snapshot?id=";
-        public const string GetPlayersEndpoint = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/players";
-        public const string GetEventsEndpoint = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/events";
-        public const string GetConfigEndpoint = "http://leafsteroids-v2-rest-server.us-east-1.elasticbeanstalk.com/config";
+        public static readonly string DataApiUrlInsertOne = $"{BaseUrl}/recording";
+
+        // public const string DataApiUrlGetMany = $"{BaseUrl}/snapshots";
+        // public const string DataApiUrlGetOne = $"{BaseUrl}/snapshot?id=";
+        public static readonly string GetPlayersEndpoint = $"{BaseUrl}/players";
+        public static readonly string GetEventsEndpoint = $"{BaseUrl}/events";
+        public static readonly string GetConfigEndpoint = $"{BaseUrl}/config";
 
         public const float RecordingSpeed = 0.1f;
 
