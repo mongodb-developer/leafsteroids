@@ -26,10 +26,6 @@ static void ConfigureServices(IServiceCollection services)
 
 ConfigureServices(builder.Services);
 
-// builder.Services.AddSingleton<IMongoClient>(new MongoClient(Configuration.GetConnectionString("MongoDB")));
-// builder.Services.AddSingleton<IMongoDatabase>(x => x.GetRequiredService<IMongoClient>().GetDatabase("yourDatabaseName"));
-// builder.Services.AddSingleton<IMongoCollection<Team>>(x => x.GetRequiredService<IMongoDatabase>().GetCollection<Team>("yourCollectionName"));
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
