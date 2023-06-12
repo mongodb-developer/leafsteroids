@@ -1,22 +1,13 @@
 # Leafsteroids
 
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 09" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/e32ade66-493e-422e-91d3-3744efb578f7">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 16" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/23b366c0-9586-46fd-8e4a-54fb825d4b4b">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 25" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/51244c98-10fd-415a-ae40-808e001945a6">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 32" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/681e2eee-ad6d-4064-b1c5-02c9606fe64c">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 38" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/6f7bf85c-7867-4935-acbe-f84ec10f1217">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 46" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/03d0f556-1b67-49e5-88e8-1293f0d1c6c0">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 15 54" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/b8c92675-f626-479d-916f-e68fd0655c41">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 16 04" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/b19613f2-f12e-4b26-9dca-67037c21e718">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 16 10" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/52e77fb4-ba4c-4df0-b2b4-b49d3cc46c1b">
-<img width="2056" alt="Screenshot 2023-05-18 at 16 17 55" src="https://github.com/mongodb-developer/gdc-2023-demo/assets/1942012/4835da6e-c36c-4c76-98d0-2632dc8f0124">
+This repository contains the MongoDB `Leafsteroids` demo. Follow the instructions in this README to deploy a version yourself.
 
 ## The Requirements
 
 To reproduce and publish this project, there are a few software requirements that must be met:
 
 - A [MongoDB Atlas](https://www.mongodb.com/atlas/database) account with an M0 tier cluster or better.
-- The latest Unity LTS release
+- Unity 3D, version 2021.3.19f1
 - The [Realm CLI](https://www.mongodb.com/docs/atlas/app-services/cli/)
 - The .NET Core SDK
 
