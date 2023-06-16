@@ -21,3 +21,11 @@ jobs:
           password: ${{ secrets.GAME_SERVER_PASSWORD }}
           source: "game_server/*"
           target: /home/ubuntu
+
+      - name: reboot game server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.GAME_SERVER_IP }}
+          username: ${{ secrets.GAME_SERVER_USERNAME }}
+          password: ${{ secrets.GAME_SERVER_PASSWORD }}
+          script: sudo systemctl restart game_server
