@@ -5,6 +5,7 @@
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
+@inject IMongoCollection<PlayerUnique> PlayersUnique
 @inject IMongoCollection<Recording> Recordings
 @inject IMongoCollection<Event> Events
 
@@ -26,7 +27,6 @@
         height: 200vh;
         margin: auto;
     }
-    
 </style>
 
 
@@ -124,9 +124,13 @@ else
                 .Find(e => e.Id.Equals(EventId))
                 .First<Event>();
 
+            PlayerUnique playerUnique = PlayersUnique
+                .Find(p => p.Nickname.Equals(Nickname))
+                .First<PlayerUnique>();
+
             Player = Players
-                .Find(p => p.location.Equals(location) &&
-                           p.Nickname.Equals(Nickname))
+                .Find(p => p.location.Equals(playerUnique.location) &&
+                           p.Nickname.Equals(playerUnique.Nickname))
                 .First<Player>();
         }
         catch (Exception ex)

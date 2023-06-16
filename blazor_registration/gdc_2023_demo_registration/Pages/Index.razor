@@ -108,7 +108,7 @@
     private Player Player { get; set; } = new Player();
     private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
 
-    BsonDocument eventFilter = new BsonDocument("_id", "mdb-local-2023-socal"); // TODO: GET FROM A CONFIG FILE
+    BsonDocument eventFilter = new BsonDocument("_id", "mdb-local-2023-new-york"); // TODO: GET FROM A CONFIG FILE
     private Event? Event;
 
     Dictionary<string, string>? queryParameters;
@@ -165,7 +165,7 @@
             )!;
 
             //NavigationManager!.NavigateTo("/done");
-            NavigationManager!.NavigateTo("/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
+            NavigationManager!.NavigateTo("/playerHome?location=" + Event.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
         }
     }
 
@@ -177,7 +177,7 @@
         PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
         if (existingPlayer != null)
         {
-            NavigationManager!.NavigateTo("/playerHome?location=" + existingPlayer.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id);
+            NavigationManager!.NavigateTo("/playerHome?location=" + Event.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id);
         }
         else
         {
