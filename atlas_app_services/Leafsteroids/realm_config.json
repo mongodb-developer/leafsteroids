@@ -4,6 +4,5 @@
     "name": "Leafsteroids",
     "location": "US-VA",
     "provider_region": "aws-us-east-1",
-    "deployment_model": "GLOBAL",
-    "environment": "production"
+    "deployment_model": "GLOBAL"
 }
