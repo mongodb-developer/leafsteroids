@@ -19,6 +19,5 @@ jobs:
           host: ${{ secrets.GAME_SERVER_IP }}
           username: ${{ secrets.GAME_SERVER_USERNAME }}
           password: ${{ secrets.GAME_SERVER_PASSWORD }}
-          #          port: ${{ secrets.PORT }}
           source: "game_server/*"
           target: /home/ubuntu
