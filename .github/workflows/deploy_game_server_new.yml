@@ -1,0 +1,24 @@
+name: Deploy game_server folder to AWS EC2 instance
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout repo
+        uses: actions/checkout@v2
+
+      - name: deploy game server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.GAME_SERVER_IP }}
+          username: ${{ secrets.GAME_SERVER_USERNAME }}
+          password: ${{ secrets.GAME_SERVER_PASSWORD }}
+          #          port: ${{ secrets.PORT }}
+          source: "game_server/*"
+          target: /home/ubuntu/game_server
