@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using _3_Main._ReplaySystem;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -17,7 +16,6 @@ namespace _00_Shared
             Debug.Log(nameof(GetConfig));
             using var request = UnityWebRequest.Get(Constants.GetConfigEndpoint);
             request!.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("apiKey", Constants.DataApiKey);
             yield return request.SendWebRequest();
             if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
@@ -29,14 +27,14 @@ namespace _00_Shared
                 callback?.Invoke(JsonConvert.DeserializeObject<GameConfig>(request.downloadHandler!.text!));
             }
         }
-        
+
         public static IEnumerator GetEvents(Action<List<Event>> callback = null)
         {
             Debug.Log(nameof(GetEvents));
             using var request = UnityWebRequest.Get(Constants.GetEventsEndpoint);
-            request!.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("apiKey", Constants.DataApiKey);
-            yield return request.SendWebRequest();
+            // request!.SetRequestHeader("Content-Type", "application/json");
+            // request.SetRequestHeader("apiKey", Constants.DataApiKey);
+            yield return request!.SendWebRequest();
             if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
                 Debug.Log(request.error);
@@ -53,7 +51,6 @@ namespace _00_Shared
             Debug.Log(nameof(GetPlayers));
             using var request = UnityWebRequest.Get(Constants.GetPlayersEndpoint);
             request!.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("apiKey", Constants.DataApiKey);
             yield return request.SendWebRequest();
             if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
             {
@@ -66,45 +63,42 @@ namespace _00_Shared
             }
         }
 
-        public static IEnumerator GetSnapshots(Action<List<Recording>> callback = null)
-        {
-            using var request = UnityWebRequest.Get(Constants.DataApiUrlGetMany);
-            request!.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("apiKey", Constants.DataApiKey);
-            yield return request.SendWebRequest();
-            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log(request.error);
-                callback?.Invoke(null);
-            }
-            else
-            {
-                callback?.Invoke(JsonConvert.DeserializeObject<List<Recording>>(request.downloadHandler!.text!));
-            }
-        }
-
-        public static IEnumerator GetSnapshot(string id, Action<Recording> callback = null)
-        {
-            using var request = UnityWebRequest.Get(Constants.DataApiUrlGetOne + id);
-            request!.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("apiKey", Constants.DataApiKey);
-            yield return request.SendWebRequest();
-            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.Log(request.error);
-                callback?.Invoke(null);
-            }
-            else
-            {
-                callback?.Invoke(JsonConvert.DeserializeObject<Recording>(request.downloadHandler!.text!));
-            }
-        }
+        // public static IEnumerator GetSnapshots(Action<List<Recording>> callback = null)
+        // {
+        //     using var request = UnityWebRequest.Get(Constants.DataApiUrlGetMany);
+        //     request!.SetRequestHeader("Content-Type", "application/json");
+        //     yield return request.SendWebRequest();
+        //     if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+        //     {
+        //         Debug.Log(request.error);
+        //         callback?.Invoke(null);
+        //     }
+        //     else
+        //     {
+        //         callback?.Invoke(JsonConvert.DeserializeObject<List<Recording>>(request.downloadHandler!.text!));
+        //     }
+        // }
+        //
+        // public static IEnumerator GetSnapshot(string id, Action<Recording> callback = null)
+        // {
+        //     using var request = UnityWebRequest.Get(Constants.DataApiUrlGetOne + id);
+        //     request!.SetRequestHeader("Content-Type", "application/json");
+        //     yield return request.SendWebRequest();
+        //     if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+        //     {
+        //         Debug.Log(request.error);
+        //         callback?.Invoke(null);
+        //     }
+        //     else
+        //     {
+        //         callback?.Invoke(JsonConvert.DeserializeObject<Recording>(request.downloadHandler!.text!));
+        //     }
+        // }
 
         public static IEnumerator RecordSnapshot(string data, Action<bool> callback = null)
         {
             using var request = new UnityWebRequest(Constants.DataApiUrlInsertOne, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
-            request.SetRequestHeader("apiKey", Constants.DataApiKey);
             var bodyRaw = Encoding.UTF8.GetBytes(data!);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.downloadHandler = new DownloadHandlerBuffer();

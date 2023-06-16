@@ -73,6 +73,19 @@ a, .btn-link {
     Custom CSS added by DevRel
 */
 
+.iframe-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* height: 100vh; */
+}
+
+.iframe-wrapper iframe {
+    margin: auto;
+    display: block;
+}
+
+
 .input-group-prepend {
     margin-right: -1px;
     display: flex;

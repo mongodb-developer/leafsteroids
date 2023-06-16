@@ -1,21 +1,32 @@
 using System.Collections;
-using _00_Shared;
 using UnityEngine;
 using UnityEngine.Playables;
 
-public class StartGame : MonoBehaviour
+namespace _00_Shared
 {
-    [SerializeField] private PlayableDirector playableDirector;
-
-    private void Start()
+    public class StartGame : MonoBehaviour
     {
-        playableDirector!.Play();
-        StartCoroutine(WaitForTimeline());
-    }
+        [SerializeField] private PlayableDirector playableDirector;
 
-    private IEnumerator WaitForTimeline()
-    {
-        while (playableDirector!.state == PlayState.Playing) yield return null;
-        SceneNavigation.SwitchToMain();
+        private void Start()
+        {
+            ResetPlayableDirector();
+            StartCoroutine(WaitForTimeline());
+        }
+
+        private void ResetPlayableDirector()
+        {
+            Time.timeScale = 1f;
+            playableDirector!.Stop();
+            playableDirector!.time = 0;
+            playableDirector.Evaluate();
+            playableDirector!.Play();
+        }
+
+        private IEnumerator WaitForTimeline()
+        {
+            while (playableDirector!.state == PlayState.Playing) yield return null;
+            SceneNavigation.SwitchToMain();
+        }
     }
 }

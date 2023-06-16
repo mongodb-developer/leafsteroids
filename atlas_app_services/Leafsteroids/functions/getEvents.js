@@ -7,7 +7,7 @@ exports = async function({ query, headers, body}, response) {
     if(start_date && end_date) {
       filter.CreatedAt = {
         "$gte": new Date(start_date),
-        "$lte": new Date(end_date)
+        "$lte": new Date(end_date),
       }
     }
   
@@ -15,7 +15,7 @@ exports = async function({ query, headers, body}, response) {
       .get("mongodb-atlas")
       .db("Leafsteroids")
       .collection("events")
-        .find(filter)
+        .find({})  // .find({"_id":"mdb-local-2023-socal"})
         .sort({})
         .toArray();
 

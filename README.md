@@ -1,11 +1,13 @@
-# GDC 2023 Demo
+# Leafsteroids
+
+This repository contains the MongoDB `Leafsteroids` demo. Follow the instructions in this README to deploy a version yourself.
 
 ## The Requirements
 
 To reproduce and publish this project, there are a few software requirements that must be met:
 
 - A [MongoDB Atlas](https://www.mongodb.com/atlas/database) account with an M0 tier cluster or better.
-- The latest Unity LTS release
+- Unity 3D, version 2021.3.19f1
 - The [Realm CLI](https://www.mongodb.com/docs/atlas/app-services/cli/)
 - The .NET Core SDK
 
