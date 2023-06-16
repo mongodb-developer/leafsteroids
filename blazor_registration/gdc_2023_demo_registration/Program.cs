@@ -1,7 +1,6 @@
 using gdc_2023_demo_registration.Data;
 using MongoDB.Driver;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
