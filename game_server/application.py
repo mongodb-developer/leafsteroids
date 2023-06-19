@@ -15,7 +15,7 @@ app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def get_root():
-    return "I'm alive."
+    return "I'm alive!"
 
 
 @app.route('/events', methods=['GET'])
