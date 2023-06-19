@@ -25,7 +25,9 @@
         height: 90vh;
     }
 </style>
-
+<a href="\?EventId=@event_name">
+    <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+</a>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
         <h2 class="text-center">Player Registration & Login</h2>
@@ -123,39 +125,44 @@
 
 
 @code {
+
     private string message = "";
     private string chartUrl = "";
 
     private Player Player { get; set; } = new Player();
     private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
 
-    BsonDocument eventFilter = new BsonDocument("_id", "mdb-local-2023-socal"); // TODO: GET FROM A CONFIG FILE
     private Event? Event;
+    private string event_name = "";
 
     Dictionary<string, string>? queryParameters;
 
     private List<string> suggestedNicknames = new List<string>();
     public int FocusedSuggestionIndex { get; set; } = -1;
 
+    
+
     protected override void OnInitialized()
     {
-        try
-        {
-            var uri = new Uri(NavigationManager.Uri);
+        // PRepare to read URL parameters
+        // URL event param will always take precedence
+        var uri = new Uri(NavigationManager.Uri);
+        var queryParameters = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
-            queryParameters = uri.Query.TrimStart('?')
-                .Split('&')
-                .ToDictionary(
-                    x => Uri.UnescapeDataString(x.Split('=')[0]),
-                    x => Uri.UnescapeDataString(x.Split('=')[1])
-                );
-
-            eventFilter = new BsonDocument("_id", queryParameters["event"]);
+        if ( queryParameters.ContainsKey("event") ) {
+            event_name = queryParameters["event"];
+        } 
+        else {
+            if (queryParameters.ContainsKey("EventId"))
+            {
+                event_name = queryParameters["EventId"];
+            }
+            else {
+                // fallback on a default event, if none is available
+                event_name = "mdb-local-2023-socal";
+            }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
+        BsonDocument eventFilter = new BsonDocument("_id", event_name);
 
         Event = Events.FindSync(eventFilter).Single<Event>();
 
