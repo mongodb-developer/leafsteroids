@@ -24,7 +24,9 @@ namespace _00_Shared
             }
             else
             {
-                callback?.Invoke(JsonConvert.DeserializeObject<GameConfig>(request.downloadHandler!.text!));
+                var gameConfig = JsonConvert.DeserializeObject<GameConfig>(request.downloadHandler!.text!);
+                Debug.Log(gameConfig);
+                callback?.Invoke(gameConfig);
             }
         }
 

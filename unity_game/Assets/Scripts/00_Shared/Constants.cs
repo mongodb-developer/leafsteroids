@@ -4,7 +4,7 @@
     {
         public const string Version = "v1.0-RC2";
 
-        private const string BaseUrl = "http://3.229.247.46:8000";
+        private const string BaseUrl = "http://54.88.138.219:8000";
 
         public static readonly string DataApiUrlInsertOne = $"{BaseUrl}/recording";
 
