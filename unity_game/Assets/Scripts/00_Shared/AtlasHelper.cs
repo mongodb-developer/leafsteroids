@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using _1_Loading;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -14,7 +15,11 @@ namespace _00_Shared
         public static IEnumerator GetConfig(Action<GameConfig> callback = null)
         {
             Debug.Log(nameof(GetConfig));
-            using var request = UnityWebRequest.Get(Constants.GetConfigEndpoint);
+            var url = string.Format(Constants.GameServerEndpoints.GetConfig,
+                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
+                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+            Debug.Log(url);
+            using var request = UnityWebRequest.Get(url);
             request!.SetRequestHeader("Content-Type", "application/json");
             yield return request.SendWebRequest();
             if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
@@ -33,7 +38,11 @@ namespace _00_Shared
         public static IEnumerator GetEvents(Action<List<Event>> callback = null)
         {
             Debug.Log(nameof(GetEvents));
-            using var request = UnityWebRequest.Get(Constants.GetEventsEndpoint);
+            var url = string.Format(Constants.GameServerEndpoints.GetEvents,
+                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
+                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+            Debug.Log(url);
+            using var request = UnityWebRequest.Get(url);
             // request!.SetRequestHeader("Content-Type", "application/json");
             // request.SetRequestHeader("apiKey", Constants.DataApiKey);
             yield return request!.SendWebRequest();
@@ -51,7 +60,11 @@ namespace _00_Shared
         public static IEnumerator GetPlayers(Action<List<RegisteredPlayer>> callback = null)
         {
             Debug.Log(nameof(GetPlayers));
-            using var request = UnityWebRequest.Get(Constants.GetPlayersEndpoint);
+            var url = string.Format(Constants.GameServerEndpoints.GetPlayers,
+                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
+                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+            Debug.Log(url);
+            using var request = UnityWebRequest.Get(url);
             request!.SetRequestHeader("Content-Type", "application/json");
             yield return request.SendWebRequest();
             if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
@@ -99,7 +112,11 @@ namespace _00_Shared
 
         public static IEnumerator RecordSnapshot(string data, Action<bool> callback = null)
         {
-            using var request = new UnityWebRequest(Constants.DataApiUrlInsertOne, "POST");
+            var url = string.Format(Constants.GameServerEndpoints.PostInsertOne,
+                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
+                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+            Debug.Log(url);
+            using var request = new UnityWebRequest(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");
             var bodyRaw = Encoding.UTF8.GetBytes(data!);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);

@@ -2,17 +2,13 @@
 {
     public static class Constants
     {
-        public const string Version = "v1.0-RC2";
-
-        private const string BaseUrl = "http://54.88.138.219:8000";
-
-        public static readonly string DataApiUrlInsertOne = $"{BaseUrl}/recording";
-
-        // public const string DataApiUrlGetMany = $"{BaseUrl}/snapshots";
-        // public const string DataApiUrlGetOne = $"{BaseUrl}/snapshot?id=";
-        public static readonly string GetPlayersEndpoint = $"{BaseUrl}/players";
-        public static readonly string GetEventsEndpoint = $"{BaseUrl}/events";
-        public static readonly string GetConfigEndpoint = $"{BaseUrl}/config";
+        public static class GameServerEndpoints
+        {
+            public const string GetEvents = "http://{0}:{1}/events";
+            public const string GetConfig = "http://{0}:{1}/config";
+            public const string GetPlayers = "http://{0}:{1}/players";
+            public const string PostInsertOne = "http://{0}:{1}/recording";
+        }
 
         public const float RecordingSpeed = 0.1f;
 

@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.IO;
 using _00_Shared;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace _1_Loading
@@ -16,6 +19,7 @@ namespace _1_Loading
         public SceneName sceneToSwitchTo;
         public static GameConfigLoader Instance;
         public GameConfig GameConfig;
+        public LocalConfig LocalConfig;
 
         private void Awake()
         {
@@ -31,13 +35,14 @@ namespace _1_Loading
 
         private void Start()
         {
-            // InvokeRepeating(nameof(LoadConfig), 0f, 3f);
-            LoadConfig();
+            // InvokeRepeating(nameof(LoadRemoteConfig), 0f, 3f);
+            LoadLocalConfig();
+            LoadRemoteConfig();
         }
 
-        private void LoadConfig()
+        private void LoadRemoteConfig()
         {
-            Debug.Log(nameof(LoadConfig));
+            Debug.Log(nameof(LoadRemoteConfig));
             if (Instance != null && Instance.GameConfig != null) return;
 
             StartCoroutine(
@@ -61,6 +66,24 @@ namespace _1_Loading
                     }
                 })
             );
+        }
+
+        private void LoadLocalConfig()
+        {
+            var configJson = Application.dataPath + "/local_config.json";
+            StreamReader streamReader = new StreamReader(configJson);
+            var configJsonContent = streamReader.ReadToEnd();
+            Debug.Log(configJsonContent);
+            LocalConfig = JsonConvert.DeserializeObject<LocalConfig>(configJsonContent);
+            if (LocalConfig != null)
+            {
+                Debug.Log(LocalConfig.GameServerIp);
+                Debug.Log(LocalConfig.GameServerPort);
+            }
+            else
+            {
+                Debug.Log("No local config found.");
+            }
         }
     }
 }
