@@ -1,8 +1,8 @@
 {
-    "app_id": "leafsteroids-ljgok",
+    "app_id": "application-0-ndypy",
     "config_version": 20210101,
-    "name": "Leafsteroids",
-    "location": "US-VA",
-    "provider_region": "aws-us-east-1",
-    "deployment_model": "GLOBAL"
+    "name": "Application-0",
+    "location": "IE",
+    "provider_region": "eu-west-1",
+    "deployment_model": "SINGLE"
 }
