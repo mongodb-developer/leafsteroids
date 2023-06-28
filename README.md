@@ -14,7 +14,9 @@ The demo consists of the following parts:
 
 ## Deployment
 
-To deploy your own clone of this demo, go through the following steps, starting with a fork of this repository.
+To deploy your own clone of this demo, go through the following steps:
+
+1. Fork the repository.
 
 ### Prepare the database (MongoDB Atlas)
 
