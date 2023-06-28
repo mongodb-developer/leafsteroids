@@ -1,4 +1,12 @@
-ENDPOINT_GET_PLAYERS = "https://data.mongodb-api.com/app/leafsteroids-ljgok/endpoint/players"
-ENDPOINT_GET_EVENTS = "https://data.mongodb-api.com/app/leafsteroids-ljgok/endpoint/events"
-ENDPOINT_GET_CONFIG = "https://data.mongodb-api.com/app/leafsteroids-ljgok/endpoint/config"
-ENDPOINT_POST_SNAPSHOT = "https://data.mongodb-api.com/app/leafsteroids-ljgok/endpoint/snapshot"
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+APP_ID = os.environ["APP_ID"]
+APP_SERVICES_URL = f"https://data.mongodb-api.com/app/{APP_ID}/endpoint"
+ENDPOINT_GET_PLAYERS = f"{APP_SERVICES_URL}/players"
+ENDPOINT_GET_EVENTS = f"{APP_SERVICES_URL}/events"
+ENDPOINT_GET_CONFIG = f"{APP_SERVICES_URL}/config"
+ENDPOINT_POST_SNAPSHOT = f"{APP_SERVICES_URL}/snapshot"

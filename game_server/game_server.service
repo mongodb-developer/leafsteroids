@@ -2,10 +2,9 @@
 Description=Game Server Service
 
 [Service]
-Environment=API_KEY=KSIB3diaMwUT1pTVWQSFr0UXYpp30dpfSiZEkD5e7lnl8iZSdyOPSIPE9ImR4Hva
 WorkingDirectory=/home/ubuntu/game_server
 User=ubuntu
-ExecStart=gunicorn -b 0.0.0.0:8000 application:app
+ExecStart=gunicorn --log-level=debug application:app
 Restart=always
 
 [Install]
