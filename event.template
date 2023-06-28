@@ -1,1 +1,5 @@
-{"_id":"mdb-live-stream","name":"MongoDB TV Live Stream","location":"IE"}
+{
+  "_id": "mdb-live-stream",
+  "name": "MongoDB TV Live Stream",
+  "location": "IE"
+}
