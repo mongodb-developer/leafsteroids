@@ -1,0 +1,29 @@
+{
+  "RoundDuration": {
+    "$numberDouble": "60.0"
+  },
+  "BulletDamage": {
+    "$numberDouble": "15.0"
+  },
+  "BulletSpeed": {
+    "$numberDouble": "500.0"
+  },
+  "PlayerMoveSpeed": {
+    "$numberDouble": "5.0"
+  },
+  "PlayerRotateSpeed": {
+    "$numberDouble": "100.0"
+  },
+  "BulletLifespan": {
+    "$numberDouble": "1.0"
+  },
+  "PelletHeatlhSmall": {
+    "$numberDouble": "50.0"
+  },
+  "PelletHeatlhLarge": {
+    "$numberDouble": "150.0"
+  },
+  "PelletHeatlhMedium": {
+    "$numberDouble": "75.0"
+  }
+}

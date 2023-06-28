@@ -17,9 +17,6 @@ app.logger.handlers = gunicorn_logger.handlers
 app.logger.setLevel(gunicorn_logger.level)
 
 
-# logging.basicConfig(filename='record.log', level=logging.DEBUG)
-
-
 @app.route('/', methods=['GET'])
 def get_root():
     return "I'm alive!\n"
@@ -82,4 +79,4 @@ def send_request(route: str, endpoint: str, json_object: Optional[Any] = None):
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=8000, debug=True)
+    app.run()

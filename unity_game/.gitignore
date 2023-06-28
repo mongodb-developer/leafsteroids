@@ -76,3 +76,5 @@ crashlytics-build.properties
 .DS_Store
 
 .env
+Assets/local_config.json
+
