@@ -401,3 +401,5 @@ FodyWeavers.xsd
 
 # Blazor project package cache
 Library/
+
+gdc_2023_demo_registration/deploy.zip
