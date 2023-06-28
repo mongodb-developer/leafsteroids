@@ -11,8 +11,13 @@ from constants import ENDPOINT_GET_EVENTS, ENDPOINT_GET_CONFIG, ENDPOINT_GET_PLA
 
 load_dotenv()
 
-logging.basicConfig(filename='record.log', level=logging.DEBUG)
 app = Flask(__name__)
+gunicorn_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers = gunicorn_logger.handlers
+app.logger.setLevel(gunicorn_logger.level)
+
+
+# logging.basicConfig(filename='record.log', level=logging.DEBUG)
 
 
 @app.route('/', methods=['GET'])
@@ -77,4 +82,4 @@ def send_request(route: str, endpoint: str, json_object: Optional[Any] = None):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host="0.0.0.0", port=8000, debug=True)
