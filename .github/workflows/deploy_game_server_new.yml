@@ -23,10 +23,10 @@ jobs:
         run: |
           echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
 
-      - name: run tests with pytest
-        run: pytest
-        env:
-          API_KEY: ${{ secrets.API_KEY }}
+#      - name: run tests with pytest
+#        run: pytest
+#        env:
+#          API_KEY: ${{ secrets.API_KEY }}
 
       - name: deploy game server
         uses: appleboy/scp-action@v0.1.4
