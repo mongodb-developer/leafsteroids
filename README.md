@@ -39,8 +39,7 @@ To deploy your own clone of this demo, go through the following steps:
 - cd blazor_registration
 - cd gdc_2023_demo_registration
 - dotnet publish -o output
-- cd output
-- zip -r ../deploy.zip .
+- zip -r deploy.zip output
 
 ### Deploy the website (AWS Beanstalk)
 
