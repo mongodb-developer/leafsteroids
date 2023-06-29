@@ -1,7 +1,9 @@
-scp -i ~/.ssh/dominicfrei.pem * ubuntu@34.238.80.46:/home/ubuntu
-scp -i ~/.ssh/dominicfrei.pem .env ubuntu@34.238.80.46:/home/ubuntu
+cd game_server
 
-ssh -i ~/.ssh/dominicfrei.pem ubuntu@34.238.80.46
+scp -i ~/.ssh/dominicfrei.pem * ubuntu@54.234.86.246:/home/ubuntu
+scp -i ~/.ssh/dominicfrei.pem .env ubuntu@54.234.86.246:/home/ubuntu
+
+ssh -i ~/.ssh/dominicfrei.pem ubuntu@54.234.86.246
 
 sudo apt update
 sudo apt -y upgrade
