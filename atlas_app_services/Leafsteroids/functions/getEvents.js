@@ -15,7 +15,7 @@ exports = async function({ query, headers, body}, response) {
       .get("mongodb-atlas")
       .db("Leafsteroids")
       .collection("events")
-        .find({})  // .find({"_id":"mdb-local-2023-socal"})
+        .find({"_id":"mdb-live-stream"})
         .sort({})
         .toArray();
 
