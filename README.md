@@ -65,7 +65,7 @@ To deploy your own clone of this demo, go through the following steps:
 ### Game Setup
 
 - Download the game and create a new file `local_config.json` based on `local_config.json.template`.
-- Place it in the same directory as the game (Windows) or the appropriate folders `Contents` (Mac OS) or `Data` (Linux).
+- Place it in the appropriate folders for your OS: `Contents` (Mac OS) or `Data` (Linux/Windows).
 - Have fun! :)
 
 ## Contributors
