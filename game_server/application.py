@@ -38,6 +38,11 @@ def convert_document_to_json(document):
     return document
 
 
+@app.route('/', methods=['GET'])
+def get_root():
+    return "I'm alive!\n"
+
+
 @app.route('/config')
 def get_config():
     collection = leafsteroids_database[COLLECTION_NAME_CONFIG]
