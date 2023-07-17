@@ -12,6 +12,10 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
 
+      - name: set up environment variables
+        run: |
+          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+
       - name: install pytest
         run: |
           cd game_server
@@ -19,14 +23,10 @@ jobs:
           pip install -r requirements.txt
           echo ${{ steps.commit.outputs.hash }}
 
-      - name: set up environment variables
-        run: |
-          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
-
-#      - name: run tests with pytest
-#        run: pytest
-#        env:
-#          API_KEY: ${{ secrets.API_KEY }}
+      #      - name: run tests with pytest
+      #        run: pytest
+      #        env:
+      #          API_KEY: ${{ secrets.API_KEY }}
 
       - name: deploy game server
         uses: appleboy/scp-action@v0.1.4
