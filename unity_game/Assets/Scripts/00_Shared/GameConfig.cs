@@ -1,5 +1,6 @@
 using _3_Main._ReplaySystem;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace _00_Shared
 {
@@ -8,6 +9,7 @@ namespace _00_Shared
         public float BulletDamage;
         public float BulletLifespan;
         public float BulletSpeed;
+        [JsonProperty("_id")]
         public string Id;
         public float PelletHeatlhLarge;
         public float PelletHeatlhMedium;

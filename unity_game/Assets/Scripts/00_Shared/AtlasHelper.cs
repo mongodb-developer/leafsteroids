@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using _1_Loading;
 using Newtonsoft.Json;
@@ -29,9 +30,9 @@ namespace _00_Shared
             }
             else
             {
-                var gameConfig = JsonConvert.DeserializeObject<GameConfig>(request.downloadHandler!.text!);
-                Debug.Log(gameConfig);
-                callback?.Invoke(gameConfig);
+                var gameConfigs = JsonConvert.DeserializeObject<List<GameConfig>>(request.downloadHandler!.text!);
+                Debug.Log(gameConfigs);
+                callback?.Invoke(gameConfigs.First());
             }
         }
 

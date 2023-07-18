@@ -77,4 +77,4 @@ crashlytics-build.properties
 
 .env
 Assets/local_config.json
-
+Assets/local_config.json.meta
