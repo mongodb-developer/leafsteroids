@@ -1,8 +1,0 @@
-{
-    "app_id": "application-0-sjlte",
-    "config_version": 20210101,
-    "name": "Application-0",
-    "location": "IE",
-    "provider_region": "eu-west-1",
-    "deployment_model": "SINGLE"
-}
