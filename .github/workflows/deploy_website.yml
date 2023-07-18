@@ -33,4 +33,4 @@ jobs:
           environment_name: leafsteroids-v2-website-prod
           version_label: leafsteroids-v2-website-${{ steps.commit.outputs.hash }}
           region: us-east-1
-          deployment_package: ./blazor_registration/gdc_2023_demo_registration/deploy.zip
+          deployment_package: ./website/gdc_2023_demo_registration/deploy.zip
