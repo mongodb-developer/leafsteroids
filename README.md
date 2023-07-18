@@ -13,6 +13,11 @@ The demo and repository consist of the following parts:
 
 ## Running your own clone
 
+### Requirements
+
+- Install Python and PIP
+- Install the .NET SDK 7
+
 ### Prepare the database (MongoDB Atlas)
 
 - Create a new Atlas project
