@@ -33,6 +33,9 @@ cp .env.template .env
 - Grab the connection string for your Atlas cluster and exchange it in the `.env` file.
 
 ```shell
+python3 -m venv venv
+. venv/bin/activate
+pip install -r requirements.txt
 gunicorn --log-level=debug -b 0.0.0.0:8000 application:app
 ```
 
