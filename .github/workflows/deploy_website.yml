@@ -18,8 +18,7 @@ jobs:
 
       - name: Generate deployment package
         run: |
-          cd blazor_registration
-          cd gdc_2023_demo_registration
+          cd website
           dotnet publish -o output
           cd output
           zip -r ../deploy.zip .
