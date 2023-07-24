@@ -2,4 +2,4 @@
 # This file only contains entries that need to be globally excluded.
 
 .idea/
-.env
+

@@ -75,6 +75,6 @@ crashlytics-build.properties
 .idea/
 .DS_Store
 
-.env
 Assets/local_config.json
 Assets/local_config.json.meta
+

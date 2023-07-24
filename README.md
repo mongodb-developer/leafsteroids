@@ -30,12 +30,7 @@ You can adjust the config to change how the game behaves and add more events to 
 
 ### Run the Game Server
 
-```shell
-cd game_server
-cp .env.template .env
-```
-
-- Grab the connection string for your Atlas cluster and exchange it in the `.env` file.
+- Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `game_server` folder.
 
 ```shell
 python3 -m venv venv
@@ -46,12 +41,7 @@ gunicorn --log-level=debug -b 0.0.0.0:8000 application:app
 
 ### Run the Website
 
-```shell
-cd website
-cp .env.template .env
-```
-
-- Grab the connection string for your Atlas cluster and exchange it in the `.env` file.
+- Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `game_server` folder.
 
 ```shell
 dotnet run
@@ -60,8 +50,7 @@ dotnet run
 ### Run the Game Client
 
 - Open the Unity project.
-- In the `Assets` folder, duplicate the `.env.template` file and call it `.env`.
-- Since the game server is running in locally when going through above steps, you can keep the defaults.
+- In the `Assets` folder, adjust the IP in the `.env` folder to your `game_server`.
 - Run the game.
 
 ## Contributors
