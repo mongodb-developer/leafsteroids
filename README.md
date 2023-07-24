@@ -30,6 +30,8 @@ You can adjust the config to change how the game behaves and add more events to 
 
 ### Run the Game Server
 
+- Switch into the `game_server` folder.
+- Make a copy of the `.env.template` file and call it `.env`.
 - Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `game_server` folder.
 
 ```shell
@@ -41,6 +43,8 @@ gunicorn --log-level=debug -b 0.0.0.0:8000 application:app
 
 ### Run the Website
 
+- Switch into the `website` folder.
+- Make a copy of the `.env.template` file and call it `.env`.
 - Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `game_server` folder.
 
 ```shell
@@ -49,8 +53,9 @@ dotnet run
 
 ### Run the Game Client
 
-- Open the Unity project.
-- In the `Assets` folder, adjust the IP in the `.env` folder to your `game_server`.
+- Switch into the `game_client` folder.
+- In the `Assets` folder, make a copy of the `.env.template` file and call it `.env`.
+- Adjust the IP in the `.env` folder to your `game_server`. Leave as is when running locally.
 - Run the game.
 
 ## Contributors
