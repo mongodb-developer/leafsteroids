@@ -20,7 +20,7 @@ The demo and repository consist of the following parts:
 
 ### Prepare the database (MongoDB Atlas)
 
-- Create a new Atlas project
+- Create a new [Atlas project](https://www.mongodb.com/cloud/atlas/register)
 - Create a new cluster (M0)
 - Create a new database `Leafsteroids`:
     - Create a collection `config` and add the [`deployment/templates/config.template`](https://github.com/mongodb-developer/leafsteroids/blob/main/deployment/templates/config.template) document to it.
