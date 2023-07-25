@@ -33,67 +33,75 @@
         <h2 class="text-center">Player Registration & Login</h2>
         <h4 class="card-title mt-3 text-center">
             <b>
-                @if ( (@Event!=null) ) 
+                @if ((@Event != null))
                 {
                     if ((@Event.Id != null) && (@Event.location != null) && (@Event.name != null))
                     {
                         <a href="/eventHome/?location=@Event.location&EventId=@Event.Id">@Event.name</a>
-                    } else
+                    }
+                    else
                     {
                         @Event.name
                     }
-                }                 
+                }
             </b>
         </h4>
-        <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
+        <h4 class="card-title mt-3 text-center">
+            <b class="validation-message">@message</b>
+        </h4>
 
         <form>
             <div class="form-group input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                    <span class="input-group-text">
+                        <i class="fa fa-user"></i>
+                    </span>
                 </div>
-                <input  id="nickname"
-                        type="text"
-                        class="form-control" 
-                        placeholder="Nickname (case sensitive!)" 
-                        @bind="Player.Nickname" name=""  
-                        @oninput="AutoCompleteNickname"
-                        required>
+                <input id="nickname"
+                       type="text"
+                       class="form-control"
+                       placeholder="Nickname (case sensitive!)"
+                       @bind="Player.Nickname" name=""
+                       @oninput="AutoCompleteNickname"
+                       required>
 
                 @if (suggestedNicknames.Count > 0)
                 {
-                    <div class="autocomplete" >
+                    <div class="autocomplete">
                         <ul class="options">
                             @foreach (var nickname in suggestedNicknames)
                             {
-                                <li id="option_@nickname" 
+                                <li id="option_@nickname"
                                     class="option"
-                                    @onclick=@(_ => SelectNickname(nickname))
-                                >
+                                    @onclick=@(_ => SelectNickname(nickname))>
                                     @nickname <!-- visible suggestion -->
                                 </li>
                             }
                         </ul>
                     </div>
-                }                
+                }
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-users"></i> </span>
+                    <span class="input-group-text">
+                        <i class="fa fa-users"></i>
+                    </span>
                 </div>
                 <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
+                    <span class="input-group-text">
+                        <i class="fa fa-comment"></i>
+                    </span>
                 </div>
-                <input id="email" @bind="Player.Email" 
-                    name="" 
-                    class="form-control" 
-                    placeholder="E-Mail for prizes (optional)" 
-                    type="email">
+                <input id="email" @bind="Player.Email"
+                       name=""
+                       class="form-control"
+                       placeholder="E-Mail for prizes (optional)"
+                       type="email">
             </div> <!-- form-group// -->
 
 
@@ -110,7 +118,9 @@
 <div class="card bg-white">
     @if (chartUrl.Length == 0)
     {
-        <p><em>Loading...</em></p>
+        <p>
+            <em>Loading...</em>
+        </p>
     }
     else
     {
@@ -132,35 +142,37 @@
     private Player Player { get; set; } = new Player();
     private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
 
-    BsonDocument eventFilter = new BsonDocument("_id", "mdb-local-2023-new-york"); // TODO: GET FROM A CONFIG FILE
+    BsonDocument eventFilter = new BsonDocument("_id", "mdb-mongodb-tv"); // TODO: GET FROM A CONFIG FILE
     private Event? Event;
-    private string event_name = "";
+    private string event_name = "mdb-mongodb-tv"; // default
 
     Dictionary<string, string>? queryParameters;
 
     private List<string> suggestedNicknames = new List<string>();
     public int FocusedSuggestionIndex { get; set; } = -1;
 
-    
 
     protected override void OnInitialized()
     {
-        // PRepare to read URL parameters
-        // URL event param will always take precedence
+    // PRepare to read URL parameters
+    // URL event param will always take precedence
         var uri = new Uri(NavigationManager.Uri);
         var queryParameters = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
 
-        if ( queryParameters.ContainsKey("event") ) {
+        if (queryParameters.ContainsKey("event"))
+        {
             event_name = queryParameters["event"];
-        } 
-        else {
+        }
+        else
+        {
             if (queryParameters.ContainsKey("EventId"))
             {
                 event_name = queryParameters["EventId"];
             }
-            else {
-                // fallback on a default event, if none is available
-                event_name = "mdb-live-stream";
+            else
+            {
+    // fallback on a default event, if none is available
+                event_name = "mdb-mongodb-tv";
             }
         }
         BsonDocument eventFilter = new BsonDocument("_id", event_name);
@@ -179,21 +191,22 @@
         tmpchartUrl += "&showTitleAndDesc=false";
         tmpchartUrl += "&scalingWidth=100%25"; // 100% url-encoded
         tmpchartUrl += "&scalingHeight=fixed";
-        tmpchartUrl += "&attribution=false";    // removes the logo inside the iframe = tighter fit
+        tmpchartUrl += "&attribution=false"; // removes the logo inside the iframe = tighter fit
         tmpchartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
 
         chartUrl = tmpchartUrl; // in the future, consider assembling the non-encoded URL, then encode it with HttpUtility.UrlEncode(); 
-                                // additional iframe options
-                                // https://www.mongodb.com/docs/charts/embedded-chart-options/#std-label-embedded-chart-options
+    // additional iframe options
+    // https://www.mongodb.com/docs/charts/embedded-chart-options/#std-label-embedded-chart-options
     }
 
     private async Task CreatePlayer()
     {
-        // basic checks
-        if ((Player == null) || (Player.Nickname == null) || (Event == null) || (Event.location== null) ) {
+    // basic checks
+        if ((Player == null) || (Player.Nickname == null) || (Event == null) || (Event.location == null))
+        {
             message = "[please fill out the form]";
             return;
-        }        
+        }
 
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
@@ -213,23 +226,23 @@
                 Nickname = Player.Nickname,
                 location = Player.location
             }
-            )!;
+                )!;
 
             var new_dest = "/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id;
-            NavigationManager!.NavigateTo( new_dest );
-            //NavigationManager!.NavigateTo("/done");
+            NavigationManager!.NavigateTo(new_dest);
+    //NavigationManager!.NavigateTo("/done");
             NavigationManager!.NavigateTo("/playerHome?location=" + Event.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
         }
     }
 
     private async Task LoginPlayer()
     {
-        // basic checks
-        if ( (Player == null) || (Player.Nickname == null) )
+    // basic checks
+        if ((Player == null) || (Player.Nickname == null))
         {
             message = "[enter your nickname]";
             return;
-        }    
+        }
 
         message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
@@ -250,7 +263,6 @@
 
         if (input.Length >= 2)
         {
-
             var nicknames = await PlayerUniques.Aggregate()
                 .Search(Builders<PlayerUnique>
                     .Search.Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
@@ -271,29 +283,34 @@
     }
 
 
-
     void SelectNickname(string Nickname)
     {
         Player.Nickname = Nickname;
-        // reset
+    // reset
         suggestedNicknames.Clear();
         FocusedSuggestionIndex = -1;
     }
 
     private void HandleKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "ArrowUp") {
-            if (FocusedSuggestionIndex > 0) {
+        if (e.Key == "ArrowUp")
+        {
+            if (FocusedSuggestionIndex > 0)
+            {
                 FocusedSuggestionIndex--;
             }
         }
-        else if (e.Key == "ArrowDown") {
-            if (FocusedSuggestionIndex < suggestedNicknames.Count - 1) {
+        else if (e.Key == "ArrowDown")
+        {
+            if (FocusedSuggestionIndex < suggestedNicknames.Count - 1)
+            {
                 FocusedSuggestionIndex++;
-            }            
+            }
         }
-        else if (e.Key == "Enter" && FocusedSuggestionIndex >= 0) {
-            // SelectSuggestion(Suggestions[FocusedSuggestionIndex]);
+        else if (e.Key == "Enter" && FocusedSuggestionIndex >= 0)
+        {
+    // SelectSuggestion(Suggestions[FocusedSuggestionIndex]);
         }
     }
+
 }

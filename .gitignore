@@ -1,5 +1,6 @@
 # Project-specfic .gitignore files exist for each folder depending on the language used in there.
 # This file only contains entries that need to be globally excluded.
 
+.env
 .idea/
 
