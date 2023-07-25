@@ -23,8 +23,8 @@ The demo and repository consist of the following parts:
 - Create a new Atlas project
 - Create a new cluster (M0)
 - Create a new database `Leafsteroids`:
-    - Create a collection `config` and add the `config.template` document (folder `deployment/templates` in this repo) to it.
-    - Create a collection `events` and add the `event.template` document (folder `deployment/templates` in this repo) to it.
+    - Create a collection `config` and add the [`deployment/templates/config.template`](https://github.com/mongodb-developer/leafsteroids/blob/main/deployment/templates/config.template) document to it.
+    - Create a collection `events` and add the [`deployment/templates/event.template`](https://github.com/mongodb-developer/leafsteroids/blob/main/deployment/templates/event.template) document to it.
 
 You can adjust the config to change how the game behaves and add more events to have several to choose from.
 
