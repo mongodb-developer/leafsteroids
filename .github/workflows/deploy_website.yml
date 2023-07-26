@@ -19,6 +19,7 @@ jobs:
       - name: Generate deployment package
         run: |
           cd website
+          echo ${{ secrets.CONNECTION_STRING }} > .env
           dotnet publish -o output
           cd output
           zip -r ../deploy.zip .
