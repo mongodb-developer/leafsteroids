@@ -1,4 +1,4 @@
-name: Deploy game_server folder to AWS EC2 instance
+name: Deploy the game server to EC2
 
 on:
   push:
@@ -9,26 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+
       - name: checkout repo
         uses: actions/checkout@v2
+      
+      #      - name: set up environment variables
+      #        run: |
+      #          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+      
+      #      - name: install pytest
+      #        run: |
+      #          cd game_server
+      #          pip install --upgrade pip
+      #          pip install -r requirements.txt
+      #          echo ${{ steps.commit.outputs.hash }}
+      
+      #            - name: run tests with pytest
+      #              run: pytest
+      #              env:
+      #                API_KEY: ${{ secrets.API_KEY }}
 
-      - name: set up environment variables
-        run: |
-          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
-
-      - name: install pytest
-        run: |
-          cd game_server
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          echo ${{ steps.commit.outputs.hash }}
-
-      #      - name: run tests with pytest
-      #        run: pytest
-      #        env:
-      #          API_KEY: ${{ secrets.API_KEY }}
-
-      - name: deploy game server
+      - name: Deploy game server
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.GAME_SERVER_IP }}
@@ -37,7 +38,7 @@ jobs:
           source: "game_server/*"
           target: /home/ubuntu
 
-      - name: reboot game server
+      - name: Restart game server service
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.GAME_SERVER_IP }}
