@@ -28,8 +28,7 @@ namespace _3_Main._ReplaySystem
             {
                 Snapshots = _snapshots,
                 Player = GameConfigLoader.Instance!.GameConfig!.Player,
-                Event = GameConfigLoader.Instance!.GameConfig.Event,
-                Location = GameConfigLoader.Instance!.GameConfig.Event!.Location
+                Event = GameConfigLoader.Instance!.GameConfig.Event
             };
             StartCoroutine(
                 AtlasHelper.RecordSnapshot(

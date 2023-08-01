@@ -6,3 +6,4 @@ urllib3==1.26.6  # Don't change version.
 python-dotenv==1.0.0
 gunicorn==21.1.0
 pymongo==4.4.1
+jsonschema~=4.18.4
