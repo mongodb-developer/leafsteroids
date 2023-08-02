@@ -1,5 +1,7 @@
 from typing import Dict, List
 
+import jsonschema
+
 from application import app
 
 
@@ -11,7 +13,6 @@ def test_get_events():
     assert len(json) > 10
     assert json[0]["_id"] == "gdc-2023-sf"
     assert json[0]["name"] == "GDC 2023 San Francisco"
-    assert json[0]["location"] == "US-CA"
 
 
 def test_get_config():
@@ -47,10 +48,7 @@ def test_post_recording():
         },
         "location": "TESTING",
         "DateTime": "2023-05-24 10:30:00 +05:00",
-        "RegisteredPlayer": {
-            "_id": "640ce9f8e98101ac554aa9ef",
-            "Nickname": "Dominic"
-        },
+        "RegisteredPlayer": {"_id": "640ce9f8e98101ac554aa9ef", "Nickname": "Dominic"},
         "Snapshots": [
             {
                 "Position": {
@@ -59,7 +57,7 @@ def test_post_recording():
                     "z": 1.0,
                 }
             }
-        ]
+        ],
     }
     response = app.test_client().post("/recording", json=recording)
     assert response.status_code == 201

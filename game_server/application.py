@@ -1,8 +1,8 @@
-import logging
 import json
-import jsonschema
+import logging
 from datetime import datetime
 
+import jsonschema
 from bson import ObjectId
 from flask import Flask, jsonify
 from flask import request
@@ -10,9 +10,8 @@ from pymongo import MongoClient
 
 from constants import *
 
-
 app = Flask(__name__)
-gunicorn_logger = logging.getLogger('gunicorn.error')
+gunicorn_logger = logging.getLogger("gunicorn.error")
 app.logger.handlers = gunicorn_logger.handlers
 app.logger.setLevel(gunicorn_logger.level)
 
@@ -37,92 +36,88 @@ def convert_document_to_json(document):
     return document
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def get_root():
     return "I'm alive!\n"
 
 
-@app.route('/config')
+@app.route("/config")
 def get_config():
     collection = leafsteroids_database[COLLECTION_NAME_CONFIG]
     documents = [convert_document_to_json(doc) for doc in collection.find()]
     return jsonify(documents)
 
 
-@app.route('/events')
+@app.route("/events")
 def get_events():
     collection = leafsteroids_database[VIEW_NAME_EVENTS4GAMECLIENT]
     documents = [convert_document_to_json(doc) for doc in collection.find()]
     return jsonify(documents)
 
 
-@app.route('/players')
+@app.route("/players")
 def get_players():
     collection = leafsteroids_database[VIEW_NAME_PLAYERS4GAMECLIENT]
     documents = [convert_document_to_json(doc) for doc in collection.find()]
     return jsonify(documents)
 
 
-@app.route('/recording', methods=['POST'])
+@app.route("/recording", methods=["POST"])
 def post_recording():
-
     collection = leafsteroids_database[COLLECTION_NAME_RECORDINGS]
     recording = request.get_json()
 
     try:
-
         # Verify Event
-        event_id = recording['Event']['_id']
-        event = leafsteroids_database[COLLECTION_NAME_EVENTS]\
-            .find_one({'_id': event_id})
+        event_id = recording["Event"]["_id"]
+        event = leafsteroids_database[COLLECTION_NAME_EVENTS].find_one(
+            {"_id": event_id}
+        )
         if not event:
             err = {"error": "Could not retrieve event: " + event_id}
             app.logger.debug(json.dumps(err))
             return jsonify(err), 500
 
-        eventExtRef = {
-            "_id": event["_id"]
-        }
+        event_ext_ref = {"_id": event["_id"]}
 
         location = event["location"]  # location for recording
 
         # Verify Player
-        nickname = recording['Player']['Nickname']
+        nickname = recording["Player"]["Nickname"]
 
-        player_unique = leafsteroids_database[COLLECTION_NAME_PLAYERS]\
-            .find_one({'Nickname': nickname})
+        player_unique = leafsteroids_database[COLLECTION_NAME_PLAYERS].find_one(
+            {"Nickname": nickname}
+        )
         if not player_unique:
             err = {"error": "Could not retrieve player_unique: " + nickname}
             app.logger.debug(json.dumps(err))
             return jsonify(err), 500
 
-        player = leafsteroids_database[COLLECTION_NAME_PLAYERS]\
-            .find_one({'location': player_unique["location"], 'Nickname': nickname})
+        player = leafsteroids_database[COLLECTION_NAME_PLAYERS].find_one(
+            {"location": player_unique["location"], "Nickname": nickname}
+        )
         if not player:
             err = {"error": "Could not retrieve player: " + nickname}
             app.logger.debug(json.dumps(err))
             return jsonify(err), 500
 
-        playerExtRef = {
-            "_id": player["_id"],
-            "Nickname": player["Nickname"]
-        }
+        player_ext_ref = {"_id": player["_id"], "Nickname": player["Nickname"]}
 
         # Create Recording to persist
-        recordingToPersist = {
+        recording_to_persist = {
             "location": location,
             "DateTime": datetime.now(),
-            "Player": playerExtRef,     # Extended Reference Pattern
-            "Event": eventExtRef,       # Extended Reference Pattern
+            "Player": player_ext_ref,  # Extended Reference Pattern
+            "Event": event_ext_ref,  # Extended Reference Pattern
             "SessionStatisticsPlain": recording["SessionStatisticsPlain"],
             "Snapshots": recording["Snapshots"],
         }
 
         # Validate against $jsonSchema
-        validateRecordingSchema(recordingToPersist)
+        validate_recordings_schema(recording_to_persist)
 
         # Persist
-        result = collection.insert_one(recordingToPersist)
+        result = collection.insert_one(recording_to_persist)
         app.logger.debug(f"Inserted new recording with id: {result.inserted_id}")
 
         if not result.acknowledged:
@@ -130,25 +125,27 @@ def post_recording():
 
     except Exception as exception:
         app.logger.debug(json.dumps(exception))
-        return jsonify({'error': str(exception)}), 500
+        return jsonify({"error": str(exception)}), 500
     return "", 201
 
 
-def validateRecordingSchema(recording):
-
+def validate_recordings_schema(recording):
     # TO-DO: Move json schema to a file
     recording_schema = {
         "$jsonSchema": {
             "bsonType": "object",
-            "required": ["location", "DateTime", "Player", "Event", "SessionStatisticsPlain", "Snapshots"],
+            "required": [
+                "location",
+                "DateTime",
+                "Player",
+                "Event",
+                "SessionStatisticsPlain",
+                "Snapshots",
+            ],
             "additionalProperties": False,
             "properties": {
-                "location": {
-                  "bsonType": "string"
-                },
-                "DateTime": {
-                    "bsonType": "date"
-                },
+                "location": {"bsonType": "string"},
+                "DateTime": {"bsonType": "date"},
                 "Player": {
                     "type": "object",
                     "properties": {
@@ -163,62 +160,42 @@ def validateRecordingSchema(recording):
                         #   },
                         #   "required": ["$oid"],
                         # },
-                        "Nickname": {
-                          "type": "string"
-                        }
+                        "Nickname": {"type": "string"}
                     },
-                    "required": ["_id", "Nickname"],    # TO-DO: add _id
-                    "additionalProperties": True        # TO-DO: Change to false whe setting _id
+                    "required": ["_id", "Nickname"],  # TO-DO: add _id
+                    "additionalProperties": True,  # TO-DO: Change to false whe setting _id
                 },
                 "Event": {
                     "type": "object",
                     "properties": {
                         "_id": {
-                          "type": "string",
+                            "type": "string",
                         }
                     },
                     "required": ["_id"],
-                    "additionalProperties": False
+                    "additionalProperties": False,
                 },
                 "SessionStatisticsPlain": {
                     "type": "object",
                     "properties": {
-                        "BulletsFired": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "DamageDone": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "PelletsDestroyedSmall": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "PelletsDestroyedMedium": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "PelletsDestroyedLarge": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
-                        "Score": {
-                            "type": "integer",
-                            "minimum": 0
-                        },
+                        "BulletsFired": {"type": "integer", "minimum": 0},
+                        "DamageDone": {"type": "integer", "minimum": 0},
+                        "PelletsDestroyedSmall": {"type": "integer", "minimum": 0},
+                        "PelletsDestroyedMedium": {"type": "integer", "minimum": 0},
+                        "PelletsDestroyedLarge": {"type": "integer", "minimum": 0},
+                        "Score": {"type": "integer", "minimum": 0},
                         "PowerUpBulletDamageCollected": {
                             "type": "integer",
-                            "minimum": 0
+                            "minimum": 0,
                         },
                         "PowerUpBulletSpeedCollected": {
                             "type": "integer",
-                            "minimum": 0
+                            "minimum": 0,
                         },
                         "PowerUpPlayerSpeedCollected": {
                             "type": "integer",
-                            "minimum": 0
-                        }
+                            "minimum": 0,
+                        },
                     },
                     "required": [
                         "BulletsFired",
@@ -229,9 +206,9 @@ def validateRecordingSchema(recording):
                         "Score",
                         "PowerUpBulletDamageCollected",
                         "PowerUpBulletSpeedCollected",
-                        "PowerUpPlayerSpeedCollected"
+                        "PowerUpPlayerSpeedCollected",
                     ],
-                    "additionalProperties": False
+                    "additionalProperties": False,
                 },
                 "Snapshots": {
                     "type": "array",
@@ -241,32 +218,25 @@ def validateRecordingSchema(recording):
                             "PlayerPosition": {
                                 "type": "object",
                                 "properties": {
-                                    "X": {
-                                        "type": "number"
-                                    },
-                                    "Y": {
-                                        "type": "number"
-                                    },
-                                    "Z": {
-                                        "type": "number"
-                                    }
+                                    "X": {"type": "number"},
+                                    "Y": {"type": "number"},
+                                    "Z": {"type": "number"},
                                 },
                                 "required": ["X", "Y", "Z"],
-                                "additionalProperties": False
+                                "additionalProperties": False,
                             }
                         },
                         "required": ["PlayerPosition"],
-                        "additionalProperties": False
+                        "additionalProperties": False,
                     },
                     "required": ["items"],
-                    "additionalProperties": False
-                }
-            }
+                    "additionalProperties": False,
+                },
+            },
         }
     }
 
     try:
-
         # TO-DO: Adding this property should fail validation, but it doesn't
         recording["TEST"] = "BOO!"
         jsonschema.validate(recording, recording_schema)
@@ -279,5 +249,5 @@ def validateRecordingSchema(recording):
         raise Exception({"message": "An error occurred.", "error": str(e)})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
