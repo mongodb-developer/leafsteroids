@@ -1,4 +1,3 @@
-using dotenv.net;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -9,29 +8,24 @@ namespace RestService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PlayersController : ControllerBase
+    public class PlayersController : BaseController
     {
-        private readonly ILogger<PlayersController> _logger;
-        private readonly MongoClient _mongoClient;
+        private readonly IMongoCollection<PlayerAtlas> _playersCollection;
 
-        public PlayersController(ILogger<PlayersController> logger)
+        public PlayersController(ILogger<PlayersController> logger) : base(logger)
         {
-            _logger = logger;
-            DotEnv.Load();
-            var envVars = DotEnv.Read();
-            var connectionString = envVars[Constants.ConnectionString];
-            _mongoClient = new MongoClient(connectionString);
+            _playersCollection = Database!.GetCollection<PlayerAtlas>(Constants.PlayersCollectionName);
         }
 
         [HttpGet(Name = "GetPlayers")]
         public async Task<PlayerResponse[]> GetPlayers()
         {
-            _logger.LogDebug($"Route {nameof(GetPlayers)} called.");
-            var database = _mongoClient.GetDatabase(Constants.DatabaseName);
-            var playersCollection = database.GetCollection<PlayerAtlas>(Constants.PlayersCollectionName);
-            var playersAtlas = await playersCollection.FindAsync(new BsonDocument());
+            Logger.LogDebug($"Route {nameof(GetPlayers)} called.");
+
+            var playersAtlas = await _playersCollection.FindAsync(new BsonDocument());
             var playersResponse =
                 playersAtlas.ToList().Select(playerAtlas => new PlayerResponse(playerAtlas)).ToArray();
+
             return playersResponse;
         }
     }
