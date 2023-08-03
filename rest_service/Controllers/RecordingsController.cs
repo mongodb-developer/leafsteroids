@@ -21,19 +21,16 @@ namespace RestService.Controllers
         {
             Logger.LogDebug($"Route {nameof(PostRecording)} called.");
 
-            if (recordingRequest == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Invalid request data.");
+                return BadRequest(ModelState);
             }
 
-            // Assuming you have a constructor in RecordingAtlas to create a new recording from the request data
             var newRecordingAtlas = new RecordingAtlas(recordingRequest);
 
-            // Insert the new recording into the database
             await _recordingsCollection.InsertOneAsync(newRecordingAtlas);
 
-            // Return a response indicating success
-            return Ok(new { Message = "Recording created successfully.", RecordingId = newRecordingAtlas.Id });
+            return Ok(new { Message = "Recording created successfully." });
         }
     }
 }

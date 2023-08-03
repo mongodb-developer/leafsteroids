@@ -1,4 +1,3 @@
-using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using RestService.Entities.ResponseObjects;
 
@@ -6,7 +5,7 @@ namespace RestService.Entities.Atlas;
 
 public class RecordingAtlas
 {
-    [BsonElement("_id")] public ObjectId? Id { get; set; }
+    // [BsonElement("_id")] public ObjectId? Id { get; set; }
     [BsonElement("location")] public string? Location { get; set; }
     public SessionStatisticsPlain? SessionStatisticsPlain { get; set; }
     public DateTime? DateTime { get; set; }
