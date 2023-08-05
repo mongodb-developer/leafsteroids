@@ -22,9 +22,9 @@ jobs:
         id: check_environment
         run: |
           if [ "${{ github.ref }}" == "refs/heads/STAGING" ]; then
-            echo "ENVIRONMENT_IP=${STAGING_IP}"
+            echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
           else
-            echo "ENVIRONMENT_IP=${PROD_IP}"
+            echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
           fi
 
   deploy:
