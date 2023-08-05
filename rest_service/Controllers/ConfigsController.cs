@@ -18,14 +18,14 @@ namespace RestService.Controllers
         }
 
         [HttpGet(Name = "GetConfigs")]
-        public async Task<ConfigResponse> GetConfigs()
+        public async Task<ConfigResponse[]> GetConfigs()
         {
             Logger.LogDebug($"Route {nameof(GetConfigs)} called.");
 
             var configsAtlas = await _configsCollection.FindAsync(new BsonDocument());
             var configsResponse = configsAtlas.ToList().Select(configAtlas => new ConfigResponse(configAtlas)).First();
 
-            return configsResponse;
+            return new[] { configsResponse };
         }
     }
 }

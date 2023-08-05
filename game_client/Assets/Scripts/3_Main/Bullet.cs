@@ -8,7 +8,7 @@ namespace _3_Main
     {
         public float damage;
 
-        private float _lifespan;
+        private int _lifespan;
 
         private void Awake()
         {

@@ -32,7 +32,9 @@ namespace _00_Shared
             {
                 var gameConfigs = JsonConvert.DeserializeObject<List<GameConfig>>(request.downloadHandler!.text!);
                 Debug.Log(gameConfigs);
-                callback?.Invoke(gameConfigs.First());
+                var config = gameConfigs.First();
+                config.RoundDuration = 3;
+                callback?.Invoke(config);
             }
         }
 
@@ -54,7 +56,8 @@ namespace _00_Shared
             }
             else
             {
-                callback?.Invoke(JsonConvert.DeserializeObject<List<Event>>(request.downloadHandler!.text!));
+                var events = JsonConvert.DeserializeObject<List<Event>>(request.downloadHandler!.text!);
+                callback?.Invoke(events);
             }
         }
 
@@ -75,7 +78,8 @@ namespace _00_Shared
             }
             else
             {
-                callback?.Invoke(JsonConvert.DeserializeObject<List<RegisteredPlayer>>(request.downloadHandler!.text!));
+                var players = JsonConvert.DeserializeObject<List<RegisteredPlayer>>(request.downloadHandler!.text!);
+                callback?.Invoke(players);
             }
         }
 

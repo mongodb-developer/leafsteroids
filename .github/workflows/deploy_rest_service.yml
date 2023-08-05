@@ -14,27 +14,30 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Configure SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+    - name: Debug - Print SSH key
+      run: cat ~/.ssh/id_rsa
 
-      - name: Add SSH fingerprint for PROD
-        run: ssh-keyscan -H ${{ env.PROD_IP }} >> ~/.ssh/known_hosts
-        if: github.ref == 'refs/heads/PROD'
+    - name: Configure SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
 
-      - name: Add SSH fingerprint for STAGING
-        run: ssh-keyscan -H ${{ env.STAGING_IP }} >> ~/.ssh/known_hosts
-        if: github.ref == 'refs/heads/STAGING'
+    - name: Add SSH fingerprint for PROD
+      run: ssh-keyscan -H ${{ env.PROD_IP }} >> ~/.ssh/known_hosts
+      if: github.ref == 'refs/heads/PROD'
 
-      - name: Deploy to EC2 PROD
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service/
-        if: github.ref == 'refs/heads/PROD'
+    - name: Add SSH fingerprint for STAGING
+      run: ssh-keyscan -H ${{ env.STAGING_IP }} >> ~/.ssh/known_hosts
+      if: github.ref == 'refs/heads/STAGING'
 
-      - name: Deploy to EC2 Staging
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service/
-        if: github.ref == 'refs/heads/STAGING'
+    - name: Deploy to EC2 PROD
+      run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service/
+      if: github.ref == 'refs/heads/PROD'
+
+    - name: Deploy to EC2 Staging
+      run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service/
+      if: github.ref == 'refs/heads/STAGING'

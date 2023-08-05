@@ -27,7 +27,7 @@ namespace _3_Main
 
         private void Start()
         {
-            playerTextField!.text = $"Player: {_gameConfig!.Player!.Nickname}";
+            playerTextField!.text = $"Player: {_gameConfig!.Player!.Name}";
             ToggleGameOverOverlay(false);
 
             // Intro

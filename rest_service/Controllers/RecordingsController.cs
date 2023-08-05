@@ -21,6 +21,8 @@ namespace RestService.Controllers
         {
             Logger.LogDebug($"Route {nameof(PostRecording)} called.");
 
+            Logger.LogDebug(recordingRequest.ToString());
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

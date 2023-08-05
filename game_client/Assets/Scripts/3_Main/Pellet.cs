@@ -12,8 +12,8 @@ namespace _3_Main
         public HealthBar healthBar;
 
         [SerializeField] private PelletSize pelletSize;
-        [SerializeField] private float maxHealth;
-        [SerializeField] private float currentHealth;
+        [SerializeField] private int maxHealth;
+        [SerializeField] private int currentHealth;
 
         private GameConfig _gameConfig;
 
@@ -22,9 +22,9 @@ namespace _3_Main
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
             maxHealth = pelletSize switch
             {
-                PelletSize.Small => _gameConfig!.PelletHeatlhSmall,
-                PelletSize.Medium => _gameConfig!.PelletHeatlhMedium,
-                PelletSize.Large => _gameConfig!.PelletHeatlhLarge,
+                PelletSize.Small => _gameConfig!.PelletHealthSmall,
+                PelletSize.Medium => _gameConfig!.PelletHealthMedium,
+                PelletSize.Large => _gameConfig!.PelletHealthLarge,
                 _ => throw new ArgumentOutOfRangeException()
             };
             currentHealth = maxHealth;
@@ -49,7 +49,7 @@ namespace _3_Main
             var bullet = collision!.gameObject!.GetComponent<Bullet>();
             if (bullet == null) return;
 
-            currentHealth -= bullet.damage;
+            currentHealth -= (int)bullet.damage;
             healthBar!.SetCurrentHealth(currentHealth);
             SessionStatistics.Instance!.DamageDone += _gameConfig!.BulletDamage;
 

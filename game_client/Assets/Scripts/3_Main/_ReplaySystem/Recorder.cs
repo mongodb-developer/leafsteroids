@@ -24,11 +24,12 @@ namespace _3_Main._ReplaySystem
 
         public void PersistRecording()
         {
+            var gameConfig = GameConfigLoader.Instance!.GameConfig!;
             var recording = new Recording
             {
                 Snapshots = _snapshots,
-                Player = GameConfigLoader.Instance!.GameConfig!.Player,
-                Event = GameConfigLoader.Instance!.GameConfig.Event
+                PlayerName = gameConfig.Player!.Name,
+                EventId = gameConfig.Event!.Id
             };
             StartCoroutine(
                 AtlasHelper.RecordSnapshot(
@@ -41,7 +42,7 @@ namespace _3_Main._ReplaySystem
         {
             var snapshot = new Snapshot
             {
-                PlayerPosition = new Position(Helper.InvertY(player!.transform.position))
+                Position = new Position(Helper.InvertY(player!.transform.position))
             };
             _snapshots!.Add(snapshot);
         }

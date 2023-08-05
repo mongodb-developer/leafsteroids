@@ -44,7 +44,7 @@ namespace _2_PlayerSelection
                 if (char.IsLetter(pressedCharacter) && _players is { Count: > 0 })
                 {
                     Debug.Log("Detected key code: " + pressedCharacter);
-                    _currentIndex = _players.FindIndex(p => p!.Nickname!.StartsWith(pressedCharacter));
+                    _currentIndex = _players.FindIndex(p => p!.Name!.StartsWith(pressedCharacter));
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace _2_PlayerSelection
                 AtlasHelper.GetPlayers(result =>
                 {
                     _players = result;
-                    _players!.Sort((x, y) => string.Compare(x!.Nickname!, y!.Nickname, StringComparison.Ordinal));
+                    _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name, StringComparison.Ordinal));
                     UpdatePlayerList();
                 })
             );
@@ -89,13 +89,13 @@ namespace _2_PlayerSelection
             var slot4Index = _currentIndex + 1;
             var slot5Index = _currentIndex + 2;
 
-            slot1!.text = slot1Index >= 0 && slot1Index < _players!.Count ? _players[slot1Index]!.Nickname : "";
-            slot2!.text = slot2Index >= 0 && slot2Index < _players!.Count ? _players[slot2Index]!.Nickname : "";
+            slot1!.text = slot1Index >= 0 && slot1Index < _players!.Count ? _players[slot1Index]!.Name : "";
+            slot2!.text = slot2Index >= 0 && slot2Index < _players!.Count ? _players[slot2Index]!.Name : "";
             slot3!.text = slot3Index >= 0 && slot3Index < _players!.Count
-                ? $"===> {_players[slot3Index]!.Nickname} <==="
+                ? $"===> {_players[slot3Index]!.Name} <==="
                 : "";
-            slot4!.text = slot4Index >= 0 && slot4Index < _players!.Count ? _players[slot4Index]!.Nickname : "";
-            slot5!.text = slot5Index >= 0 && slot5Index < _players!.Count ? _players[slot5Index]!.Nickname : "";
+            slot4!.text = slot4Index >= 0 && slot4Index < _players!.Count ? _players[slot4Index]!.Name : "";
+            slot5!.text = slot5Index >= 0 && slot5Index < _players!.Count ? _players[slot5Index]!.Name : "";
         }
 
         private void SelectPlayer()

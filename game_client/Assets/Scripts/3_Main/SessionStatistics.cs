@@ -7,11 +7,11 @@ namespace _3_Main
         public static SessionStatistics Instance;
 
         public int BulletsFired { get; set; }
-        public float DamageDone { get; set; }
+        public int DamageDone { get; set; }
         public int PelletsDestroyedSmall { get; set; }
         public int PelletsDestroyedMedium { get; set; }
         public int PelletsDestroyedLarge { get; set; }
-        public float Score { get; set; }
+        public int Score { get; set; }
         public int PowerUpBulletDamageCollected { get; set; }
         public int PowerUpBulletSpeedCollected { get; set; }
         public int PowerUpPlayerSpeedCollected { get; set; }
@@ -32,11 +32,11 @@ namespace _3_Main
         public void Reset()
         {
             BulletsFired = 0;
-            DamageDone = 0f;
+            DamageDone = 0;
             PelletsDestroyedSmall = 0;
             PelletsDestroyedMedium = 0;
             PelletsDestroyedLarge = 0;
-            Score = 0f;
+            Score = 0;
         }
 
         public SessionStatisticsPlain GetPlainCopy()

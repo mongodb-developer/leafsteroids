@@ -10,13 +10,13 @@ public class RecordingAtlas
     public SessionStatisticsPlain? SessionStatisticsPlain { get; set; }
     public DateTime? DateTime { get; set; }
     public string? PlayerName { get; set; }
-    public PlayerPosition[]? Snapshots { get; set; }
+    public List<Snapshot>? Snapshots { get; set; }
     public string? EventId { get; set; }
 
     public RecordingAtlas(RecordingRequest recordingRequest)
     {
         SessionStatisticsPlain = recordingRequest.SessionStatisticsPlain;
-        DateTime = recordingRequest.DateTime;
+        DateTime = System.DateTime.UtcNow;
         PlayerName = recordingRequest.PlayerName;
         Snapshots = recordingRequest.Snapshots;
         EventId = recordingRequest.EventId;

@@ -6,18 +6,17 @@ namespace _00_Shared
 {
     public class GameConfig
     {
-        public float BulletDamage;
-        public float BulletLifespan;
-        public float BulletSpeed;
-        [JsonProperty("_id")]
-        public string Id;
-        public float PelletHeatlhLarge;
-        public float PelletHeatlhMedium;
-        public float PelletHeatlhSmall;
-        [CanBeNull] public RegisteredPlayer Player;
-        [CanBeNull] public Event Event;
-        public float PlayerMoveSpeed;
-        public float PlayerRotateSpeed;
-        public float RoundDuration;
+        [JsonProperty("bulletDamage")] public int BulletDamage { get; set; }
+
+        [JsonProperty("bulletLifespan")] public int BulletLifespan { get; set; }
+        [JsonProperty("bulletSpeed")] public int BulletSpeed { get; set; }
+        [JsonProperty("pelletHealthSmall")] public int PelletHealthSmall { get; set; }
+        [JsonProperty("pelletHealthMedium")] public int PelletHealthMedium { set; get; }
+        [JsonProperty("pelletHealthLarge")] public int PelletHealthLarge { get; set; }
+        [CanBeNull] public RegisteredPlayer Player { get; set; }
+        [CanBeNull] public Event Event { get; set; }
+        [JsonProperty("playerMoveSpeed")] public int PlayerMoveSpeed { get; set; }
+        [JsonProperty("playerRotateSpeed")] public int PlayerRotateSpeed { get; set; }
+        [JsonProperty("roundDuration")] public int RoundDuration { get; set; }
     }
 }

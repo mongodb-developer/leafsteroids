@@ -25,7 +25,7 @@
         height: 90vh;
     }
 </style>
-<a href="\?EventId=@event_name">
+<a href="\?EventId=@eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card bg-white">
@@ -142,9 +142,10 @@
     private Player Player { get; set; } = new Player();
     private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
 
-    BsonDocument eventFilter = new BsonDocument("_id", "mdb-mongodb-tv"); // TODO: GET FROM A CONFIG FILE
+        const string defaultEventId = "mdb-global-event";
+    private string eventId = defaultEventId;
+    BsonDocument eventFilter = new BsonDocument("_id", defaultEventId);
     private Event? Event;
-    private string event_name = "mdb-mongodb-tv"; // default
 
     Dictionary<string, string>? queryParameters;
 
@@ -161,21 +162,21 @@
 
         if (queryParameters.ContainsKey("event"))
         {
-            event_name = queryParameters["event"];
+            eventId = queryParameters["event"];
         }
         else
         {
             if (queryParameters.ContainsKey("EventId"))
             {
-                event_name = queryParameters["EventId"];
+                eventId = queryParameters["EventId"];
             }
             else
             {
     // fallback on a default event, if none is available
-                event_name = "mdb-mongodb-tv";
+                eventId = defaultEventId;
             }
         }
-        BsonDocument eventFilter = new BsonDocument("_id", event_name);
+        BsonDocument eventFilter = new BsonDocument("_id", eventId);
 
         Event = Events.FindSync(eventFilter).Single<Event>();
 
