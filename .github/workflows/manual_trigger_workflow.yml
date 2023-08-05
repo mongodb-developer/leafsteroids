@@ -11,7 +11,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+
+      - run: |
+          echo foo
 
       # Add your build and deployment steps here
       # For example:
