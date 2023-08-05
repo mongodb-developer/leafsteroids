@@ -21,13 +21,13 @@ jobs:
           echo $PRIVATE_KEY > ~/.ssh/id_rsa
           chmod 400 ~/.ssh/id_rsa
 
-      - name: Add SSH fingerprint
-        env:
-          PROD_SECRET: ${{ secrets.PROD_IP }}
-          STAGING_SECRET: ${{ secrets.STAGING_IP }}
-        run: |
-          ssh-keyscan -H $PROD_IP >> ~/.ssh/known_hosts
-          ssh-keyscan -H $STAGING_IP >> ~/.ssh/known_hosts
+      - name: Add SSH fingerprint for PROD
+        run: ssh-keyscan -H ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts
+        if: github.ref == 'refs/heads/PROD'
+
+      - name: Add SSH fingerprint for STAGING
+        run: ssh-keyscan -H ${{ secrets.STAGING_IP }} >> ~/.ssh/known_hosts
+        if: github.ref == 'refs/heads/STAGING'
 
       - name: Deploy to EC2
         run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ secrets.PROD_IP }}:/home/ubuntu/rest_service/
