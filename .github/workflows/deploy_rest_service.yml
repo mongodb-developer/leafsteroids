@@ -33,14 +33,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Create SSH Directory
-        run: mkdir -p ~/.ssh
-        continue-on-error: true  # it might already exist, which is ok
-
       - name: Create SSH Key File
         run: |
-          echo "${EC2_PRIVATE_KEY}" > ~/.ssh/ec2_private_key.pem
-          chmod 400 ~/.ssh/ec2_private_key.pem
+          echo "${EC2_PRIVATE_KEY}" > ec2_private_key.pem
+          chmod 400 ec2_private_key.pem
 
       - name: Add SSH Fingerprint
         run: |
@@ -58,13 +54,13 @@ jobs:
           echo "DATABASE_NAME=${{env.DATABASE_NAME}}" >> ./rest_service/.env
 
       - name: Copy The rest_service Directory To The AWS EC2 Instance
-        run: scp -i ~/.ssh/ec2_private_key.pem -r ./rest_service ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/
+        run: scp -i ec2_private_key.pem -r ./rest_service ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/
 
       - name: Copy The Systemd Service To The AWS EC2 Instance
-        run: scp -i ~/.ssh/ec2_private_key.pem deployment/rest_service.service ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/rest_service.service
+        run: scp -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/rest_service.service
 
       - name: Enable And Start The Systemd Service On The AWS EC2 Instance
         run: |
-          ssh -i ~/.ssh/ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ~/.ssh/ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo systemctl enable rest_service.service'
-          ssh -i ~/.ssh/ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo systemctl start rest_service.service'
+          ssh -i ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo systemctl enable rest_service.service'
+          ssh -i ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo systemctl start rest_service.service'
