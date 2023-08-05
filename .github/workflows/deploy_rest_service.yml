@@ -38,17 +38,19 @@ jobs:
           echo "${EC2_PRIVATE_KEY}" > ec2_private_key.pem
           chmod 400 ec2_private_key.pem
 
-      - name: Create SSH Directory
-        run: mkdir -p ~/.ssh
-        continue-on-error: true  # it might already exist, which is ok
-
-      - name: Add SSH Fingerprint
-        run: |
-          echo ${{ env.ENVIRONMENT_IP }}
-          ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
+      #      - name: Create SSH Directory
+      #        run: mkdir -p ~/.ssh
+      #        continue-on-error: true  # it might already exist, which is ok
+      #
+      #      - name: Add SSH Fingerprint
+      #        run: |
+      #          echo ${{ env.ENVIRONMENT_IP }}
+      #          ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
       - name: Install .NET SDK 7 On The AWS EC2 Instance
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
+        run: |
+          echo ${{ env.ENVIRONMENT_IP }}
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
       #      - name: Copy The Files to The EC2 Instance
       #        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
@@ -59,13 +61,13 @@ jobs:
           echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env
 
       - name: Copy The rest_service Directory To The AWS EC2 Instance
-        run: scp -i ec2_private_key.pem -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
+        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
 
       - name: Copy The Systemd Service To The AWS EC2 Instance
-        run: scp -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
+        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
 
       - name: Enable And Start The Systemd Service On The AWS EC2 Instance
         run: |
-          ssh -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
-          ssh -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
