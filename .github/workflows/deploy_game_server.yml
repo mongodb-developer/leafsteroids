@@ -24,9 +24,9 @@ jobs:
           chmod 400 ec2_private_key.pem
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           if [[ "$BRANCH_NAME" == "PROD" ]]; then
-             scp -i ec2_private_key.pem .env ubuntu@$PROD_IP:/path/to/target/directory
+             scp -i ec2_private_key.pem -r rest_service ubuntu@$PROD_IP:/home/ubuntu/rest_service
           elif [[ "$BRANCH_NAME" == "STAGING" ]]; then
-             scp -i ec2_private_key.pem .env ubuntu@$PROD_IP:/path/to/target/directory
+             scp -i ec2_private_key.pem -r rest_service ubuntu@$STAGING_IP:/home/ubuntu/rest_service
           fi
 
 
