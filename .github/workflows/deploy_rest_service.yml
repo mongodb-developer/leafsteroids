@@ -40,7 +40,6 @@ jobs:
 
       - name: Add SSH fingerprint
         run: |
-          echo $ENVIRONMENT_IP
           echo ${{ env.ENVIRONMENT_IP }}
           ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
@@ -48,22 +47,22 @@ jobs:
         run: cat ~/.ssh/known_hosts  # Print the known_hosts file for verification
 
       - name: Install .NET SDK 7 on EC2
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
       - name: Deploy to EC2
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
 
       - name: Create .env file inside rest_service folder
         run: echo "CONNECTION_STRING=${CONNECTION_STRING}" > ./rest_service/.env
 
       - name: Copy rest_service folder and .env file to EC2
-        run: scp -i ~/.ssh/id_rsa -r ./rest_service ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }}:/home/ubuntu/
+        run: scp -i ~/.ssh/id_rsa -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
 
       - name: Create systemd service on EC2
-        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
+        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
 
       - name: Enable and start systemd service on EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
