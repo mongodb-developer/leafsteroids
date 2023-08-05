@@ -43,7 +43,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add SSH fingerprint
-        run: ssh-keyscan -H ${{ needs.set_environment.outputs.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
         continue-on-error: true  # Continue even if ssh-keyscan fails
 
       - name: Verify known_hosts
