@@ -33,7 +33,6 @@ namespace _00_Shared
                 var gameConfigs = JsonConvert.DeserializeObject<List<GameConfig>>(request.downloadHandler!.text!);
                 Debug.Log(gameConfigs);
                 var config = gameConfigs.First();
-                config.RoundDuration = 3;
                 callback?.Invoke(config);
             }
         }

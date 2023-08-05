@@ -10,10 +10,12 @@ namespace RestService.Controllers
     public class RecordingsController : BaseController
     {
         private readonly IMongoCollection<RecordingAtlas> _recordingsCollection;
+        private readonly IMongoCollection<EventAtlas> _eventsCollection;
 
         public RecordingsController(ILogger<RecordingsController> logger) : base(logger)
         {
             _recordingsCollection = Database!.GetCollection<RecordingAtlas>(Constants.RecordingsCollectionName);
+            _eventsCollection = Database!.GetCollection<EventAtlas>(Constants.EventsCollectionName);
         }
 
         [HttpPost(Name = "PostRecording")]
@@ -29,10 +31,19 @@ namespace RestService.Controllers
             }
 
             var newRecordingAtlas = new RecordingAtlas(recordingRequest);
+            await AddLocation(newRecordingAtlas);
 
             await _recordingsCollection.InsertOneAsync(newRecordingAtlas);
 
             return Ok(new { Message = "Recording created successfully." });
+        }
+
+        private async Task AddLocation(RecordingAtlas recordingAtlas)
+        {
+            var eventId = recordingAtlas.EventId;
+            var eventFilter = Builders<EventAtlas>.Filter.Eq("_id", eventId);
+            var currentEvent = await _eventsCollection.Find(eventFilter).FirstAsync();
+            recordingAtlas.Location = currentEvent.Location;
         }
     }
 }
