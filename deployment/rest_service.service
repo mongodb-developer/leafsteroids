@@ -1,0 +1,15 @@
+[Unit]
+Description=rest_service .NET Core Web API
+After=network.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/rest_service
+ExecStart=/usr/bin/dotnet run
+Restart=always
+RestartSec=10
+SyslogIdentifier=rest_service
+User=ubuntu
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target
