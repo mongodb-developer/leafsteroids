@@ -23,6 +23,7 @@ jobs:
           echo "$EC2_PRIVATE_KEY" > ec2_private_key.pem
           chmod 400 ec2_private_key.pem
           
+          touch ~/.ssh/known_hosts
           ssh-keyscan -H $PROD_IP >> ~/.ssh/known_hosts
           ssh-keyscan -H $STAGING_IP >> ~/.ssh/known_hosts
           
