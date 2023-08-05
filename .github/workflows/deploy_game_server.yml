@@ -17,8 +17,8 @@ jobs:
       - name: copy files to EC2
         env:
           EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-          PROD_SECRET: ${{ secrets.PROD_IP }}
-          STAGING_SECRET: ${{ secrets.STAGING_IP }}
+          PROD_IP: ${{ secrets.PROD_IP }}
+          STAGING_IP: ${{ secrets.STAGING_IP }}
         run: |
           echo "$EC2_PRIVATE_KEY" > ec2_private_key.pem
           chmod 400 ec2_private_key.pem
