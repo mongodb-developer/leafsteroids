@@ -1,5 +1,5 @@
 [Unit]
-Description=rest_service .NET Core Web API
+Description=REST service
 After=network.target
 
 [Service]

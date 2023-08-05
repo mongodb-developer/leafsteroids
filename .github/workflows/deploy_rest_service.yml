@@ -5,6 +5,7 @@ on:
     branches:
       - PROD
       - STAGING
+  workflow_dispatch:  # Allow manual triggering
 
 env:
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
@@ -43,9 +44,6 @@ jobs:
           echo ${{ env.ENVIRONMENT_IP }}
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
-      #      - name: Copy The Files to The EC2 Instance
-      #        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
-
       - name: Create The .env File Inside rest_service Directory
         run: |
           echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./rest_service/.env
@@ -62,3 +60,4 @@ jobs:
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl restart rest_service.service'
