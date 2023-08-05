@@ -19,7 +19,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo $PRIVATE_KEY > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Add SSH fingerprint for PROD
         run: ssh-keyscan -H ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts
