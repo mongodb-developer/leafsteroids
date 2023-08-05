@@ -4,6 +4,12 @@ on:
     branches:
       - STAGING
   workflow_dispatch:
+    # To allow manual triggering, we need to specify an input
+    inputs:
+      manual_trigger:
+        description: 'Manually trigger the workflow'
+        # Set the input as not required, so it's optional during manual triggering
+        required: false
 
 jobs:
   build:
@@ -15,14 +21,3 @@ jobs:
 
       - run: |
           echo foo
-
-      # Add your build and deployment steps here
-      # For example:
-      # - name: Build project
-      #   run: |
-      #     # Build commands go here
-
-      # - name: Deploy to production
-      #   if: github.event_name == 'workflow_dispatch' # Optional, you can conditionally run deployment based on the event name
-      #   run: |
-      #     # Deployment commands go here
