@@ -1,0 +1,22 @@
+name: Manual Trigger Workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Add your build and deployment steps here
+      # For example:
+      # - name: Build project
+      #   run: |
+      #     # Build commands go here
+
+      # - name: Deploy to production
+      #   if: github.event_name == 'workflow_dispatch' # Optional, you can conditionally run deployment based on the event name
+      #   run: |
+      #     # Deployment commands go here
