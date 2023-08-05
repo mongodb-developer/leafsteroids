@@ -13,11 +13,10 @@ env:
   CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
 
 jobs:
-  set_environment:
+  deploy:
     runs-on: ubuntu-latest
-    outputs:
-      ENVIRONMENT_IP: ${{ steps.check_environment.outputs.ENVIRONMENT_IP }}
     steps:
+
       - name: Check Environment
         id: check_environment
         run: |
@@ -27,10 +26,6 @@ jobs:
             echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
           fi
 
-  deploy:
-    needs: set_environment
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -47,7 +42,6 @@ jobs:
         run: |
           echo $ENVIRONMENT_IP
           ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
-        continue-on-error: true  # Continue even if ssh-keyscan fails
 
       - name: Verify known_hosts
         run: cat ~/.ssh/known_hosts  # Print the known_hosts file for verification
