@@ -15,7 +15,7 @@ jobs:
           STAGING_SECRET: ${{ secrets.STAGING_IP }}
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          if [[ "$BRANCH_NAME" == "PROD" ]]; then
+          if [[ "$BRANCH_NAME" == "df/new-rest-service" ]]; then
             echo "PROD secret: $PROD_SECRET"
           elif [[ "$BRANCH_NAME" == "STAGING" ]]; then
             echo "STAGING secret: $STAGING_SECRET"
