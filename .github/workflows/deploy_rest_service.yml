@@ -10,6 +10,8 @@ env:
   PROD_IP: ${{ secrets.PROD_IP }}
   STAGING_IP: ${{ secrets.STAGING_IP }}
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+  CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+  ENVIRONMENT_IP: ${{ env.PROD_IP }} # Default to PROD_IP, will be changed if branch is STAGING
 
 jobs:
   deploy:
@@ -18,8 +20,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Debug - Print SSH key
-        run: echo "${EC2_PRIVATE_KEY}"
+      - name: Set Environment IP
+        run: |
+          if [ "$GITHUB_REF" == "refs/heads/STAGING" ]; then
+            echo "Setting ENVIRONMENT_IP to STAGING"
+            echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
+          else
+            echo "Setting ENVIRONMENT_IP to PROD"
+            echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
+          fi
 
       - name: Create SSH directory
         run: mkdir -p ~/.ssh
@@ -29,48 +38,26 @@ jobs:
           echo "${EC2_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Add SSH fingerprint for PROD
-        run: ssh-keyscan -H ${{ env.PROD_IP }} >> ~/.ssh/known_hosts
-        if: github.ref == 'refs/heads/PROD'
+      - name: Add SSH fingerprint
+        run: ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
-      - name: Add SSH fingerprint for STAGING
-        run: ssh-keyscan -H ${{ env.STAGING_IP }} >> ~/.ssh/known_hosts
-        if: github.ref == 'refs/heads/STAGING'
+      - name: Install .NET SDK 7 on EC2
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
-      - name: Install .NET SDK 7 on EC2 PROD
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.PROD_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
-        if: github.ref == 'refs/heads/PROD'
+      - name: Deploy to EC2
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
 
-      - name: Install .NET SDK 7 on EC2 Staging
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.STAGING_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
-        if: github.ref == 'refs/heads/STAGING'
+      - name: Create .env file inside rest_service folder
+        run: echo "CONNECTION_STRING=${CONNECTION_STRING}" > ./rest_service/.env
 
-      - name: Deploy to EC2 PROD
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service/
-        if: github.ref == 'refs/heads/PROD'
+      - name: Copy rest_service folder and .env file to EC2
+        run: scp -i ~/.ssh/id_rsa -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
 
-      - name: Deploy to EC2 Staging
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service/
-        if: github.ref == 'refs/heads/STAGING'
+      - name: Create systemd service on EC2
+        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
 
-      - name: Copy systemd service file to EC2 PROD
-        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service.service
-        if: github.ref == 'refs/heads/PROD'
-
-      - name: Copy systemd service file to EC2 Staging
-        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service.service
-        if: github.ref == 'refs/heads/STAGING'
-
-      - name: Enable and start systemd service on EC2 PROD
+      - name: Enable and start systemd service on EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.PROD_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.PROD_IP }} 'sudo systemctl enable rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.PROD_IP }} 'sudo systemctl start rest_service.service'
-        if: github.ref == 'refs/heads/PROD'
-
-      - name: Enable and start systemd service on EC2 Staging
-        run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.STAGING_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.STAGING_IP }} 'sudo systemctl enable rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.STAGING_IP }} 'sudo systemctl start rest_service.service'
-        if: github.ref == 'refs/heads/STAGING'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
