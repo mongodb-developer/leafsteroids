@@ -1,0 +1,14 @@
+name: Print Branch Name
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  print-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print branch name
+        run: |
+          echo "Branch Name: ${GITHUB_REF#refs/heads/}"
