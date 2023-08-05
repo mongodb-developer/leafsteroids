@@ -12,9 +12,6 @@ jobs:
 
       - name: Checkout repo
         uses: actions/checkout@v2
-      
-      #      - id: commit
-      #        uses: pr-mpt/actions-commit-hash@v2
 
       - name: Prepare deployment package
         run: |
@@ -22,17 +19,6 @@ jobs:
           echo ${{ secrets.CONNECTION_STRING }} > .env
           dotnet publish -o deployment_package
           zip -r deploy.zip deployment_package
-      
-      #      - name: Deploy to AWS Beanstalk
-      #        uses: einaregilsson/beanstalk-deploy@v21
-      #        with:
-      #          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #          application_name: leafsteroids-v2-website
-      #          environment_name: leafsteroids-v2-website-prod
-      #          version_label: leafsteroids-v2-website-${{ steps.commit.outputs.hash }}
-      #          region: us-east-1
-      #          deployment_package: ./website/deploy.zip
 
       - name: Deploy website
         uses: appleboy/scp-action@v0.1.4

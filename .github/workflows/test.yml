@@ -3,10 +3,11 @@ name: Print Corresponding Secret
 on:
   push:
     branches:
-      - '**'
+      - PROD
+      - STAGING
 
 jobs:
-  print-secret:
+  deploy-rest-service:
     runs-on: ubuntu-latest
     steps:
       - name: Print secret based on branch name
@@ -19,6 +20,4 @@ jobs:
             echo "PROD secret: $PROD_SECRET"
           elif [[ "$BRANCH_NAME" == "STAGING" ]]; then
             echo "STAGING secret: $STAGING_SECRET"
-          else
-            echo "No secrets to show for this branch"
           fi
