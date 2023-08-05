@@ -7,11 +7,11 @@ on:
       - STAGING
 
 env:
-  EC2_PRIVATE_KEY: ${{secrets.EC2_PRIVATE_KEY}}
-  PROD_IP: ${{secrets.PROD_IP}}
-  STAGING_IP: ${{secrets.STAGING_IP}}
-  CONNECTION_STRING_STAGING: ${{secrets.CONNECTION_STRING_STAGING}}
-  CONNECTION_STRING_PROD: ${{secrets.CONNECTION_STRING_PROD}}
+  EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+  PROD_IP: ${{ secrets.PROD_IP }}
+  STAGING_IP: ${{ secrets.STAGING_IP }}
+  CONNECTION_STRING_STAGING: ${{ secrets.CONNECTION_STRING_STAGING }}
+  CONNECTION_STRING_PROD: ${{ secrets.CONNECTION_STRING_PROD }}
 
 jobs:
   deployment:
@@ -20,7 +20,7 @@ jobs:
 
       - name: Set Environment Variables For PROD And STAGING
         run: |
-          if [ "${{github.ref}}" == "refs/heads/STAGING" ]; then
+          if [ "${{ github.ref }}" == "refs/heads/STAGING" ]; then
             echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
             echo "DATABASE_NAME=Leafsteroids_stage" >> $GITHUB_ENV
             echo "CONNECTION_STRING=${CONNECTION_STRING_STAGING}" >> $GITHUB_ENV
@@ -40,27 +40,27 @@ jobs:
 
       - name: Add SSH Fingerprint
         run: |
-          ssh-keyscan -H ${{env.ENVIRONMENT_IP}} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
       - name: Install .NET SDK 7 On The AWS EC2 Instance
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{env.ENVIRONMENT_IP}} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
       #      - name: Copy The Files to The EC2 Instance
-      #        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/rest_service/
+      #        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
 
       - name: Create The .env File Inside rest_service Directory
         run: |
-          echo "CONNECTION_STRING=${{env.CONNECTION_STRING}}" > ./rest_service/.env
-          echo "DATABASE_NAME=${{env.DATABASE_NAME}}" >> ./rest_service/.env
+          echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./rest_service/.env
+          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env
 
       - name: Copy The rest_service Directory To The AWS EC2 Instance
-        run: scp -i ec2_private_key.pem -r ./rest_service ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/
+        run: scp -i ec2_private_key.pem -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
 
       - name: Copy The Systemd Service To The AWS EC2 Instance
-        run: scp -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{env.ENVIRONMENT_IP}}:/home/ubuntu/rest_service.service
+        run: scp -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
 
       - name: Enable And Start The Systemd Service On The AWS EC2 Instance
         run: |
-          ssh -i ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo systemctl enable rest_service.service'
-          ssh -i ec2_private_key.pem ubuntu@${{env.ENVIRONMENT_IP}} 'sudo systemctl start rest_service.service'
+          ssh -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
