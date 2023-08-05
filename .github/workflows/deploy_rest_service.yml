@@ -41,7 +41,7 @@ jobs:
       - name: Add SSH fingerprint
         run: |
           echo $ENVIRONMENT_IP
-           echo ${{ env.ENVIRONMENT_IP }}
+          echo ${{ env.ENVIRONMENT_IP }}
           ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
       - name: Verify known_hosts
