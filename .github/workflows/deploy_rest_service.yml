@@ -38,15 +38,6 @@ jobs:
           echo "${EC2_PRIVATE_KEY}" > ec2_private_key.pem
           chmod 400 ec2_private_key.pem
 
-      #      - name: Create SSH Directory
-      #        run: mkdir -p ~/.ssh
-      #        continue-on-error: true  # it might already exist, which is ok
-      #
-      #      - name: Add SSH Fingerprint
-      #        run: |
-      #          echo ${{ env.ENVIRONMENT_IP }}
-      #          ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
-
       - name: Install .NET SDK 7 On The AWS EC2 Instance
         run: |
           echo ${{ env.ENVIRONMENT_IP }}
