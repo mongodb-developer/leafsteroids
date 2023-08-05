@@ -10,7 +10,8 @@ env:
   PROD_IP: ${{ secrets.PROD_IP }}
   STAGING_IP: ${{ secrets.STAGING_IP }}
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-  CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
+  CONNECTION_STRING_STAGING: ${{ secrets.CONNECTION_STRING_STAGING }}
+  CONNECTION_STRING_PROD: ${{ secrets.CONNECTION_STRING_PROD }}
 
 jobs:
   deploy:
@@ -23,9 +24,11 @@ jobs:
           if [ "${{ github.ref }}" == "refs/heads/STAGING" ]; then
             echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
             echo "DATABASE_NAME=Leafsteroids_stage" >> $GITHUB_ENV
+            echo "CONNECTION_STRING=${CONNECTION_STRING_STAGING}" >> $GITHUB_ENV
           else
             echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
             echo "DATABASE_NAME=Leafsteroids" >> $GITHUB_ENV
+            echo "CONNECTION_STRING=${CONNECTION_STRING_PROD}" >> $GITHUB_ENV
           fi
 
       - name: Checkout code
@@ -56,7 +59,7 @@ jobs:
 
       - name: Create .env file inside rest_service folder
         run: |
-          echo "CONNECTION_STRING=${CONNECTION_STRING}" > ./rest_service/.env
+          echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./rest_service/.env
           echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env
 
       - name: Copy rest_service folder and .env file to EC2
