@@ -1,4 +1,4 @@
-name: Print Branch Name
+name: Print Corresponding Secret
 
 on:
   push:
@@ -6,9 +6,19 @@ on:
       - '**'
 
 jobs:
-  print-branch:
+  print-secret:
     runs-on: ubuntu-latest
     steps:
-      - name: Print branch name
+      - name: Print secret based on branch name
+        env:
+          PROD_SECRET: ${{ secrets.PROD_IP }}
+          STAGING_SECRET: ${{ secrets.STAGING_IP }}
         run: |
-          echo "Branch Name: ${GITHUB_REF#refs/heads/}"
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [[ "$BRANCH_NAME" == "PROD" ]]; then
+            echo "PROD secret: $PROD_SECRET"
+          elif [[ "$BRANCH_NAME" == "STAGING" ]]; then
+            echo "STAGING secret: $STAGING_SECRET"
+          else
+            echo "No secrets to show for this branch"
+          fi
