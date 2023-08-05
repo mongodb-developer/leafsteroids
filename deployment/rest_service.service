@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 WorkingDirectory=/home/ubuntu/rest_service
-ExecStart=/usr/bin/dotnet run
+ExecStart=/usr/bin/dotnet run --urls "http://0.0.0.0:8000"
 Restart=always
 RestartSec=10
 SyslogIdentifier=rest_service
