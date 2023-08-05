@@ -37,6 +37,14 @@ jobs:
         run: ssh-keyscan -H ${{ env.STAGING_IP }} >> ~/.ssh/known_hosts
         if: github.ref == 'refs/heads/STAGING'
 
+      - name: Install .NET SDK 7 on EC2 PROD
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.PROD_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
+        if: github.ref == 'refs/heads/PROD'
+
+      - name: Install .NET SDK 7 on EC2 Staging
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.STAGING_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
+        if: github.ref == 'refs/heads/STAGING'
+
       - name: Deploy to EC2 PROD
         run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service/
         if: github.ref == 'refs/heads/PROD'
