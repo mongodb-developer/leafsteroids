@@ -5,7 +5,6 @@ on:
     branches:
       - PROD
       - STAGING
-  workflow_dispatch:  # Allow manual triggering
 
 env:
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
