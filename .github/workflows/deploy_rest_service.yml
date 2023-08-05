@@ -36,6 +36,7 @@ jobs:
 
       - name: Create SSH directory
         run: mkdir -p ~/.ssh
+        continue-on-error: true  # it's ok if it already exists
 
       - name: Configure SSH key
         run: |
@@ -43,7 +44,9 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add SSH fingerprint
-        run: ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
+        run: |
+          echo $ENVIRONMENT_IP
+          ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
         continue-on-error: true  # Continue even if ssh-keyscan fails
 
       - name: Verify known_hosts
