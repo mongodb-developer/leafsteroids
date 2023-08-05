@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      # Environment
+
       - name: Set Environment Variables For PROD And STAGING
         run: |
           if [ "${{ github.ref }}" == "refs/heads/STAGING" ]; then
@@ -44,10 +46,12 @@ jobs:
           echo ${{ env.ENVIRONMENT_IP }}
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
+      # REST service
+
       - name: Create The .env File Inside rest_service Directory
         run: |
           echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./rest_service/.env
-          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env
+          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env     
 
       - name: Copy The rest_service Directory To The AWS EC2 Instance
         run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
@@ -61,3 +65,23 @@ jobs:
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl restart rest_service.service'
+
+      # Website
+
+      - name: Create The .env File Inside rest_service Directory
+        run: |
+          echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./website/.env
+          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./website/.env     
+
+      - name: Copy The website Directory To The AWS EC2 Instance
+        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./website ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
+
+      - name: Copy The Systemd Service To The AWS EC2 Instance
+        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem deployment/website.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/website.service
+
+      - name: Enable And Start The Systemd Service On The AWS EC2 Instance
+        run: |
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/website.service /etc/systemd/system/website.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable website.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start website.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl restart website.service'

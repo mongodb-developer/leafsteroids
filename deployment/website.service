@@ -1,0 +1,15 @@
+[Unit]
+Description=Website service
+After=network.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/website
+ExecStart=/usr/bin/dotnet run --urls "http://0.0.0.0:5000"
+Restart=always
+RestartSec=10
+SyslogIdentifier=website
+User=ubuntu
+Environment=ASPNETCORE_ENVIRONMENT=Production
+
+[Install]
+WantedBy=multi-user.target
