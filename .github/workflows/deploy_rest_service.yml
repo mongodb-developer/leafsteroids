@@ -40,6 +40,7 @@ jobs:
 
       - name: Add SSH Fingerprint
         run: |
+          echo ${{ env.ENVIRONMENT_IP }}
           ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
       - name: Install .NET SDK 7 On The AWS EC2 Instance
