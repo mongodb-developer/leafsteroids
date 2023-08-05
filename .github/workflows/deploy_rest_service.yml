@@ -11,7 +11,7 @@ env:
   STAGING_IP: ${{ secrets.STAGING_IP }}
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
   CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
-  ENVIRONMENT_IP: ${{ env.PROD_IP }} # Default to PROD_IP, will be changed if branch is STAGING
+  ENVIRONMENT_IP: ${{ needs.set_environment.outputs.ENVIRONMENT_IP }}
 
 jobs:
   deploy:
@@ -21,6 +21,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set Environment IP
+        id: set_environment
         run: |
           if [ "$GITHUB_REF" == "refs/heads/STAGING" ]; then
             echo "Setting ENVIRONMENT_IP to STAGING"
