@@ -14,22 +14,14 @@ jobs:
       - name: check out repository
         uses: actions/checkout@v2
 
-      #      - name: set up environment variables
-      #        run: |
-      #          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
-
-      - name: create private key file
-        env:
-          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-        run: |
-          echo "$EC2_PRIVATE_KEY" > ec2_private_key.pem
-          chmod 400 ec2_private_key.pem
-
       - name: copy files to EC2
         env:
+          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
           PROD_SECRET: ${{ secrets.PROD_IP }}
           STAGING_SECRET: ${{ secrets.STAGING_IP }}
         run: |
+          echo "$EC2_PRIVATE_KEY" > ec2_private_key.pem
+          chmod 400 ec2_private_key.pem
           BRANCH_NAME=${GITHUB_REF#refs/heads/}
           if [[ "$BRANCH_NAME" == "PROD" ]]; then
              scp -i ec2_private_key.pem .env ubuntu@$PROD_IP:/path/to/target/directory
