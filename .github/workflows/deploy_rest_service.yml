@@ -55,7 +55,9 @@ jobs:
         run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
 
       - name: Create .env file inside rest_service folder
-        run: echo "CONNECTION_STRING=${CONNECTION_STRING}" > ./rest_service/.env
+        run: |
+          echo "CONNECTION_STRING=${CONNECTION_STRING}" > ./rest_service/.env
+          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env
 
       - name: Copy rest_service folder and .env file to EC2
         run: scp -i ~/.ssh/id_rsa -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
