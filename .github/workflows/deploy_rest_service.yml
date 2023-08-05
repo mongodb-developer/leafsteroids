@@ -52,3 +52,49 @@ jobs:
       - name: Deploy to EC2 Staging
         run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service/
         if: github.ref == 'refs/heads/STAGING'
+
+      - name: Create systemd service on EC2 PROD
+        run: |
+          echo "[Unit]
+          Description=rest_service .NET Core Web API
+          After=network.target
+          
+          [ Service ]
+          WorkingDirectory=/home/ubuntu/rest_service
+          ExecStart=/usr/bin/dotnet run
+          Restart=always
+          RestartSec=10
+          SyslogIdentifier=rest_service
+          User=ubuntu
+          Environment=ASPNETCORE_ENVIRONMENT=Production
+          
+          [ Install ]
+          WantedBy=multi-user.target" > rest_service.service
+          scp -i ~/.ssh/id_rsa rest_service.service ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service.service
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.PROD_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.PROD_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.PROD_IP }} 'sudo systemctl start rest_service.service'
+        if: github.ref == 'refs/heads/PROD'
+
+      - name: Create systemd service on EC2 Staging
+        run: |
+          echo "[Unit]
+          Description=rest_service .NET Core Web API
+          After=network.target
+          
+          [ Service ]
+          WorkingDirectory=/home/ubuntu/rest_service
+          ExecStart=/usr/bin/dotnet run
+          Restart=always
+          RestartSec=10
+          SyslogIdentifier=rest_service
+          User=ubuntu
+          Environment=ASPNETCORE_ENVIRONMENT=Production
+          
+          [ Install ]
+          WantedBy=multi-user.target" > rest_service.service
+          scp -i ~/.ssh/id_rsa rest_service.service ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service.service
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.STAGING_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.STAGING_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.STAGING_IP }} 'sudo systemctl start rest_service.service'
+        if: github.ref == 'refs/heads/STAGING'
