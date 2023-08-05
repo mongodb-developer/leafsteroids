@@ -22,8 +22,10 @@ jobs:
         run: |
           if [ "${{ github.ref }}" == "refs/heads/STAGING" ]; then
             echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
+            echo "DATABASE_NAME=Leafsteroids_stage" >> $GITHUB_ENV
           else
             echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
+            echo "DATABASE_NAME=Leafsteroids" >> $GITHUB_ENV
           fi
 
       - name: Checkout code
