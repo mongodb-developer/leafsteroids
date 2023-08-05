@@ -1,4 +1,4 @@
-name: Deploy to AWS EC2
+name: Deploy the REST service to EC2
 
 on:
   push:
@@ -7,32 +7,50 @@ on:
       - STAGING
 
 jobs:
-  deploy:
+  deploy-rest-service:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
 
-      - name: Configure SSH key
+      - name: check out repository
+        uses: actions/checkout@v2
+
+      #      - name: set up environment variables
+      #        run: |
+      #          echo "API_KEY=${{ secrets.API_KEY }}" >> $GITHUB_ENV
+
+      - name: create private key file
         env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo $PRIVATE_KEY > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "$EC2_PRIVATE_KEY" > ec2_private_key.pem
+          chmod 400 ec2_private_key.pem
 
-      - name: Add SSH fingerprint for PROD
-        run: ssh-keyscan -H ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts
-        if: github.ref == 'refs/heads/PROD'
+      - name: copy files to EC2
+        env:
+          PROD_SECRET: ${{ secrets.PROD_IP }}
+          STAGING_SECRET: ${{ secrets.STAGING_IP }}
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          if [[ "$BRANCH_NAME" == "PROD" ]]; then
+             scp -i ec2_private_key.pem .env ubuntu@$PROD_IP:/path/to/target/directory
+          elif [[ "$BRANCH_NAME" == "STAGING" ]]; then
+             scp -i ec2_private_key.pem .env ubuntu@$PROD_IP:/path/to/target/directory
+          fi
 
-      - name: Add SSH fingerprint for STAGING
-        run: ssh-keyscan -H ${{ secrets.STAGING_IP }} >> ~/.ssh/known_hosts
-        if: github.ref == 'refs/heads/STAGING'
 
-      - name: Deploy to EC2
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ secrets.PROD_IP }}:/home/ubuntu/rest_service/
-        if: github.ref == 'refs/heads/PROD'
+      - name: deploy game server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.GAME_SERVER_IP }}
+          username: ${{ secrets.GAME_SERVER_USERNAME }}
+          password: ${{ secrets.GAME_SERVER_PASSWORD }}
+          source: "game_server/*"
+          target: /home/ubuntu
 
-      - name: Deploy to EC2 Staging
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ secrets.STAGING_IP }}:/home/ubuntu/rest_service/
-        if: github.ref == 'refs/heads/STAGING'
+      - name: Restart game server service
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.GAME_SERVER_IP }}
+          username: ${{ secrets.GAME_SERVER_USERNAME }}
+          password: ${{ secrets.GAME_SERVER_PASSWORD }}
+          script: sudo systemctl restart game_server
