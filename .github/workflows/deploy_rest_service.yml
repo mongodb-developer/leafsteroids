@@ -9,6 +9,7 @@ on:
 env:
   PROD_IP: ${{ secrets.PROD_IP }}
   STAGING_IP: ${{ secrets.STAGING_IP }}
+  EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
 
 jobs:
   deploy:
@@ -17,16 +18,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Debug - Print SSH key
+        run: echo "${EC2_PRIVATE_KEY}"
+
       - name: Create SSH directory
         run: mkdir -p ~/.ssh
 
-      - name: Debug - Print SSH key
-        run: cat ~/.ssh/id_rsa
-
       - name: Configure SSH key
         run: |
-          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 700 ~/.ssh/id_rsa
+          echo "${EC2_PRIVATE_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
       - name: Add SSH fingerprint for PROD
         run: ssh-keyscan -H ${{ env.PROD_IP }} >> ~/.ssh/known_hosts
