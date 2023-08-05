@@ -4,12 +4,10 @@ on:
     branches:
       - STAGING
   workflow_dispatch:
-    # To allow manual triggering, we need to specify an input
     inputs:
-      manual_trigger:
-        description: 'Manually trigger the workflow'
-        # Set the input as not required, so it's optional during manual triggering
-        required: false
+      just_some_random_number:
+        description: 'Just choose a random number. Preferably 42.'
+        required: true
 
 jobs:
   build:
