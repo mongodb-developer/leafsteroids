@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - STAGING
+      - main
   workflow_dispatch:
     inputs:
       just_some_random_number:
