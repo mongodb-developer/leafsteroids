@@ -1,4 +1,4 @@
-name: Deploy the REST service to AWS EC2
+name: Deploy the REST service and Website to AWS EC2
 
 on:
   push:
