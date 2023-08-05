@@ -44,6 +44,10 @@ jobs:
 
       - name: Add SSH fingerprint
         run: ssh-keyscan -H ${{ needs.set_environment.outputs.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
+        continue-on-error: true  # Continue even if ssh-keyscan fails
+
+      - name: Verify known_hosts
+        run: cat ~/.ssh/known_hosts  # Print the known_hosts file for verification
 
       - name: Install .NET SDK 7 on EC2
         run: ssh -o StrictHostKeyChecking=no ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
