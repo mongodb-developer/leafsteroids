@@ -1,4 +1,4 @@
-name: Deploy the REST service to EC2
+name: Deploy to AWS EC2
 
 on:
   push:
@@ -6,48 +6,35 @@ on:
       - PROD
       - STAGING
 
+env:
+  PROD_IP: ${{ secrets.PROD_IP }}
+  STAGING_IP: ${{ secrets.STAGING_IP }}
+
 jobs:
-  deploy-rest-service:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-
-      - name: check out repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: copy files to EC2
-        env:
-          EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
-          PROD_IP: ${{ secrets.PROD_IP }}
-          STAGING_IP: ${{ secrets.STAGING_IP }}
+      - name: Configure SSH key
         run: |
-          echo "$EC2_PRIVATE_KEY" > ec2_private_key.pem
-          chmod 400 ec2_private_key.pem
-          
-          touch ~/.ssh/known_hosts
-          ssh-keyscan -H $PROD_IP >> ~/.ssh/known_hosts
-          ssh-keyscan -H $STAGING_IP >> ~/.ssh/known_hosts
-          
-          BRANCH_NAME=${GITHUB_REF#refs/heads/}
-          if [[ "$BRANCH_NAME" == "PROD" ]]; then
-             scp -i ec2_private_key.pem -r rest_service ubuntu@$PROD_IP:/home/ubuntu/rest_service
-          elif [[ "$BRANCH_NAME" == "STAGING" ]]; then
-             scp -i ec2_private_key.pem -r rest_service ubuntu@$STAGING_IP:/home/ubuntu/rest_service
-          fi
+          mkdir -p ~/.ssh
+          echo "${{ secrets.PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-#
-#      - name: deploy game server
-#        uses: appleboy/scp-action@v0.1.4
-#        with:
-#          host: ${{ secrets.GAME_SERVER_IP }}
-#          username: ${{ secrets.GAME_SERVER_USERNAME }}
-#          password: ${{ secrets.GAME_SERVER_PASSWORD }}
-#          source: "game_server/*"
-#          target: /home/ubuntu
-#
-#      - name: Restart game server service
-#        uses: appleboy/ssh-action@v0.1.10
-#        with:
-#          host: ${{ secrets.GAME_SERVER_IP }}
-#          username: ${{ secrets.GAME_SERVER_USERNAME }}
-#          password: ${{ secrets.GAME_SERVER_PASSWORD }}
-#          script: sudo systemctl restart game_server
+      - name: Add SSH fingerprint for PROD
+        run: ssh-keyscan -H ${{ env.PROD_IP }} >> ~/.ssh/known_hosts
+        if: github.ref == 'refs/heads/PROD'
+
+      - name: Add SSH fingerprint for STAGING
+        run: ssh-keyscan -H ${{ env.STAGING_IP }} >> ~/.ssh/known_hosts
+        if: github.ref == 'refs/heads/STAGING'
+
+      - name: Deploy to EC2 PROD
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.PROD_IP }}:/home/ubuntu/rest_service/
+        if: github.ref == 'refs/heads/PROD'
+
+      - name: Deploy to EC2 Staging
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.STAGING_IP }}:/home/ubuntu/rest_service/
+        if: github.ref == 'refs/heads/STAGING'
