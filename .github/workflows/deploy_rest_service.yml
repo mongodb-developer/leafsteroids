@@ -11,25 +11,28 @@ env:
   STAGING_IP: ${{ secrets.STAGING_IP }}
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
   CONNECTION_STRING: ${{ secrets.CONNECTION_STRING }}
-  ENVIRONMENT_IP: ${{ needs.set_environment.outputs.ENVIRONMENT_IP }}
 
 jobs:
+  set_environment:
+    runs-on: ubuntu-latest
+    outputs:
+      ENVIRONMENT_IP: ${{ steps.check_environment.outputs.ENVIRONMENT_IP }}
+    steps:
+      - name: Check Environment
+        id: check_environment
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/STAGING" ]; then
+            echo "ENVIRONMENT_IP=${STAGING_IP}"
+          else
+            echo "ENVIRONMENT_IP=${PROD_IP}"
+          fi
+
   deploy:
+    needs: set_environment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
-      - name: Set Environment IP
-        id: set_environment
-        run: |
-          if [ "$GITHUB_REF" == "refs/heads/STAGING" ]; then
-            echo "Setting ENVIRONMENT_IP to STAGING"
-            echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
-          else
-            echo "Setting ENVIRONMENT_IP to PROD"
-            echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
-          fi
 
       - name: Create SSH directory
         run: mkdir -p ~/.ssh
@@ -40,25 +43,25 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Add SSH fingerprint
-        run: ssh-keyscan -H ${{ env.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
+        run: ssh-keyscan -H ${{ needs.set_environment.outputs.ENVIRONMENT_IP }} >> ~/.ssh/known_hosts
 
       - name: Install .NET SDK 7 on EC2
-        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
+        run: ssh -o StrictHostKeyChecking=no ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0'
 
       - name: Deploy to EC2
-        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
+        run: rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./rest_service/ ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }}:/home/ubuntu/rest_service/
 
       - name: Create .env file inside rest_service folder
         run: echo "CONNECTION_STRING=${CONNECTION_STRING}" > ./rest_service/.env
 
       - name: Copy rest_service folder and .env file to EC2
-        run: scp -i ~/.ssh/id_rsa -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
+        run: scp -i ~/.ssh/id_rsa -r ./rest_service ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }}:/home/ubuntu/
 
       - name: Create systemd service on EC2
-        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
+        run: scp -i ~/.ssh/id_rsa deployment/rest_service.service ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
 
       - name: Enable and start systemd service on EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ needs.set_environment.outputs.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
