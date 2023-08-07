@@ -49,7 +49,7 @@ Open http://127.0.0.1:8000/ to verify the REST service is running.
 - Also replace the `DATABASE_NAME` in the `.env` file with the database name you created earlier.
 
 ```shell
-dotnet run
+dotnet run --urls "http://0.0.0.0:5000"
 ```
 
 Open http://127.0.0.1:5000/ to verify the website is running.
