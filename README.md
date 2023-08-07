@@ -27,7 +27,7 @@ The demo and repository consist of the following parts:
 
 You can adjust the config to change how the game behaves and add more events to have several to choose from.
 
-### Run the Game Server
+### Run the REST service
 
 - Switch into the `rest_service` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
