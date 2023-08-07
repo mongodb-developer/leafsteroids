@@ -39,6 +39,8 @@ To get started, it is recommended to use those default documents.
 dotnet run
 ```
 
+Open http://127.0.0.1:8000/ to verify the REST service is running.
+
 ### Run the Website
 
 - Switch into the `website` folder.
@@ -49,6 +51,8 @@ dotnet run
 ```shell
 dotnet run
 ```
+
+Open http://127.0.0.1:5000/ to verify the website is running.
 
 ### Run the Game Client
 
