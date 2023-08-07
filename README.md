@@ -33,6 +33,7 @@ To get started, it is recommended to use those default documents.
 - Switch into the `rest_service` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
 - [Grab the connection string for your Atlas cluster](https://www.mongodb.com/docs/guides/atlas/connection-string/) and exchange it in the `.env` file in the `rest_service` folder.
+- Also replace the `DATABASE_NAME` in the `.env` file with the database name you created earlier.
 
 ```shell
 dotnet run
@@ -43,6 +44,7 @@ dotnet run
 - Switch into the `website` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
 - [Grab the connection string for your Atlas cluster](https://www.mongodb.com/docs/guides/atlas/connection-string/) and exchange it in the `.env` file in the `website` folder.
+- Also replace the `DATABASE_NAME` in the `.env` file with the database name you created earlier.
 
 ```shell
 dotnet run
