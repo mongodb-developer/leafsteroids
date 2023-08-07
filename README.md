@@ -30,15 +30,12 @@ You can adjust the config to change how the game behaves and add more events to 
 
 ### Run the Game Server
 
-- Switch into the `game_server` folder.
+- Switch into the `rest_service` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
-- Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `game_server` folder.
+- Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `rest_service` folder.
 
 ```shell
-python3 -m venv venv
-. venv/bin/activate
-pip install -r requirements.txt
-gunicorn --log-level=debug -b 0.0.0.0:8000 application:app
+dotnet run
 ```
 
 ### Run the Website
