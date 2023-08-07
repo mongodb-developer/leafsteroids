@@ -8,14 +8,13 @@ Follow the instructions in this README to run a clone of your own to get your Mo
 The demo and repository consist of the following parts:
 
 - Game Client (Unity3D, .NET, C#)
-- Game Server (Python, flask)
+- Game Server (ASP.NET Web API, .NET, C#)
 - Website (Blazor Server Application, .NET)
 
 ## Running your own clone
 
 ### Requirements
 
-- Install Python and PIP
 - Install the .NET SDK 7
 
 ### Prepare the database (MongoDB Atlas)
