@@ -15,7 +15,7 @@ The demo and repository consist of the following parts:
 
 ### Requirements
 
-- Install the .NET SDK 7
+- [Install the .NET SDK 7](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 
 ### Prepare the database (MongoDB Atlas)
 
