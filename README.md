@@ -51,7 +51,7 @@ dotnet run
 
 - Switch into the `game_client` folder.
 - In the `Assets` folder, make a copy of the `.env.template` file and call it `.env`.
-- Adjust the IP in the `.env` folder to your `game_server`. Leave as is when running locally.
+- Adjust the IP in the `.env` folder to your `rest_service`. Leave as is when running locally.
 - Run the game.
 
 ## Contributors
