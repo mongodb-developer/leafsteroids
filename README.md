@@ -41,7 +41,7 @@ dotnet run
 
 - Switch into the `website` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
-- Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `game_server` folder.
+- Grab the connection string for your Atlas cluster and exchange it in the `.env` file in the `website` folder.
 
 ```shell
 dotnet run
