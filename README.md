@@ -9,7 +9,7 @@ The demo and repository consist of the following parts:
 
 - Game Client (Unity3D, .NET, C#)
 - Game Server (ASP.NET Web API, .NET, C#)
-- Website (Blazor Server Application, .NET)
+- Website (Blazor Server Application, .NET, C#)
 
 ## Running your own clone
 
