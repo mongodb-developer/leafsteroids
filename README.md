@@ -36,7 +36,7 @@ To get started, it is recommended to use those default documents.
 - Also replace the `DATABASE_NAME` in the `.env` file with the database name you created earlier.
 
 ```shell
-dotnet run
+dotnet run --urls "http://0.0.0.0:8000"
 ```
 
 Open http://127.0.0.1:8000/ to verify the REST service is running.
