@@ -2,7 +2,7 @@ using RestService.Entities.Atlas;
 
 namespace RestService.Entities.ResponseObjects;
 
-public class Snapshot
+public class SnapshotRequest
 {
     public Position Position { get; set; }
 }

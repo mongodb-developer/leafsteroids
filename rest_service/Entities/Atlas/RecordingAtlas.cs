@@ -8,16 +8,16 @@ public class RecordingAtlas
     [BsonElement("location")] public string? Location { get; set; }
     public SessionStatisticsPlain? SessionStatisticsPlain { get; set; }
     public DateTime? DateTime { get; set; }
-    public string? PlayerName { get; set; }
-    public List<Snapshot>? Snapshots { get; set; }
-    public string? EventId { get; set; }
+    public PlayerForRecordingsAtlas Player { get; set; }
+    public List<SnapshotRequest>? Snapshots { get; set; }
+    public EventForRecordingsAtlas Event { get; set; }
 
     public RecordingAtlas(RecordingRequest recordingRequest)
     {
         SessionStatisticsPlain = recordingRequest.SessionStatisticsPlain;
         DateTime = System.DateTime.UtcNow;
-        PlayerName = recordingRequest.PlayerName;
+        Player = new PlayerForRecordingsAtlas { Nickname = recordingRequest.PlayerName };
         Snapshots = recordingRequest.Snapshots;
-        EventId = recordingRequest.EventId;
+        Event = new EventForRecordingsAtlas { Id = recordingRequest.EventId };
     }
 }

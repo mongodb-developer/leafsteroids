@@ -40,7 +40,7 @@ namespace RestService.Controllers
 
         private async Task AddLocation(RecordingAtlas recordingAtlas)
         {
-            var eventId = recordingAtlas.EventId;
+            var eventId = recordingAtlas.Event.Id;
             var eventFilter = Builders<EventAtlas>.Filter.Eq("_id", eventId);
             var currentEvent = await _eventsCollection.Find(eventFilter).FirstAsync();
             recordingAtlas.Location = currentEvent.Location;
