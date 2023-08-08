@@ -82,6 +82,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/website.service /etc/systemd/system/website.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable website.service'
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl systemctl daemon-reload'          
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl  daemon-reload'          
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start website.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl restart website.service'
