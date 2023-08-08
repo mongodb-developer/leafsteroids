@@ -17,7 +17,8 @@ var pipeline = [
             "Event.location",
             "Event.name",
             "Player.Email",
-            "Player.TeamName"
+            "Player.TeamName",
+            "Player.location"
         ]
     },
     {
@@ -40,6 +41,7 @@ var query = {
             {"Event.name": {$exists: true}},
             {"Player.Email": {$exists: true}},
             {"Player.TeamName": {$exists: true}},
+            {"Player.location": {$exists: true}},
             {"DateTime": {$not: {$type: 9}}},
             {"Player._id": {$not: {$type: 7}}},
             {"location": {$in: [null, '', "TESTING"]}}
