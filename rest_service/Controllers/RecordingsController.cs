@@ -1,65 +1,111 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
-using RestService.Dtos.ResponseObjects;
+using RestService.Dtos.RequestObjects;
 using RestService.Entities;
+using RestService.Exceptions;
 
-namespace RestService.Controllers
+namespace RestService.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class RecordingsController : BaseController
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class RecordingsController : BaseController
+    private readonly IMongoCollection<Recording> _recordingsCollection;
+    private readonly IMongoCollection<Event> _eventsCollection;
+    private readonly IMongoCollection<Player> _playersCollection;
+
+    public RecordingsController(ILogger<RecordingsController> logger) : base(logger)
     {
-        private readonly IMongoCollection<Recording> _recordingsCollection;
-        private readonly IMongoCollection<Event> _eventsCollection;
-        private readonly IMongoCollection<Player> _playersCollection; 
+        _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
+        _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
+        /*  
+         *  Use players_unique collection to query by Nickname
+         *  This avoids a collscan against the players globally sharded collection
+         *  whose shard key is {location:1, Nickname:1}
+        */
+        _playersCollection = Database!.GetCollection<Player>(Constants.PlayersUniqueCollectionName);
+    }
 
-        public RecordingsController(ILogger<RecordingsController> logger) : base(logger)
-        { 
-            _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
-            _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
-            /*  
-             *  Use players_unique collection to query by Nickname
-             *  This avoids a collscan against the players globally sharded collection
-             *  whose shard key is {location:1, Nickname:1}
-            */
-            _playersCollection = Database!.GetCollection<Player>(Constants.PlayersUniqueCollectionName);
+    [HttpPost(Name = "PostRecording")]
+    public async Task<IActionResult> PostRecording([FromBody] RecordingRequest recordingRequest)
+    {
+        Logger.LogDebug($"Route {nameof(PostRecording)} called.");
+
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
         }
 
-        [HttpPost(Name = "PostRecording")]
-        public async Task<IActionResult> PostRecording([FromBody] RecordingRequest recordingRequest)
+        var newRecording = new Recording(recordingRequest);
+        try
         {
-            Logger.LogDebug($"Route {nameof(PostRecording)} called.");
-
-            Logger.LogDebug(recordingRequest.ToString());
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var newRecording = new Recording(recordingRequest);
             await AddLocation(newRecording);
+        }
+        catch (EventNotFoundException)
+        {
+            return BadRequest(new { Message = $"The event with id '{newRecording.Event.Id}' does not exist." });
+        }
+        catch (MultipleEventsFoundException)
+        {
+            return BadRequest(new { Message = $"The event with id '{newRecording.Event.Id}' exists multiple times." });
+        }
+
+        try
+        {
             await AddPlayer(newRecording);
-
-            await _recordingsCollection.InsertOneAsync(newRecording);
-
-            return Ok(new { Message = "Recording created successfully." });
+        }
+        catch (PlayerNotFoundException)
+        {
+            return BadRequest(new { Message = $"The player '{newRecording.Player.Nickname}' does not exist." });
+        }
+        catch (MultiplePlayersFoundException)
+        {
+            return BadRequest(new
+                { Message = $"The player '{newRecording.Player.Nickname}' exists multiple times." });
         }
 
-        private async Task AddLocation(Recording recording)
-        {
-            var eventId = recording.Event.Id;
-            var eventFilter = Builders<Event>.Filter.Eq("_id", eventId);
-            var currentEvent = await _eventsCollection.Find(eventFilter).FirstAsync();
-            recording.Location = currentEvent.Location;
-        }
+        await _recordingsCollection.InsertOneAsync(newRecording);
 
-        private async Task AddPlayer(Recording recording)
+        return Ok(new { Message = "Recording created successfully." });
+    }
+
+    private async Task AddLocation(Recording recording)
+    {
+        var eventId = recording.Event.Id;
+        var eventFilter = Builders<Event>.Filter.Eq("_id", eventId);
+        var events = await _eventsCollection.Find(eventFilter).ToListAsync();
+        switch (events.Count)
         {
-            var playerNickname = recording.Player.Nickname;
-            var playerFilter = Builders<Player>.Filter.Eq("Nickname", playerNickname);
-            var currentPlayer = await _playersCollection.Find(playerFilter).FirstAsync();
-            recording.Player.Id = currentPlayer.Id;
+            case 1:
+            {
+                var eventLocation = events[0].Location;
+                recording.Location = eventLocation;
+                break;
+            }
+            case 0:
+                throw new EventNotFoundException();
+            default:
+                throw new MultipleEventsFoundException();
+        }
+    }
+
+    private async Task AddPlayer(Recording recording)
+    {
+        var playerNickname = recording.Player.Nickname;
+        var playerFilter = Builders<Player>.Filter.Eq("Nickname", playerNickname);
+        var players = await _playersCollection.Find(playerFilter).ToListAsync();
+        switch (players.Count)
+        {
+            case 1:
+            {
+                var playerId = players[0].Id;
+                recording.Player.Id = playerId;
+                break;
+            }
+            case 0:
+                throw new PlayerNotFoundException();
+            default:
+                throw new MultiplePlayersFoundException();
         }
     }
 }

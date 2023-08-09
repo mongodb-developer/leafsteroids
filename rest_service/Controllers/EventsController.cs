@@ -1,31 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using RestService.Entities;
 using RestService.Dtos.ResponseObjects;
+using RestService.Entities;
 
-namespace RestService.Controllers
+namespace RestService.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class EventsController : BaseController
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class EventsController : BaseController
+    private readonly IMongoCollection<Event> _eventsCollection;
+
+    public EventsController(ILogger<EventsController> logger) : base(logger)
     {
-        private readonly IMongoCollection<Event> _eventsCollection;
+        _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
+    }
 
-        public EventsController(ILogger<EventsController> logger) : base(logger)
-        {
-            _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
-        }
+    [HttpGet(Name = "GetEvents")]
+    public async Task<EventResponse[]> GetEvents()
+    {
+        Logger.LogDebug($"Route {nameof(GetEvents)} called.");
 
-        [HttpGet(Name = "GetEvents")]
-        public async Task<EventResponse[]> GetEvents()
-        {
-            Logger.LogDebug($"Route {nameof(GetEvents)} called.");
+        var events = await _eventsCollection.FindAsync(new BsonDocument());
+        var eventsResponse = events.ToList().Select(evt => new EventResponse(evt)).ToArray();
 
-            var events = await _eventsCollection.FindAsync(new BsonDocument());
-            var eventsResponse = events.ToList().Select(evt => new EventResponse(evt)).ToArray();
-
-            return eventsResponse;
-        }
+        return eventsResponse;
     }
 }

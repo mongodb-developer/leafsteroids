@@ -1,7 +1,12 @@
-﻿using RestService.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
+using RestService.Entities;
 
-namespace RestService.Dtos.ResponseObjects;
+#pragma warning disable CS8618
 
+namespace RestService.Dtos.RequestObjects;
+
+[SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class RecordingRequest
 {
     public SessionStatisticsPlain SessionStatisticsPlain { get; set; }

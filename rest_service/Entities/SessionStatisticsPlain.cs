@@ -1,5 +1,8 @@
-﻿namespace RestService.Entities;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace RestService.Entities;
+
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
 public class SessionStatisticsPlain
 {
     public int BulletsFired { get; set; }

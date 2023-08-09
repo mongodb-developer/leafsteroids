@@ -1,8 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
-using RestService.Dtos.ResponseObjects;
+using RestService.Dtos.RequestObjects;
 
 namespace RestService.Entities;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class Recording
 {
     [BsonElement("location")] public string? Location { get; set; }
