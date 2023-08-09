@@ -1,3 +1,6 @@
+using MongoDB.Bson.Serialization;
+using RestService.Entities;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,5 +24,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Register custom serializers
+BsonSerializer.RegisterSerializer(new PlayerForRecordingsSerializer());
+BsonSerializer.RegisterSerializer(new EventForRecordingSerializer());
 
 app.Run();

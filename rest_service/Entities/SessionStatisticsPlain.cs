@@ -1,4 +1,4 @@
-﻿namespace RestService.Entities.Atlas;
+﻿namespace RestService.Entities;
 
 public class SessionStatisticsPlain
 {

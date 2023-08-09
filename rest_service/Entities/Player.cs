@@ -1,9 +1,9 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace RestService.Entities.Atlas;
+namespace RestService.Entities;
 
-public class PlayerAtlas
+public class Player
 {
     [BsonElement("_id")] public ObjectId? Id { get; set; }
     public string? Nickname { get; set; }

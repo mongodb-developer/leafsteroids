@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using RestService.Entities;
-using RestService.Entities.Atlas;
+using RestService.Dtos.ResponseObjects;
 
 namespace RestService.Controllers
 {
@@ -10,12 +10,11 @@ namespace RestService.Controllers
     [Route("[controller]")]
     public class EventsController : BaseController
     {
-        private readonly IMongoCollection<EventAtlas> _eventsCollection;
-
+        private readonly IMongoCollection<Event> _eventsCollection;
 
         public EventsController(ILogger<EventsController> logger) : base(logger)
         {
-            _eventsCollection = Database!.GetCollection<EventAtlas>(Constants.EventsCollectionName);
+            _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
         }
 
         [HttpGet(Name = "GetEvents")]
@@ -23,8 +22,8 @@ namespace RestService.Controllers
         {
             Logger.LogDebug($"Route {nameof(GetEvents)} called.");
 
-            var eventsAtlas = await _eventsCollection.FindAsync(new BsonDocument());
-            var eventsResponse = eventsAtlas.ToList().Select(eventAtlas => new EventResponse(eventAtlas)).ToArray();
+            var events = await _eventsCollection.FindAsync(new BsonDocument());
+            var eventsResponse = events.ToList().Select(evt => new EventResponse(evt)).ToArray();
 
             return eventsResponse;
         }
