@@ -6,16 +6,28 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+    <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
     <ItemGroup>
         <PackageReference Include="dotenv.net" Version="3.1.2" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9" />
         <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 
     </ItemGroup>
 
 
 
 
+    <ItemGroup>
+      <None Remove="Dtos\" />
+      <None Remove="Dtos\RequestObjects\" />
+      <None Remove="Dtos\ResponseObjects\" />
+    </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Dtos\" />
+      <Folder Include="Dtos\RequestObjects\" />
+      <Folder Include="Dtos\ResponseObjects\" />
+    </ItemGroup>
 </Project>
