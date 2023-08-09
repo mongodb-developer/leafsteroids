@@ -1,9 +1,9 @@
 ﻿@page "/"
 @using MongoDB.Driver
-@using MongoDB.Bson
-@using System.Web
 @using website.Data
-@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.WebUtilities
+@using MongoDB.Bson
+@using website.Utils
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
@@ -16,7 +16,7 @@
         background-color: #023430;
     }
 
-    .myiframe {
+    .chartsiframe {
         background: #F1F5F4;
         border: none;
         border-radius: 2px;
@@ -25,7 +25,7 @@
         height: 90vh;
     }
 </style>
-<a href="\?EventId=@eventId">
+<a href="\?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card bg-white">
@@ -33,21 +33,21 @@
         <h2 class="text-center">Player Registration & Login</h2>
         <h4 class="card-title mt-3 text-center">
             <b>
-                @if ((@Event != null))
+                @if ((_event != null))
                 {
-                    if ((@Event.Id != null) && (@Event.location != null) && (@Event.name != null))
+                    if ((_event.location != null) && (_event.name != null))
                     {
-                        <a href="/eventHome/?location=@Event.location&EventId=@Event.Id">@Event.name</a>
+                        <a href="/eventHome/?location=@_event.location&EventId=@_event.Id">@_event.name</a>
                     }
                     else
                     {
-                        @Event.name
+                        @_event.name
                     }
                 }
             </b>
         </h4>
         <h4 class="card-title mt-3 text-center">
-            <b class="validation-message">@message</b>
+            <b class="validation-message">@_message</b>
         </h4>
 
         <form>
@@ -61,15 +61,15 @@
                        type="text"
                        class="form-control"
                        placeholder="Nickname (case sensitive!)"
-                       @bind="Player.Nickname" name=""
+                       @bind="Player!.Nickname" name=""
                        @oninput="AutoCompleteNickname"
                        required>
 
-                @if (suggestedNicknames.Count > 0)
+                @if (_suggestedNicknames.Count > 0)
                 {
                     <div class="autocomplete">
                         <ul class="options">
-                            @foreach (var nickname in suggestedNicknames)
+                            @foreach (var nickname in _suggestedNicknames)
                             {
                                 <li id="option_@nickname"
                                     class="option"
@@ -116,7 +116,7 @@
 </div> <!-- card.// -->
 
 <div class="card bg-white">
-    @if (chartUrl.Length == 0)
+    @if (_chartUrl.Length == 0)
     {
         <p>
             <em>Loading...</em>
@@ -125,100 +125,67 @@
     else
     {
         <div class="iframe-wrapper">
-            <iframe class="myiframe" src="@chartUrl"></iframe>
+            <iframe class="chartsiframe" src="@_chartUrl"></iframe>
         </div>
     }
 </div>
 
-
-@inject IJSRuntime jsRuntime
-
-
 @code {
 
-    private string message = "";
-    private string chartUrl = "";
-
-    private Player Player { get; set; } = new Player();
-    private PlayerUnique PlayerUnique { get; set; } = new PlayerUnique();
-
-        const string defaultEventId = "mdb-global-event";
-    private string eventId = defaultEventId;
-    BsonDocument eventFilter = new BsonDocument("_id", defaultEventId);
-    private Event? Event;
-
-    Dictionary<string, string>? queryParameters;
-
-    private List<string> suggestedNicknames = new List<string>();
-    public int FocusedSuggestionIndex { get; set; } = -1;
-
+    private string _message = "";
+    private string _chartUrl = "";
+    private Player? Player { get; set; } = new Player();
+    private string _eventId = Constants.DefaultEventId;
+    private Event? _event;
+    private List<string> _suggestedNicknames = new List<string>();
 
     protected override void OnInitialized()
     {
-    // PRepare to read URL parameters
-    // URL event param will always take precedence
         var uri = new Uri(NavigationManager.Uri);
-        var queryParameters = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        var queryParameters = QueryHelpers.ParseQuery(uri.Query);
 
-        if (queryParameters.ContainsKey("event"))
+        if (queryParameters.TryGetValue("event", out var queryParameter))
         {
-            eventId = queryParameters["event"];
+            _eventId = queryParameter!;
         }
         else
         {
-            if (queryParameters.ContainsKey("EventId"))
+            if (queryParameters.TryGetValue("EventId", out var parameter))
             {
-                eventId = queryParameters["EventId"];
+                _eventId = parameter!;
             }
             else
             {
-    // fallback on a default event, if none is available
-                eventId = defaultEventId;
+                _eventId = Constants.DefaultEventId;
             }
         }
-        BsonDocument eventFilter = new BsonDocument("_id", eventId);
+        BsonDocument eventFilter = new BsonDocument("_id", _eventId);
 
-        Event = Events.FindSync(eventFilter).Single<Event>();
+        _event = Events.FindSync(eventFilter).Single<Event>();
 
-        string atlasChartEmbedDashboardURL = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards";
-        string atlasChartID = "645abbc7-2258-4908-8eb4-94bbe0c6d324";
+        var chartsUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event.Id, _event.location!);
 
-        string tmpchartUrl = atlasChartEmbedDashboardURL;
-
-        tmpchartUrl += "?id=" + atlasChartID; // FIRST parameter. This typically changed for each route of the website
-        tmpchartUrl += "&theme=light";
-        tmpchartUrl += "&autoRefresh=true";
-        tmpchartUrl += "&maxDataAge=60";
-        tmpchartUrl += "&showTitleAndDesc=false";
-        tmpchartUrl += "&scalingWidth=100%25"; // 100% url-encoded
-        tmpchartUrl += "&scalingHeight=fixed";
-        tmpchartUrl += "&attribution=false"; // removes the logo inside the iframe = tighter fit
-        tmpchartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
-
-        chartUrl = tmpchartUrl; // in the future, consider assembling the non-encoded URL, then encode it with HttpUtility.UrlEncode(); 
-    // additional iframe options
-    // https://www.mongodb.com/docs/charts/embedded-chart-options/#std-label-embedded-chart-options
+        _chartUrl = chartsUrl;
     }
 
     private async Task CreatePlayer()
     {
-    // basic checks
-        if ((Player == null) || (Player.Nickname == null) || (Event == null) || (Event.location == null))
+        if (Player?.Nickname == null || _event?.location == null)
         {
-            message = "[please fill out the form]";
+            _message = "[please fill out the form]";
             return;
         }
 
-        message = "";
+        _message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
 
-        if (PlayerUniques.Find<PlayerUnique>(filter).Any<PlayerUnique>())
+        if (await PlayerUniques.Find<PlayerUnique>(filter).AnyAsync<PlayerUnique>())
         {
-            message = "[" + Player.Nickname + "] exists! Login instead?";
+            _message = "[" + Player.Nickname + "] exists! Login instead?";
         }
         else
         {
-            Player.location = Event.location; // Inject location of event for new player
+            Player.location = _event.location;
 
             await Players!.InsertOneAsync(Player)!;
             await PlayerUniques!.InsertOneAsync(new PlayerUnique
@@ -229,38 +196,36 @@
             }
                 )!;
 
-            var new_dest = "/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id;
-            NavigationManager!.NavigateTo(new_dest);
-    //NavigationManager!.NavigateTo("/done");
-            NavigationManager!.NavigateTo("/playerHome?location=" + Event.location + "&Nickname=" + Player.Nickname + "&EventId=" + Event.Id);
+            var newDest = "/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + _event.Id;
+            NavigationManager!.NavigateTo(newDest);
+            NavigationManager!.NavigateTo("/playerHome?location=" + _event.location + "&Nickname=" + Player.Nickname + "&EventId=" + _event.Id);
         }
     }
 
-    private async Task LoginPlayer()
+    private void LoginPlayer()
     {
-    // basic checks
-        if ((Player == null) || (Player.Nickname == null))
+        if (Player?.Nickname == null)
         {
-            message = "[enter your nickname]";
+            _message = "[enter your nickname]";
             return;
         }
 
-        message = "";
+        _message = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
-        PlayerUnique existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
+        var existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
         if (existingPlayer != null)
         {
-            NavigationManager!.NavigateTo("/playerHome?location=" + Event.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + Event.Id);
+            NavigationManager!.NavigateTo("/playerHome?location=" + _event!.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + _event.Id);
         }
         else
         {
-            message = "[" + Player.Nickname + "] not found. Register instead?";
+            _message = "[" + Player.Nickname + "] not found. Register instead?";
         }
     }
 
     private async Task AutoCompleteNickname(ChangeEventArgs e)
     {
-        string input = e.Value.ToString();
+        string input = e.Value!.ToString()!;
 
         if (input.Length >= 2)
         {
@@ -274,44 +239,19 @@
                 .Limit(10)
                 .ToListAsync();
 
-            suggestedNicknames = nicknames.Select(p => p.Nickname).ToList();
+            _suggestedNicknames = nicknames.Select(p => p.Nickname).ToList()!;
         }
         else
         {
-            suggestedNicknames.Clear();
-            FocusedSuggestionIndex = -1;
+            _suggestedNicknames.Clear();
         }
     }
 
 
-    void SelectNickname(string Nickname)
+    void SelectNickname(string nickname)
     {
-        Player.Nickname = Nickname;
-    // reset
-        suggestedNicknames.Clear();
-        FocusedSuggestionIndex = -1;
-    }
-
-    private void HandleKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Key == "ArrowUp")
-        {
-            if (FocusedSuggestionIndex > 0)
-            {
-                FocusedSuggestionIndex--;
-            }
-        }
-        else if (e.Key == "ArrowDown")
-        {
-            if (FocusedSuggestionIndex < suggestedNicknames.Count - 1)
-            {
-                FocusedSuggestionIndex++;
-            }
-        }
-        else if (e.Key == "Enter" && FocusedSuggestionIndex >= 0)
-        {
-    // SelectSuggestion(Suggestions[FocusedSuggestionIndex]);
-        }
+        Player!.Nickname = nickname;
+        _suggestedNicknames.Clear();
     }
 
 }

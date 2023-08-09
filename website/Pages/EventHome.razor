@@ -1,10 +1,9 @@
 ﻿@page "/eventHome"
 @using MongoDB.Driver
-@using MongoDB.Bson
 @using website.Data
+@using website.Utils
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Recording> Recordings
 @inject IMongoCollection<Event> Events
 
 <style>
@@ -22,7 +21,7 @@
         margin: auto;
     }
 </style>
-<a href="\?EventId=@EventId">
+<a href="\?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card bg-white">
@@ -30,36 +29,40 @@
         <h2 class="text-center">Event Dashboard</h2>
         <h4 class="card-title mt-3 text-center">
             <b>
-                @if ((@Event != null)  && (@Event.name != null)) {
+                @if (Event?.name != null)
+                {
                     <span>@Event.name</span>
                 }
-                else {
+                else
+                {
                     <span>[Unspecified Event]</span>
                 }
             </b>
         </h4>
     </article>
-</div> 
+</div>
 
 
-@if (chartUrl.Length == 0) {
-    <p><em>Loading...</em></p>
+@if (_chartUrl.Length == 0)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
 }
-else {
+else
+{
     <div class="row">
-        <iframe class="atlascharts_iframe" src="@chartUrl"></iframe>
+        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
     </div>
 }
 
 @code {
-    // default event, if no param
-    private string chartUrl = "";
-    private string location = "US-CA";
-    private string EventId = "mdb-local-2023-socal";
 
+    private string _chartUrl = "";
+    private string _location = "US-CA";
+    private string _eventId = "mdb-local-2023-socal";
     private Event? Event { get; set; }
-
-    Dictionary<string, string>? queryParameters;
+    private Dictionary<string, string>? _queryParameters;
 
     protected override void OnInitialized()
     {
@@ -67,59 +70,30 @@ else {
         {
             var uri = new Uri(NavigationManager.Uri);
 
-            
-            queryParameters = uri.Query.TrimStart('?')
+
+            _queryParameters = uri.Query.TrimStart('?')
                 .Split('&')
                 .ToDictionary(
                     x => Uri.UnescapeDataString(x.Split('=')[0]),
                     x => Uri.UnescapeDataString(x.Split('=')[1])
                 );
 
-            location = queryParameters["location"];
-            EventId = queryParameters["EventId"];
-            
-            // possibly a cleaner way to acquire URL aprams
-            /*
-            var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-            location = query["location"];
-            EventId = query["EventId"];
-            */
-      
+            _location = _queryParameters["location"];
+            _eventId = _queryParameters["EventId"];
+
             Event = Events
-                .Find(e => e.Id.Equals(EventId))
+                .Find(e => e.Id.Equals(_eventId))
                 .First<Event>();
 
-            Console.WriteLine(location);
-            Console.WriteLine(EventId);
+            Console.WriteLine(_location);
+            Console.WriteLine(_eventId);
         }
         catch (Exception ex)
         {
             Console.WriteLine(ex.ToString());
         }
 
-        // OLD STUFF. Kept it for reference
-        // delete after Q&A
-        // chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=6453fb66-c2fc-4212-8dbd-4ab8365f1ac0&theme=light&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
-        // chartUrl += "&filter={%27location%27:%27" + location + "%27,%27Event._id%27:%27" + EventId + "%27}";
-
-        string atlasChartEmbedDashboardURL = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards";
-
-        // eventHome dashboard
-        // https://charts.mongodb.com/charts-global_shared-jebkk/dashboards/6453fb66-c2fc-4212-8dbd-4ab8365f1ac0#
-        string atlasChartID = "6453fb66-c2fc-4212-8dbd-4ab8365f1ac0"; 
-
-        string tmpchartUrl = atlasChartEmbedDashboardURL;
-
-        tmpchartUrl += "?id=" + atlasChartID; // FIRST parameter. This typically changed for each route of the website
-        tmpchartUrl += "&theme=light"; // or dark
-        tmpchartUrl += "&autoRefresh=true";
-        tmpchartUrl += "&maxDataAge=60";
-        tmpchartUrl += "&showTitleAndDesc=false";
-        tmpchartUrl += "&scalingWidth=100%25"; // 100% url-encoded
-        tmpchartUrl += "&scalingHeight=fixed";
-        tmpchartUrl += "&attribution=false";
-        tmpchartUrl += "&filter={%27Event._id%27:%27" + Event.Id + "%27,%27location%27:%27" + Event.location + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
-
-        chartUrl = tmpchartUrl;
+        _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id, Event.location!);
     }
+
 }
