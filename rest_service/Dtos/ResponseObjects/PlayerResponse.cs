@@ -1,17 +1,17 @@
 using MongoDB.Bson.Serialization.Attributes;
-using RestService.Entities.Atlas;
+using RestService.Entities;
 
-namespace RestService.Entities.ResponseObjects
+namespace RestService.Dtos.ResponseObjects
 {
     public class PlayerResponse
     {
         [BsonElement("_id")] public string? Id { get; set; }
         [BsonElement("name")] public string? Name { get; set; }
 
-        public PlayerResponse(PlayerAtlas playerAtlas)
+        public PlayerResponse(Player player)
         {
-            Id = playerAtlas.Id.ToString();
-            Name = playerAtlas.Nickname;
+            Id = player.Id.ToString();
+            Name = player.Nickname;
         }
     }
 }

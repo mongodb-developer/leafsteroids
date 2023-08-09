@@ -2,9 +2,9 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 
-namespace RestService.Entities.Atlas;
+namespace RestService.Entities;
 
-public class EventForRecordingsAtlas: EventAtlas
+public class RecordingEvent : Event
 {
     // This class is empty intentionally.
     // Its purpose is to override the serialization to store a subset of the parent class
@@ -12,14 +12,14 @@ public class EventForRecordingsAtlas: EventAtlas
     // https://www.mongodb.com/blog/post/building-with-patterns-the-extended-reference-pattern 
 }
 
-public class EventForRecordingSerializer : SerializerBase<EventForRecordingsAtlas>
+public class EventForRecordingSerializer : SerializerBase<RecordingEvent>
 {
-    public override EventForRecordingsAtlas Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+    public override RecordingEvent Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
     {
-        return BsonSerializer.Deserialize<EventForRecordingsAtlas>(context.Reader);
+        return BsonSerializer.Deserialize<RecordingEvent>(context.Reader);
     }
 
-    public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, EventForRecordingsAtlas value)
+    public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, RecordingEvent value)
     {
         var document = new BsonDocument
             {

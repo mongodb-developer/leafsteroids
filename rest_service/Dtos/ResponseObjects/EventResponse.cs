@@ -1,18 +1,17 @@
 using MongoDB.Bson.Serialization.Attributes;
-using RestService.Entities.Atlas;
+using RestService.Entities;
 
-namespace RestService.Entities
+namespace RestService.Dtos.ResponseObjects
 {
     public class EventResponse
     {
         [BsonElement("_id")] public string? Id { get; set; }
-
         [BsonElement("name")] public string? Name { get; set; }
 
-        public EventResponse(EventAtlas eventAtlas)
+        public EventResponse(Event evt)
         {
-            Id = eventAtlas.Id;
-            Name = eventAtlas.Name;
+            Id = evt.Id;
+            Name = evt.Name;
         }
     }
 }

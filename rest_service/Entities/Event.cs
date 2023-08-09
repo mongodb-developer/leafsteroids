@@ -1,8 +1,8 @@
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace RestService.Entities.Atlas;
+namespace RestService.Entities;
 
-public class EventAtlas
+public class Event
 {
     [BsonElement("_id")] public string? Id { get; set; }
     [BsonElement("name")] public string? Name { get; set; }

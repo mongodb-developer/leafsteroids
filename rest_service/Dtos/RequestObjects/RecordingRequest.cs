@@ -1,6 +1,6 @@
-﻿using RestService.Entities.Atlas;
+﻿using RestService.Entities;
 
-namespace RestService.Entities.ResponseObjects;
+namespace RestService.Dtos.ResponseObjects;
 
 public class RecordingRequest
 {

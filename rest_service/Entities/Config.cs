@@ -1,9 +1,9 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace RestService.Entities.Atlas;
+namespace RestService.Entities;
 
-public class ConfigAtlas
+public class Config
 {
     [BsonElement("_id")] public ObjectId? Id { get; set; }
     public float RoundDuration { get; set; }

@@ -1,5 +1,5 @@
 using MongoDB.Bson.Serialization;
-using RestService.Entities.Atlas;
+using RestService.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
