@@ -4,6 +4,7 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 <!DOCTYPE html>
+<!--suppress ALL -->
 <html lang="en">
 <head>
     <title>Welcome to the Leafsteroid website!</title>
@@ -12,6 +13,7 @@
     <base href="~/"/>
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css"/>
     <link href="css/site.css" rel="stylesheet"/>
+    @* ReSharper disable once Html.PathError *@
     <link href="website.styles.css" rel="stylesheet"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
 
@@ -28,7 +30,6 @@
 
 <body>
 
-    
 
 <component type="typeof(App)" render-mode="ServerPrerendered"/>
 
@@ -43,7 +44,9 @@
     <a class="dismiss">🗙</a>
 </div>
 
+@* ReSharper disable Html.PathError *@
 <script src="_framework/blazor.server.js"></script>
+@* ReSharper restore Html.PathError *@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
 
 </body>
