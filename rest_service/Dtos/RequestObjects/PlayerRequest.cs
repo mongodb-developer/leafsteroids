@@ -3,11 +3,10 @@ using Newtonsoft.Json;
 
 #pragma warning disable CS8618
 
-namespace website.Data;
+namespace RestService.Dtos.RequestObjects;
 
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "InconsistentNaming")]
-public class Player
+public class PlayerRequest
 {
     [JsonProperty("nickname")] public string Nickname { get; set; }
     [JsonProperty("teamname")] public string? TeamName { get; set; }

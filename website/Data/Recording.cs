@@ -1,12 +1,10 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace website.Data;
 
 public class Recording
 {
-    public ObjectId Id { get; set; }
-    [BsonElement("location")] public string? Location { get; set; }
+    [JsonProperty("location")] public string? Location { get; set; }
     public SessionStatisticsPlain? SessionStatisticsPlain { get; set; }
     public DateTime DateTime { get; set; }
     public Player? Player { get; set; }

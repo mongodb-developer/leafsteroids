@@ -27,7 +27,6 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="Dtos\" />
-      <Folder Include="Dtos\RequestObjects\" />
       <Folder Include="Dtos\ResponseObjects\" />
     </ItemGroup>
 </Project>

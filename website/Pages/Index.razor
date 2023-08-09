@@ -1,13 +1,9 @@
 ﻿@page "/"
-@using MongoDB.Driver
+@using RestSharp
 @using website.Data
 @using website.Utils
-@using MongoDB.Bson
-@using RestSharp;
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Player> Players
-@inject IMongoCollection<PlayerUnique> PlayerUniques
 
 
 <style>
@@ -166,9 +162,12 @@
         }
 
         _errorMessage = "";
-        var filter = new BsonDocument(nameof(Player.Nickname), Player.Nickname);
 
-        if (await PlayerUniques.Find<PlayerUnique>(filter).AnyAsync<PlayerUnique>())
+        var playersUnique = await _restClient.GetJsonAsync<List<PlayerUnique>>(Constants.RestServiceEndpointPlayersUnique);
+        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Nickname!.Equals(Player.Nickname));
+        var existingPlayer = filteredPlayersUnique.FirstOrDefault();
+
+        if (existingPlayer != null)
         {
             _errorMessage = $"[{Player.Nickname}] exists! Login instead?";
         }
@@ -176,21 +175,24 @@
         {
             Player.Location = _event.location;
 
-            await Players!.InsertOneAsync(Player)!;
-            await PlayerUniques!.InsertOneAsync(new PlayerUnique
-            {
-                Id = Player.Id,
-                Nickname = Player.Nickname,
-                location = Player.Location
-            }
-                )!;
+    // await Players!.InsertOneAsync(Player)!;
+    // await PlayerUniques!.InsertOneAsync(new PlayerUnique
+    // {
+    //     Id = Player.Id,
+    //     Nickname = Player.Nickname,
+    //     Location = Player.Location
+    // }
+    //     )!;
+
+            var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(Player);
+            var response = await _restClient.PostAsync<Player>(request);
 
             var newDestination = UrlForPlayer(Player.Location, Player.Nickname, _event.Id);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
 
-    private void LoginPlayer()
+    private async Task LoginPlayer()
     {
         if (string.IsNullOrEmpty(Player.Nickname))
         {
@@ -199,8 +201,11 @@
         }
 
         _errorMessage = "";
-        var filter = new BsonDocument(nameof(Player.Nickname), Player.Nickname);
-        var existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
+
+        var playersUnique = await _restClient.GetJsonAsync<List<PlayerUnique>>(Constants.RestServiceEndpointPlayersUnique);
+        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Nickname!.Equals(Player.Nickname));
+        var existingPlayer = filteredPlayersUnique.FirstOrDefault();
+
         if (existingPlayer != null)
         {
             var newDestination = UrlForPlayer(_event!.location!, existingPlayer.Nickname!, _event.Id);
@@ -214,28 +219,28 @@
 
     private async Task AutoCompleteNickname(ChangeEventArgs e)
     {
-        var input = e.Value!.ToString()!;
+    // var input = e.Value!.ToString()!;
 
-        if (input.Length >= 2)
-        {
-            var nicknames = await PlayerUniques
-                .Aggregate()
-                .Search(Builders<PlayerUnique>
-                    .Search
-                    .Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
-                .Project<PlayerUnique>(Builders<PlayerUnique>
-                    .Projection
-                    .Include(p => p.Nickname)
-                    .Exclude(p => p.Id))
-                .Limit(10)
-                .ToListAsync();
-
-            _suggestedNicknames = nicknames.Select(p => p.Nickname).ToList()!;
-        }
-        else
-        {
-            _suggestedNicknames.Clear();
-        }
+    // if (input.Length >= 2)
+    // {
+    //     var nicknames = await PlayerUniques
+    //         .Aggregate()
+    //         .Search(Builders<PlayerUnique>
+    //             .Search
+    //             .Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
+    //         .Project<PlayerUnique>(Builders<PlayerUnique>
+    //             .Projection
+    //             .Include(p => p.Nickname)
+    //             .Exclude(p => p.Id))
+    //         .Limit(10)
+    //         .ToListAsync();
+    //
+    //     _suggestedNicknames = nicknames.Select(p => p.Nickname).ToList()!;
+    // }
+    // else
+    // {
+        _suggestedNicknames.Clear();
+    // }
     }
 
     private void SelectNickname(string nickname)

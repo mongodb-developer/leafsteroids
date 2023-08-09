@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace website.Data;
 
@@ -8,7 +7,6 @@ namespace website.Data;
 [SuppressMessage("ReSharper", "PropertyCanBeMadeInitOnly.Global")]
 public class PlayerUnique
 {
-    [BsonId] public ObjectId Id { get; set; }
     public string? Nickname { get; set; }
-    public string? location { get; set; }
+    [JsonProperty("location")] public string? Location { get; set; }
 }

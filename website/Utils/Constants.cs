@@ -11,6 +11,7 @@ public static class Constants
     public const string AtlasChartIdHome = "645abbc7-2258-4908-8eb4-94bbe0c6d324";
     public const string RestServiceEndpointEvents = "events";
     public const string RestServiceEndpointPlayers = "players";
+    public const string RestServiceEndpointPlayersUnique = "playersUnique";
     public const string RestServiceEndpointConfigs = "configs";
     public const string QueryParameterEventId = "EventId";
     public const string QueryParameterNickname = "Nickname";

@@ -1,12 +1,9 @@
 ﻿@page "/playerHome"
 @using RestSharp
-@using MongoDB.Driver
 @using website.Data
 @using website.Utils
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Player> Players
-@inject IMongoCollection<PlayerUnique> PlayersUnique
 
 <style>
     /* this in inside the body tag */
@@ -122,14 +119,10 @@
             var filteredPlayers = players!.FindAll(p => p.Nickname!.Equals(_nickname));
             Player = filteredPlayers.First();
 
-
-            var playerUnique = PlayersUnique
-                .Find(p => p.Nickname!.Equals(_nickname))
-                .First<PlayerUnique>();
-            Player = Players
-                .Find(p => p.Location!.Equals(playerUnique.location) &&
-                           p.Nickname!.Equals(playerUnique.Nickname))
-                .First<Player>();
+            var playersUnique = await _restClient.GetJsonAsync<List<PlayerUnique>>(Constants.RestServiceEndpointPlayersUnique);
+            var filteredPlayersUnique = playersUnique!.FindAll(p => p.Nickname!.Equals(_nickname));
+            var uniquePlayer = filteredPlayersUnique.FirstOrDefault()!;
+            Player = players.FindAll(p => p.Location!.Equals(uniquePlayer.Location) && p.Nickname!.Equals(uniquePlayer.Nickname)).First<Player>();
 
             _location = queryParameters["location"];
             _chartUrl = ChartsUrl.CreatePlayerUrl(Constants.AtlasChartIdPlayer, _nickname, _location, _eventId);
