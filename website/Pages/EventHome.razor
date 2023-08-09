@@ -58,42 +58,28 @@ else
 
 @code {
 
-    private string _chartUrl = "";
-    private string _location = "US-CA";
-    private string _eventId = "mdb-local-2023-socal";
     private Event? Event { get; set; }
-    private Dictionary<string, string>? _queryParameters;
+    private string _eventId = string.Empty;
+    private string _chartUrl = string.Empty;
 
     protected override void OnInitialized()
     {
         try
         {
-            var uri = new Uri(NavigationManager.Uri);
+            var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-
-            _queryParameters = uri.Query.TrimStart('?')
-                .Split('&')
-                .ToDictionary(
-                    x => Uri.UnescapeDataString(x.Split('=')[0]),
-                    x => Uri.UnescapeDataString(x.Split('=')[1])
-                );
-
-            _location = _queryParameters["location"];
-            _eventId = _queryParameters["EventId"];
-
+            _eventId = queryParameters["EventId"];
             Event = Events
                 .Find(e => e.Id.Equals(_eventId))
                 .First<Event>();
 
-            Console.WriteLine(_location);
-            Console.WriteLine(_eventId);
+            _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id, Event.location!);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            Console.WriteLine(ex.ToString());
+    // The exception itself can be ignored since the HTML is automatically adjusting to show
+    // an `[Unspecified Event]` message when no event was found.
         }
-
-        _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id, Event.location!);
     }
 
 }

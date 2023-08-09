@@ -1,9 +1,8 @@
 ﻿@page "/"
 @using MongoDB.Driver
 @using website.Data
-@using Microsoft.AspNetCore.WebUtilities
-@using MongoDB.Bson
 @using website.Utils
+@using MongoDB.Bson
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
@@ -47,7 +46,7 @@
             </b>
         </h4>
         <h4 class="card-title mt-3 text-center">
-            <b class="validation-message">@_message</b>
+            <b class="validation-message">@_errorMessage</b>
         </h4>
 
         <form>
@@ -61,7 +60,7 @@
                        type="text"
                        class="form-control"
                        placeholder="Nickname (case sensitive!)"
-                       @bind="Player!.Nickname" name=""
+                       @bind="Player.Nickname" name=""
                        @oninput="AutoCompleteNickname"
                        required>
 
@@ -132,56 +131,41 @@
 
 @code {
 
-    private string _message = "";
-    private string _chartUrl = "";
-    private Player? Player { get; set; } = new Player();
-    private string _eventId = Constants.DefaultEventId;
+    private Player Player { get; } = new();
+    private List<string> _suggestedNicknames = new();
     private Event? _event;
-    private List<string> _suggestedNicknames = new List<string>();
+    private string _eventId = string.Empty;
+    private string _chartUrl = string.Empty;
+    private string _errorMessage = string.Empty;
 
     protected override void OnInitialized()
     {
-        var uri = new Uri(NavigationManager.Uri);
-        var queryParameters = QueryHelpers.ParseQuery(uri.Query);
+        var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-        if (queryParameters.TryGetValue("event", out var queryParameter))
-        {
-            _eventId = queryParameter!;
-        }
-        else
-        {
-            if (queryParameters.TryGetValue("EventId", out var parameter))
-            {
-                _eventId = parameter!;
-            }
-            else
-            {
-                _eventId = Constants.DefaultEventId;
-            }
-        }
-        BsonDocument eventFilter = new BsonDocument("_id", _eventId);
+        _eventId = queryParameters.TryGetValue("EventId", out var eventIdValue) ? eventIdValue :
+            queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
+                Constants.DefaultEventId;
 
+        var eventFilter = new BsonDocument("_id", _eventId);
         _event = Events.FindSync(eventFilter).Single<Event>();
 
-        var chartsUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event.Id, _event.location!);
-
-        _chartUrl = chartsUrl;
+        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event.Id, _event.location!);
     }
 
     private async Task CreatePlayer()
     {
-        if (Player?.Nickname == null || _event?.location == null)
+        if (Player.Nickname == null || _event?.location == null)
         {
-            _message = "[please fill out the form]";
+            _errorMessage = "[please fill out the form]";
             return;
         }
 
-        _message = "";
+        _errorMessage = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
 
         if (await PlayerUniques.Find<PlayerUnique>(filter).AnyAsync<PlayerUnique>())
         {
-            _message = "[" + Player.Nickname + "] exists! Login instead?";
+            _errorMessage = "[" + Player.Nickname + "] exists! Login instead?";
         }
         else
         {
@@ -196,42 +180,44 @@
             }
                 )!;
 
-            var newDest = "/playerHome?location=" + Player.location + "&Nickname=" + Player.Nickname + "&EventId=" + _event.Id;
-            NavigationManager!.NavigateTo(newDest);
-            NavigationManager!.NavigateTo("/playerHome?location=" + _event.location + "&Nickname=" + Player.Nickname + "&EventId=" + _event.Id);
+            var newDestination = UrlForPlayer(Player.location, Player.Nickname, _event.Id);
+            NavigationManager!.NavigateTo(newDestination);
         }
     }
 
     private void LoginPlayer()
     {
-        if (Player?.Nickname == null)
+        if (Player.Nickname == null)
         {
-            _message = "[enter your nickname]";
+            _errorMessage = "[enter your nickname]";
             return;
         }
 
-        _message = "";
+        _errorMessage = "";
         var filter = new BsonDocument("Nickname", Player.Nickname);
         var existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
         if (existingPlayer != null)
         {
-            NavigationManager!.NavigateTo("/playerHome?location=" + _event!.location + "&Nickname=" + existingPlayer.Nickname + "&EventId=" + _event.Id);
+            var newDestination = UrlForPlayer(_event!.location!, existingPlayer.Nickname!, _event.Id);
+            NavigationManager!.NavigateTo(newDestination);
         }
         else
         {
-            _message = "[" + Player.Nickname + "] not found. Register instead?";
+            _errorMessage = "[" + Player.Nickname + "] not found. Register instead?";
         }
     }
 
     private async Task AutoCompleteNickname(ChangeEventArgs e)
     {
-        string input = e.Value!.ToString()!;
+        var input = e.Value!.ToString()!;
 
         if (input.Length >= 2)
         {
-            var nicknames = await PlayerUniques.Aggregate()
+            var nicknames = await PlayerUniques
+                .Aggregate()
                 .Search(Builders<PlayerUnique>
-                    .Search.Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
+                    .Search
+                    .Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
                 .Project<PlayerUnique>(Builders<PlayerUnique>
                     .Projection
                     .Include(p => p.Nickname)
@@ -247,11 +233,16 @@
         }
     }
 
-
-    void SelectNickname(string nickname)
+    private void SelectNickname(string nickname)
     {
-        Player!.Nickname = nickname;
+        Player.Nickname = nickname;
         _suggestedNicknames.Clear();
+    }
+
+    private static string UrlForPlayer(string location, string nickname, string eventId)
+    {
+        var newDestination = "/playerHome?location=" + location + "&Nickname=" + nickname + "&EventId=" + eventId;
+        return newDestination;
     }
 
 }
