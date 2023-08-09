@@ -23,7 +23,7 @@ public class EventsController : BaseController
         Logger.LogDebug($"Route {nameof(GetEvents)} called.");
 
         var events = await _eventsCollection.FindAsync(new BsonDocument());
-        var eventsResponse = events.ToList().Select(evt => new EventResponse(evt)).ToArray();
+        var eventsResponse = events.ToList().Select(e => new EventResponse(e)).ToArray();
 
         return eventsResponse;
     }

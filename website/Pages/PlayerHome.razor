@@ -1,4 +1,5 @@
 ﻿@page "/playerHome"
+@using RestSharp
 @using MongoDB.Driver
 @using website.Data
 @using website.Utils
@@ -6,7 +7,6 @@
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
 @inject IMongoCollection<PlayerUnique> PlayersUnique
-@inject IMongoCollection<Event> Events
 
 <style>
     /* this in inside the body tag */
@@ -29,45 +29,55 @@
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card bg-white">
-    <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Player Dashboard</h2>
-        <h4 class="card-title mt-3 text-center">
-            <b>@Event!.name</b>
-        </h4>
-        <h4 class="card-title mt-3 text-center">
-            <b class="validation-message">@_errorMessage</b>
-        </h4>
+    @if (Event == null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Player Dashboard</h2>
+            <h4 class="card-title mt-3 text-center">
+                <b>@Event!.name</b>
+            </h4>
+            <h4 class="card-title mt-3 text-center">
+                <b class="validation-message">@_errorMessage</b>
+            </h4>
 
-        <form>
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">
-                        <i class="fa fa-user"></i>
-                    </span>
-                </div>
-                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="" type="text" disabled>
-            </div> <!-- form-group// -->
+            <form>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </div>
+                    <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
 
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">
-                        <i class="fa fa-users"></i>
-                    </span>
-                </div>
-                <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="" type="text" disabled>
-            </div> <!-- form-group// -->
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-users"></i>
+                        </span>
+                    </div>
+                    <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
 
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">
-                        <i class="fa fa-comment"></i>
-                    </span>
-                </div>
-                <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
-            </div> <!-- form-group// -->
-        </form>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-comment"></i>
+                        </span>
+                    </div>
+                    <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
+            </form>
 
-    </article>
+        </article>
+    }
+
 </div> <!-- card.// -->
 
 
@@ -94,24 +104,30 @@
     private string _nickname = string.Empty;
     private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-            _eventId = queryParameters["EventId"];
-            Event = Events
-                .Find(e => e.Id.Equals(_eventId))
-                .First<Event>();
+            _eventId = queryParameters[Constants.QueryParameterEventId];
+            var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
+            var filteredEvents = events!.FindAll(e => e.Id.Equals(_eventId));
+            Event = filteredEvents.FirstOrDefault();
 
-            _nickname = queryParameters["Nickname"];
+            _nickname = queryParameters[Constants.QueryParameterNickname];
+            var players = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
+            var filteredPlayers = players!.FindAll(p => p.Nickname!.Equals(_nickname));
+            Player = filteredPlayers.First();
+
+
             var playerUnique = PlayersUnique
                 .Find(p => p.Nickname!.Equals(_nickname))
                 .First<PlayerUnique>();
             Player = Players
-                .Find(p => p.location!.Equals(playerUnique.location) &&
+                .Find(p => p.Location!.Equals(playerUnique.location) &&
                            p.Nickname!.Equals(playerUnique.Nickname))
                 .First<Player>();
 

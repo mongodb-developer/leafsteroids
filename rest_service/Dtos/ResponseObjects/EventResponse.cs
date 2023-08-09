@@ -7,10 +7,12 @@ public class EventResponse
 {
     [BsonElement("_id")] public string? Id { get; set; }
     [BsonElement("name")] public string? Name { get; set; }
+    [BsonElement("location")] public string? Location { get; set; }
 
-    public EventResponse(Event evt)
+    public EventResponse(Event @event)
     {
-        Id = evt.Id;
-        Name = evt.Name;
+        Id = @event.Id;
+        Name = @event.Name;
+        Location = @event.Location;
     }
 }

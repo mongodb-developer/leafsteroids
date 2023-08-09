@@ -3,11 +3,11 @@
 @using website.Data
 @using website.Utils
 @using MongoDB.Bson
+@using RestSharp;
 
 @inject NavigationManager NavigationManager
 @inject IMongoCollection<Player> Players
 @inject IMongoCollection<PlayerUnique> PlayerUniques
-@inject IMongoCollection<Event> Events
 
 
 <style>
@@ -137,64 +137,69 @@
     private string _eventId = string.Empty;
     private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
+    {
+        await SetEventFromUrlParameters();
+        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event!.Id, _event.location!);
+    }
+
+    private async Task SetEventFromUrlParameters()
     {
         var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
-
-        _eventId = queryParameters.TryGetValue("EventId", out var eventIdValue) ? eventIdValue :
+        _eventId = queryParameters.TryGetValue(Constants.QueryParameterEventId, out var eventIdValue) ? eventIdValue :
             queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
                 Constants.DefaultEventId;
 
-        var eventFilter = new BsonDocument("_id", _eventId);
-        _event = Events.FindSync(eventFilter).Single<Event>();
-
-        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event.Id, _event.location!);
+        var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
+        var filteredEvents = events!.FindAll(e => e.Id.Equals(_eventId));
+        _event = filteredEvents.FirstOrDefault();
     }
 
     private async Task CreatePlayer()
     {
-        if (Player.Nickname == null || _event?.location == null)
+        if (string.IsNullOrEmpty(Player.Nickname) || string.IsNullOrEmpty(_event?.location))
         {
             _errorMessage = "[please fill out the form]";
             return;
         }
 
         _errorMessage = "";
-        var filter = new BsonDocument("Nickname", Player.Nickname);
+        var filter = new BsonDocument(nameof(Player.Nickname), Player.Nickname);
 
         if (await PlayerUniques.Find<PlayerUnique>(filter).AnyAsync<PlayerUnique>())
         {
-            _errorMessage = "[" + Player.Nickname + "] exists! Login instead?";
+            _errorMessage = $"[{Player.Nickname}] exists! Login instead?";
         }
         else
         {
-            Player.location = _event.location;
+            Player.Location = _event.location;
 
             await Players!.InsertOneAsync(Player)!;
             await PlayerUniques!.InsertOneAsync(new PlayerUnique
             {
                 Id = Player.Id,
                 Nickname = Player.Nickname,
-                location = Player.location
+                location = Player.Location
             }
                 )!;
 
-            var newDestination = UrlForPlayer(Player.location, Player.Nickname, _event.Id);
+            var newDestination = UrlForPlayer(Player.Location, Player.Nickname, _event.Id);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
 
     private void LoginPlayer()
     {
-        if (Player.Nickname == null)
+        if (string.IsNullOrEmpty(Player.Nickname))
         {
-            _errorMessage = "[enter your nickname]";
+            _errorMessage = "[Enter your nickname!]";
             return;
         }
 
         _errorMessage = "";
-        var filter = new BsonDocument("Nickname", Player.Nickname);
+        var filter = new BsonDocument(nameof(Player.Nickname), Player.Nickname);
         var existingPlayer = PlayerUniques.Find<PlayerUnique>(filter).FirstOrDefault<PlayerUnique>();
         if (existingPlayer != null)
         {
@@ -203,7 +208,7 @@
         }
         else
         {
-            _errorMessage = "[" + Player.Nickname + "] not found. Register instead?";
+            _errorMessage = $"[{Player.Nickname}] not found. Register instead?";
         }
     }
 

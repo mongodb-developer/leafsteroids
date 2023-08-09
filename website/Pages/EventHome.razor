@@ -1,10 +1,9 @@
 ﻿@page "/eventHome"
-@using MongoDB.Driver
+@using RestSharp
 @using website.Data
 @using website.Utils
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Event> Events
 
 <style>
     body {
@@ -61,17 +60,18 @@ else
     private Event? Event { get; set; }
     private string _eventId = string.Empty;
     private string _chartUrl = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-            _eventId = queryParameters["EventId"];
-            Event = Events
-                .Find(e => e.Id.Equals(_eventId))
-                .First<Event>();
+            _eventId = queryParameters[Constants.QueryParameterEventId];
+            var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
+            var filteredEvents = events!.FindAll(e => e.Id.Equals(_eventId));
+            Event = filteredEvents.FirstOrDefault();
 
             _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id, Event.location!);
         }

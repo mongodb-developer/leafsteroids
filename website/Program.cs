@@ -13,9 +13,11 @@ static void ConfigureServices(IServiceCollection services)
     var envVars = DotEnv.Read();
     var connectionString = envVars["CONNECTION_STRING"];
     var databaseName = envVars["DATABASE_NAME"];
+    
     var mongoClient = new MongoClient(connectionString!);
     services.AddSingleton<IMongoClient>(mongoClient);
     services.AddSingleton<IMongoDatabase>(x => x.GetRequiredService<IMongoClient>().GetDatabase(databaseName)!);
+    
     services.AddSingleton<IMongoCollection<Player>>(x =>
         x.GetRequiredService<IMongoDatabase>().GetCollection<Player>("players")!);
     services.AddSingleton<IMongoCollection<PlayerUnique>>(x =>

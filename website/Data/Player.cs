@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
+
+#pragma warning disable CS8618
 
 namespace website.Data;
 
@@ -8,9 +11,12 @@ namespace website.Data;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public class Player
 {
-    [BsonId] public ObjectId Id { get; set; }
-    public string? Nickname { get; set; }
-    public string? TeamName { get; set; }
-    public string? Email { get; set; }
-    public string? location { get; set; }
+    [JsonProperty("_id")] [BsonId] public ObjectId Id { get; set; }
+    [JsonProperty("nickname")] public string Nickname { get; set; }
+    [JsonProperty("teamname")] public string? TeamName { get; set; }
+    [JsonProperty("email")] public string? Email { get; set; }
+
+    [JsonProperty("location")]
+    [BsonElement("location")]
+    public string? Location { get; set; }
 }
