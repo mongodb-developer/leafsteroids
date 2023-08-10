@@ -53,10 +53,13 @@ jobs:
           echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env     
 
       - name: Copy The rest_service Directory To The AWS EC2 Instance
-        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} "rm -rf /home/ubuntu/rest_service && mkdir /home/ubuntu/rest_service"
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./rest_service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
 
       - name: Copy The Systemd Service To The AWS EC2 Instance
-        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
+        run: |
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem deployment/rest_service.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/rest_service.service
 
       - name: Enable And Start The Systemd Service On The AWS EC2 Instance
         run: |
@@ -74,10 +77,13 @@ jobs:
           echo "REST_SERVICE_PORT=8001" >> ./website/.env     
 
       - name: Copy The website Directory To The AWS EC2 Instance
-        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./website ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} "rm -rf /home/ubuntu/website && mkdir /home/ubuntu/website"
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./website ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
 
       - name: Copy The Systemd Service To The AWS EC2 Instance
-        run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem deployment/website.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/website.service
+        run: |
+          scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem deployment/website.service ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/website.service
 
       - name: Enable And Start The Systemd Service On The AWS EC2 Instance
         run: |
