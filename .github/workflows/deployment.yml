@@ -47,7 +47,7 @@ jobs:
 
       # REST service
 
-      - name: Create The .env File Inside rest_service Directory
+      - name: Create The .env File Inside The `rest_service` Directory
         run: |
           echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./rest_service/.env
           echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env     
@@ -62,15 +62,16 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/rest_service.service /etc/systemd/system/rest_service.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable rest_service.service'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl daemon-reload'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start rest_service.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl restart rest_service.service'
 
       # Website
 
-      - name: Create The .env File Inside rest_service Directory
+      - name: Create The .env File Inside The `website` Directory
         run: |
-          echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./website/.env
-          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./website/.env     
+          echo "REST_SERVICE_IP=${{ env.STAGING_IP }}" > ./website/.env
+          echo "REST_SERVICE_PORT=8001" >> ./website/.env     
 
       - name: Copy The website Directory To The AWS EC2 Instance
         run: scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem -r ./website ubuntu@${{ env.ENVIRONMENT_IP }}:/home/ubuntu/
@@ -82,6 +83,6 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo mv /home/ubuntu/website.service /etc/systemd/system/website.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl enable website.service'
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl  daemon-reload'          
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl daemon-reload'          
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl start website.service'
           ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ec2_private_key.pem ubuntu@${{ env.ENVIRONMENT_IP }} 'sudo systemctl restart website.service'
