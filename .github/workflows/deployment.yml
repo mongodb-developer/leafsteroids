@@ -74,7 +74,7 @@ jobs:
       - name: Create The .env File Inside The `website` Directory
         run: |
           echo "REST_SERVICE_IP=${{ env.STAGING_IP }}" > ./website/.env
-          echo "REST_SERVICE_PORT=8001" >> ./website/.env     
+          echo "REST_SERVICE_PORT=8000" >> ./website/.env     
 
       - name: Copy The website Directory To The AWS EC2 Instance
         run: |
