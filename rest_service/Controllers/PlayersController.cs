@@ -20,35 +20,29 @@ public class PlayersController : BaseController
         _playersUniqueCollection = Database!.GetCollection<PlayerUnique>(Constants.PlayersUniqueCollectionName);
     }
 
-    [HttpGet(Name = "GetPlayers")]
-    public async Task<PlayerResponse[]> GetPlayers()
+    [HttpGet("All", Name = "GetPlayers")]
+    public async Task<List<PlayerResponse>> GetPlayers()
     {
         Logger.LogDebug($"Route {nameof(GetPlayers)} called.");
 
         var players = await _playersCollection.FindAsync(new BsonDocument());
         var playersResponse =
-            players.ToList().Select(player => new PlayerResponse(player)).ToArray();
+            players.ToList().Select(player => new PlayerResponse(player)).ToList();
 
         return playersResponse;
     }
-    
-    [HttpGet(Name = "GetPlayersUnique")]
-    public async Task<PlayerResponse[]> GetPlayersUnique()
+
+    [HttpGet("Unique", Name = "GetPlayersUnique")]
+    public async Task<List<PlayerUniqueResponse>> GetPlayersUnique()
     {
         Logger.LogDebug($"Route {nameof(GetPlayersUnique)} called.");
 
         var playersUnique = await _playersUniqueCollection.FindAsync(new BsonDocument());
         var playersUniqueList = playersUnique.ToList();
-        var playersREsponse = new List<PlayerResponse>();
-        foreach (var player in playersUniqueList)
-        {
-playersREsponse.Add(new PlayerResponse(player));
-        }
-        var playersResponse = playersUnique.ToList().Select(player => new PlayerResponse(playersUnique)).ToArray();
+        var playersResponse = playersUniqueList.Select(player => new PlayerUniqueResponse(player)).ToList();
 
         return playersResponse;
     }
-    
 
     [HttpPost(Name = "CreatePlayer")]
     public async Task<ActionResult<PlayerResponse>> CreatePlayer(PlayerRequest playerRequest)
@@ -58,7 +52,7 @@ playersREsponse.Add(new PlayerResponse(player));
         var player = new Player(playerRequest);
         await _playersCollection.InsertOneAsync(player);
 
-        var playerUnique = new PlayerUnique(playerRequest);
+        var playerUnique = new PlayerUnique(player);
         await _playersUniqueCollection.InsertOneAsync(playerUnique);
 
         return CreatedAtRoute("GetPlayers", null, null);

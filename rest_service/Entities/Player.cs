@@ -7,13 +7,12 @@ using RestService.Dtos.RequestObjects;
 namespace RestService.Entities;
 
 [SuppressMessage("ReSharper", "PropertyCanBeMadeInitOnly.Global")]
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class Player
 {
     [BsonElement("_id")] public ObjectId? Id { get; set; }
-    public string? Nickname { get; set; }
-    public string? TeamName { get; set; }
-    public string? Email { get; set; }
+    [BsonElement("Nickname")] public string? Name { get; set; }
+    [BsonElement("TeamName")] public string? Team { get; set; }
+    [BsonElement("Email")] public string? Email { get; set; }
 
     [JsonProperty("location")]
     [BsonElement("location")]
@@ -22,14 +21,13 @@ public class Player
     public Player(PlayerRequest request)
     {
         Id = ObjectId.GenerateNewId();
-        Nickname = request.Nickname;
-        TeamName = request.TeamName;
+        Name = request.Name;
+        Team = request.Team;
         Email = request.Email;
         Location = request.Location;
     }
 
     protected Player()
     {
-        throw new NotImplementedException();
     }
 }

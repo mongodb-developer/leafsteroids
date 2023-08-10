@@ -1,5 +1,3 @@
-using website.Data;
-
 namespace website.Utils;
 
 public static class ChartsUrl
@@ -14,11 +12,11 @@ public static class ChartsUrl
                + "%27}";
     }
 
-    public static string CreatePlayerUrl(string chartsId, string nickname, string location, string eventId)
+    public static string CreatePlayerUrl(string chartsId, string name, string location, string eventId)
     {
         return CreateBaseUrl(chartsId)
                + "&filter={%27Player.Nickname%27:%27"
-               + nickname
+               + name
                + "%27,%27location%27:%27"
                + location
                + "%27,%27Event._id%27:%27"

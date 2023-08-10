@@ -37,7 +37,7 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
             <h4 class="card-title mt-3 text-center">
-                <b>@Event!.name</b>
+                <b>@Event!.Name</b>
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -50,7 +50,7 @@
                             <i class="fa fa-user"></i>
                         </span>
                     </div>
-                    <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -59,7 +59,7 @@
                             <i class="fa fa-users"></i>
                         </span>
                     </div>
-                    <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text" disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -98,7 +98,7 @@
     private Player Player { get; set; } = new();
     private string _eventId = string.Empty;
     private string _location = string.Empty;
-    private string _nickname = string.Empty;
+    private string _name = string.Empty;
     private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
@@ -111,21 +111,21 @@
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
-            var filteredEvents = events!.FindAll(e => e.Id.Equals(_eventId));
+            var filteredEvents = events!.FindAll(e => e.Id!.Equals(_eventId));
             Event = filteredEvents.FirstOrDefault();
 
-            _nickname = queryParameters[Constants.QueryParameterNickname];
-            var players = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
-            var filteredPlayers = players!.FindAll(p => p.Nickname!.Equals(_nickname));
+            _name = queryParameters[Constants.QueryParameterName];
+            var players = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersAll);
+            var filteredPlayers = players!.FindAll(p => p.Name.Equals(_name));
             Player = filteredPlayers.First();
 
-            var playersUnique = await _restClient.GetJsonAsync<List<PlayerUnique>>(Constants.RestServiceEndpointPlayersUnique);
-            var filteredPlayersUnique = playersUnique!.FindAll(p => p.Nickname!.Equals(_nickname));
+            var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersUnique);
+            var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(_name));
             var uniquePlayer = filteredPlayersUnique.FirstOrDefault()!;
-            Player = players.FindAll(p => p.Location!.Equals(uniquePlayer.Location) && p.Nickname!.Equals(uniquePlayer.Nickname)).First<Player>();
+            Player = players.FindAll(p => p.Location!.Equals(uniquePlayer.Location) && p.Name!.Equals(uniquePlayer.Name)).First();
 
             _location = queryParameters["location"];
-            _chartUrl = ChartsUrl.CreatePlayerUrl(Constants.AtlasChartIdPlayer, _nickname, _location, _eventId);
+            _chartUrl = ChartsUrl.CreatePlayerUrl(Constants.AtlasChartIdPlayer, _name, _location, _eventId);
         }
         catch (Exception)
         {

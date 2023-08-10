@@ -30,13 +30,13 @@
             <b>
                 @if ((_event != null))
                 {
-                    if ((_event.location != null) && (_event.name != null))
+                    if ((_event.Location != null) && (_event.Name != null))
                     {
-                        <a href="/eventHome/?location=@_event.location&EventId=@_event.Id">@_event.name</a>
+                        <a href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
                     }
                     else
                     {
-                        @_event.name
+                        @_event.Name
                     }
                 }
             </b>
@@ -52,24 +52,24 @@
                         <i class="fa fa-user"></i>
                     </span>
                 </div>
-                <input id="nickname"
+                <input id="name"
                        type="text"
                        class="form-control"
-                       placeholder="Nickname (case sensitive!)"
-                       @bind="Player.Nickname" name=""
-                       @oninput="AutoCompleteNickname"
+                       placeholder="Name (case sensitive!)"
+                       @bind="Player.Name" name=""
+                       @oninput="AutoCompleteName"
                        required>
 
-                @if (_suggestedNicknames.Count > 0)
+                @if (_suggestedNames.Count > 0)
                 {
                     <div class="autocomplete">
                         <ul class="options">
-                            @foreach (var nickname in _suggestedNicknames)
+                            @foreach (var name in _suggestedNames)
                             {
-                                <li id="option_@nickname"
+                                <li id="option_@name"
                                     class="option"
-                                    @onclick=@(_ => SelectNickname(nickname))>
-                                    @nickname <!-- visible suggestion -->
+                                    @onclick=@(_ => SelectName(name))>
+                                    @name <!-- visible suggestion -->
                                 </li>
                             }
                         </ul>
@@ -83,7 +83,7 @@
                         <i class="fa fa-users"></i>
                     </span>
                 </div>
-                <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="Team Name (optional)" type="text">
+                <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="Team Name (optional)" type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -128,7 +128,7 @@
 @code {
 
     private Player Player { get; } = new();
-    private List<string> _suggestedNicknames = new();
+    private List<string> _suggestedNames = new();
     private Event? _event;
     private string _eventId = string.Empty;
     private string _chartUrl = string.Empty;
@@ -138,7 +138,7 @@
     protected override async Task OnInitializedAsync()
     {
         await SetEventFromUrlParameters();
-        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event!.Id, _event.location!);
+        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event!.Id!, _event.Location!);
     }
 
     private async Task SetEventFromUrlParameters()
@@ -149,13 +149,13 @@
                 Constants.DefaultEventId;
 
         var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
-        var filteredEvents = events!.FindAll(e => e.Id.Equals(_eventId));
+        var filteredEvents = events!.FindAll(e => e.Id!.Equals(_eventId));
         _event = filteredEvents.FirstOrDefault();
     }
 
     private async Task CreatePlayer()
     {
-        if (string.IsNullOrEmpty(Player.Nickname) || string.IsNullOrEmpty(_event?.location))
+        if (string.IsNullOrEmpty(Player.Name) || string.IsNullOrEmpty(_event?.Location))
         {
             _errorMessage = "[please fill out the form]";
             return;
@@ -163,95 +163,86 @@
 
         _errorMessage = "";
 
-        var playersUnique = await _restClient.GetJsonAsync<List<PlayerUnique>>(Constants.RestServiceEndpointPlayersUnique);
-        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Nickname!.Equals(Player.Nickname));
+        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersUnique);
+        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
         if (existingPlayer != null)
         {
-            _errorMessage = $"[{Player.Nickname}] exists! Login instead?";
+            _errorMessage = $"[{Player.Name}] exists! Login instead?";
         }
         else
         {
-            Player.Location = _event.location;
-
-    // await Players!.InsertOneAsync(Player)!;
-    // await PlayerUniques!.InsertOneAsync(new PlayerUnique
-    // {
-    //     Id = Player.Id,
-    //     Nickname = Player.Nickname,
-    //     Location = Player.Location
-    // }
-    //     )!;
+            Player.Location = _event.Location;
 
             var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(Player);
-            var response = await _restClient.PostAsync<Player>(request);
+            await _restClient.PostAsync<Player>(request);
 
-            var newDestination = UrlForPlayer(Player.Location, Player.Nickname, _event.Id);
+            var newDestination = UrlForPlayer(Player.Location, Player.Name, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
 
     private async Task LoginPlayer()
     {
-        if (string.IsNullOrEmpty(Player.Nickname))
+        if (string.IsNullOrEmpty(Player.Name))
         {
-            _errorMessage = "[Enter your nickname!]";
+            _errorMessage = "[Enter your name!]";
             return;
         }
 
         _errorMessage = "";
 
-        var playersUnique = await _restClient.GetJsonAsync<List<PlayerUnique>>(Constants.RestServiceEndpointPlayersUnique);
-        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Nickname!.Equals(Player.Nickname));
+        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersUnique);
+        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
         if (existingPlayer != null)
         {
-            var newDestination = UrlForPlayer(_event!.location!, existingPlayer.Nickname!, _event.Id);
+            var newDestination = UrlForPlayer(_event!.Location!, existingPlayer.Name!, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
         else
         {
-            _errorMessage = $"[{Player.Nickname}] not found. Register instead?";
+            _errorMessage = $"[{Player.Name}] not found. Register instead?";
         }
     }
 
-    private async Task AutoCompleteNickname(ChangeEventArgs e)
+    private async Task AutoCompleteName(ChangeEventArgs e)
     {
     // var input = e.Value!.ToString()!;
 
     // if (input.Length >= 2)
     // {
-    //     var nicknames = await PlayerUniques
+    //     var names = await Players
     //         .Aggregate()
-    //         .Search(Builders<PlayerUnique>
+    //         .Search(Builders<Player>
     //             .Search
-    //             .Autocomplete(p => p.Nickname, input), indexName: "autocomplete")
-    //         .Project<PlayerUnique>(Builders<PlayerUnique>
+    //             .Autocomplete(p => p.Name, input), indexName: "autocomplete")
+    //         .Project<Player>(Builders<Player>
     //             .Projection
-    //             .Include(p => p.Nickname)
+    //             .Include(p => p.Name)
     //             .Exclude(p => p.Id))
     //         .Limit(10)
     //         .ToListAsync();
     //
-    //     _suggestedNicknames = nicknames.Select(p => p.Nickname).ToList()!;
+    //     _suggestedNames = names.Select(p => p.Name).ToList()!;
     // }
     // else
     // {
-        _suggestedNicknames.Clear();
+        _suggestedNames.Clear();
     // }
     }
 
-    private void SelectNickname(string nickname)
+    private void SelectName(string name)
     {
-        Player.Nickname = nickname;
-        _suggestedNicknames.Clear();
+        Player.Name = name;
+        _suggestedNames.Clear();
     }
 
-    private static string UrlForPlayer(string location, string nickname, string eventId)
+    private static string UrlForPlayer(string location, string name, string eventId)
     {
-        var newDestination = "/playerHome?location=" + location + "&Nickname=" + nickname + "&EventId=" + eventId;
+        var newDestination = "/playerHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
         return newDestination;
     }
 

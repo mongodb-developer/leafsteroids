@@ -71,8 +71,8 @@ namespace _1_Loading
             Debug.Log(envVars);
             LocalConfig = new LocalConfig
             {
-                GameServerIp = envVars["GAME_SERVER_IP"],
-                GameServerPort = envVars["GAME_SERVER_PORT"]
+                RestServiceIp = envVars["REST_SERVICE_IP"],
+                RestServicePort = envVars["REST_SERVICE_PORT"]
             };
         }
     }

@@ -28,9 +28,9 @@
         <h2 class="text-center">Event Dashboard</h2>
         <h4 class="card-title mt-3 text-center">
             <b>
-                @if (Event?.name != null)
+                @if (Event?.Name != null)
                 {
-                    <span>@Event.name</span>
+                    <span>@Event.Name</span>
                 }
                 else
                 {
@@ -70,10 +70,10 @@ else
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
-            var filteredEvents = events!.FindAll(e => e.Id.Equals(_eventId));
+            var filteredEvents = events!.FindAll(e => e.Id!.Equals(_eventId));
             Event = filteredEvents.FirstOrDefault();
 
-            _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id, Event.location!);
+            _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id!, Event.Location!);
         }
         catch (Exception)
         {

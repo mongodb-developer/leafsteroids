@@ -18,12 +18,12 @@ public class EventsController : BaseController
     }
 
     [HttpGet(Name = "GetEvents")]
-    public async Task<EventResponse[]> GetEvents()
+    public async Task<List<EventResponse>> GetEvents()
     {
         Logger.LogDebug($"Route {nameof(GetEvents)} called.");
 
         var events = await _eventsCollection.FindAsync(new BsonDocument());
-        var eventsResponse = events.ToList().Select(e => new EventResponse(e)).ToArray();
+        var eventsResponse = events.ToList().Select(e => new EventResponse(e)).ToList();
 
         return eventsResponse;
     }

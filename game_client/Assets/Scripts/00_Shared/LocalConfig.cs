@@ -4,7 +4,7 @@ namespace _00_Shared
 {
     public class LocalConfig
     {
-        [JsonProperty("GAME_SERVER_IP")] public string GameServerIp { get; set; }
-        [JsonProperty("GAME_SERVER_PORT")] public string GameServerPort { get; set; }
+        [JsonProperty("REST_SERVICE_IP")] public string RestServiceIp { get; set; }
+        [JsonProperty("REST_SERVICE_PORT")] public string RestServicePort { get; set; }
     }
 }
