@@ -23,8 +23,8 @@ public class PlayerForRecordingsSerializer : SerializerBase<RecordingPlayer>
     {
         var document = new BsonDocument
             {
-                { "_id", value.Id },
-                { "Nickname", value.Name }
+                { "Nickname", value.Name },
+                { "location", value.Location }
             };
         
         BsonDocumentSerializer.Instance.Serialize(context, document);
