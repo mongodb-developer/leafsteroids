@@ -60,6 +60,7 @@ public class PlayersController : BaseController
     {
         Logger.LogDebug($"Route {nameof(CreatePlayer)} called.");
 
+        // ACID Transaction: player + player_unique
         using (var session = await Client.StartSessionAsync())
         {
             session.StartTransaction();
