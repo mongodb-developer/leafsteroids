@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
 
-namespace website.Data;
+namespace RestService.Dtos.RequestObjects;
 
-public class Player
+public class PlayerRequest
 {
     [JsonProperty("id")] public string? Id { get; set; }
     [JsonProperty("name")] public string? Name { get; set; }

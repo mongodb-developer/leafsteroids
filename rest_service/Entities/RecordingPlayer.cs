@@ -24,7 +24,7 @@ public class PlayerForRecordingsSerializer : SerializerBase<RecordingPlayer>
         var document = new BsonDocument
             {
                 { "_id", value.Id },
-                { "Nickname", value.Nickname }
+                { "Nickname", value.Name }
             };
         
         BsonDocumentSerializer.Instance.Serialize(context, document);

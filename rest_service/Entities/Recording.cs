@@ -20,7 +20,7 @@ public class Recording
 
         DateTime = System.DateTime.UtcNow;
 
-        Player = new RecordingPlayer { Nickname = recordingRequest.PlayerName };
+        Player = new RecordingPlayer { Name = recordingRequest.PlayerName };
 
         Event = new RecordingEvent { Id = recordingRequest.EventId };
 

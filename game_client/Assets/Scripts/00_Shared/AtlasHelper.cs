@@ -17,8 +17,8 @@ namespace _00_Shared
         {
             Debug.Log(nameof(GetConfig));
             var url = string.Format(Constants.GameServerEndpoints.GetConfig,
-                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
-                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+                GameConfigLoader.Instance!.LocalConfig!.RestServiceIp,
+                GameConfigLoader.Instance.LocalConfig.RestServicePort);
             Debug.Log(url);
             using var request = UnityWebRequest.Get(url);
             request!.SetRequestHeader("Content-Type", "application/json");
@@ -41,8 +41,8 @@ namespace _00_Shared
         {
             Debug.Log(nameof(GetEvents));
             var url = string.Format(Constants.GameServerEndpoints.GetEvents,
-                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
-                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+                GameConfigLoader.Instance!.LocalConfig!.RestServiceIp,
+                GameConfigLoader.Instance.LocalConfig.RestServicePort);
             Debug.Log(url);
             using var request = UnityWebRequest.Get(url);
             // request!.SetRequestHeader("Content-Type", "application/json");
@@ -64,8 +64,8 @@ namespace _00_Shared
         {
             Debug.Log(nameof(GetPlayers));
             var url = string.Format(Constants.GameServerEndpoints.GetPlayers,
-                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
-                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+                GameConfigLoader.Instance!.LocalConfig!.RestServiceIp,
+                GameConfigLoader.Instance.LocalConfig.RestServicePort);
             Debug.Log(url);
             using var request = UnityWebRequest.Get(url);
             request!.SetRequestHeader("Content-Type", "application/json");
@@ -117,8 +117,8 @@ namespace _00_Shared
         public static IEnumerator RecordSnapshot(string data, Action<bool> callback = null)
         {
             var url = string.Format(Constants.GameServerEndpoints.PostInsertOne,
-                GameConfigLoader.Instance!.LocalConfig!.GameServerIp,
-                GameConfigLoader.Instance.LocalConfig.GameServerPort);
+                GameConfigLoader.Instance!.LocalConfig!.RestServiceIp,
+                GameConfigLoader.Instance.LocalConfig.RestServicePort);
             Debug.Log(url);
             using var request = new UnityWebRequest(url, "POST");
             request.SetRequestHeader("Content-Type", "application/json");

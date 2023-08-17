@@ -1,22 +1,14 @@
 ﻿@page "/playerHome"
-@using MongoDB.Driver
-@using MongoDB.Bson
+@using RestSharp
 @using website.Data
+@using website.Utils
 
 @inject NavigationManager NavigationManager
-@inject IMongoCollection<Player> Players
-@inject IMongoCollection<PlayerUnique> PlayersUnique
-@inject IMongoCollection<Recording> Recordings
-@inject IMongoCollection<Event> Events
 
 <style>
     /* this in inside the body tag */
     body {
         background-color: #023430;
-    }
-
-    .foo {
-        color: #0b5ed7;
     }
 
     .atlascharts_iframe {
@@ -30,127 +22,119 @@
     }
 </style>
 
-<a href="\?EventId=@EventId">
+<a href="\?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card bg-white">
-    <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Player Dashboard</h2>
-        <h4 class="card-title mt-3 text-center"><b>@Event.name</b></h4>
-        <h4 class="card-title mt-3 text-center"><b class="validation-message">@message</b></h4>
-
-        <form>
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
-                </div>
-                <input id="nickname" @bind="Player.Nickname" name="" class="form-control" placeholder="" type="text" disabled>
-            </div> <!-- form-group// -->
-
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-users"></i> </span>
-                </div>
-                <input id="teamname" @bind="Player.TeamName" name="" class="form-control" placeholder="" type="text" disabled>
-            </div> <!-- form-group// -->
-
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-comment"></i> </span>
-                </div>
-                <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
-            </div> <!-- form-group// -->
-        </form>
-
-    </article>
-</div> <!-- card.// -->
-
-
-<div class="card bg-white">
-    @if (chartUrl.Length == 0){
+    @if (Event == null)
+    {
         <p>
             <em>Loading...</em>
         </p>
     }
-    else {
-        <iframe class="atlascharts_iframe" src="@chartUrl"></iframe>
+    else
+    {
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Player Dashboard</h2>
+            <h4 class="card-title mt-3 text-center">
+                <b>@Event!.Name</b>
+            </h4>
+            <h4 class="card-title mt-3 text-center">
+                <b class="validation-message">@_errorMessage</b>
+            </h4>
+
+            <form>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </div>
+                    <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-users"></i>
+                        </span>
+                    </div>
+                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-comment"></i>
+                        </span>
+                    </div>
+                    <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
+            </form>
+
+        </article>
+    }
+
+</div> <!-- card.// -->
+
+
+<div class="card bg-white">
+    @if (_chartUrl.Length == 0)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
     }
 </div>
 
 
 @code {
 
-    private string message = "";
-    private string chartUrl = "";
-    private string location = "";
-    private string Nickname = "";
-    private string EventId = "";
-
-    private Player Player { get; set; } = new Player();
     private Event? Event { get; set; }
+    private Player Player { get; set; } = new();
+    private string _eventId = string.Empty;
+    private string _location = string.Empty;
+    private string _name = string.Empty;
+    private string _chartUrl = string.Empty;
+    private string _errorMessage = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
 
-    private List<Recording>? recordings;
-
-    Dictionary<string, string>? queryParameters;
-
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
-            var uri = new Uri(NavigationManager.Uri);
+            var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-            queryParameters = uri.Query.TrimStart('?')
-                .Split('&')
-                .ToDictionary(
-                    x => Uri.UnescapeDataString(x.Split('=')[0]),
-                    x => Uri.UnescapeDataString(x.Split('=')[1])
-                );
+            _eventId = queryParameters[Constants.QueryParameterEventId];
+            var eventsFilter = new Dictionary<string, string>
+            {
+                { "id", _eventId }
+            };
+            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+            Event = events.First();
 
-            location = queryParameters["location"];
-            Nickname = queryParameters["Nickname"];
-            EventId = queryParameters["EventId"];
+            _name = queryParameters[Constants.QueryParameterName];
+            var playerFilter = new Dictionary<string, string>
+            {
+                { "name", _name }
+            };
+            string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
+            var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
+            Player = players.First();
 
-            Console.WriteLine(location);
-            Console.WriteLine(Nickname);
-            Console.WriteLine(EventId);
-
-            //chartUrl = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards?id=64540ea3-f8b8-4211-8c3b-cff2506301a4&theme=dark&autoRefresh=true&maxDataAge=60&showTitleAndDesc=false&scalingWidth=fixed&scalingHeight=fixed";
-            //chartUrl += "&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27,%27Event._id%27:%27" + EventId + "%27}";
-
-            Event = Events
-                .Find(e => e.Id.Equals(EventId))
-                .First<Event>();
-
-            PlayerUnique playerUnique = PlayersUnique
-                .Find(p => p.Nickname.Equals(Nickname))
-                .First<PlayerUnique>();
-
-            Player = Players
-                .Find(p => p.location.Equals(playerUnique.location) &&
-                           p.Nickname.Equals(playerUnique.Nickname))
-                .First<Player>();
-
-            string atlasChartEmbedDashboardURL = "https://charts.mongodb.com/charts-global_shared-jebkk/embed/dashboards";
-            string atlasChartID = "64540ea3-f8b8-4211-8c3b-cff2506301a4"; // Player home dashboard
-
-            string tmpchartUrl = atlasChartEmbedDashboardURL;
-
-            tmpchartUrl += "?id=" + atlasChartID; // FIRST parameter. This typically changed for each route of the website
-            tmpchartUrl += "&theme=light"; // or dark
-            tmpchartUrl += "&autoRefresh=true";
-            tmpchartUrl += "&maxDataAge=60";
-            tmpchartUrl += "&showTitleAndDesc=false";
-            tmpchartUrl += "&scalingWidth=100%25"; // 100% url-encoded
-            tmpchartUrl += "&scalingHeight=fixed";
-            tmpchartUrl += "&attribution=false";
-            tmpchartUrl += "&filter={%27Player.Nickname%27:%27" + Nickname + "%27,%27location%27:%27" + location + "%27,%27Event._id%27:%27" + EventId + "%27}"; // json, url-encoded object {'Event._id':'my-event','location':'XX-XX'}
-
-            chartUrl = tmpchartUrl;
+            _location = Event.Location;
+            _chartUrl = ChartsUrl.CreatePlayerUrl(Constants.AtlasChartIdPlayer, _name, _location, _eventId);
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Console.WriteLine(ex.ToString());
-            message = "PLAYER NOT FOUND";
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+            _errorMessage = "PLAYER NOT FOUND";
         }
     }
 }

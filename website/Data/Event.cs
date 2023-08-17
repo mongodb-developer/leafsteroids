@@ -1,13 +1,10 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+using Newtonsoft.Json;
 
 namespace website.Data;
 
 public class Event
 {
-    [BsonId]
-    public string Id { get; set; }
-    public string? name { get; set; }
-    public string? location { get; set; }
-
+    [JsonProperty("id")] public string? Id { get; set; }
+    [JsonProperty("name")] public string? Name { get; set; }
+    [JsonProperty("location")] public string? Location { get; set; }
 }
