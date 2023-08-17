@@ -16,14 +16,14 @@ public class RecordingsController : BaseController
 
     public RecordingsController(ILogger<RecordingsController> logger) : base(logger)
     {
-        _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
-        _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
         /*  
          *  Use players_unique collection to query by Name
          *  This avoids a collscan against the players globally sharded collection
          *  whose shard key is {location:1, Name:1}
         */
         _playersCollection = Database!.GetCollection<Player>(Constants.PlayersUniqueCollectionName);
+        _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
+        _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
     }
 
     [HttpPost(Name = "PostRecording")]

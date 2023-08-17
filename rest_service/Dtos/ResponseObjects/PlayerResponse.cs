@@ -23,10 +23,12 @@ public class PlayerResponse
         Location = player.Location;
     }
 
+    /*
     public PlayerResponse(PlayerUnique player)
     {
         Id = player.Id.ToString();
         Name = player.Name;
         Location = player.Location;
     }
+    */
 }
