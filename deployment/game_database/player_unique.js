@@ -19,3 +19,7 @@ var pipeline = [
 ];
 
 db.players.aggregate(pipeline);
+
+// Ensure same count
+db.players.countDocuments();
+db.players_unique.countDocuments();

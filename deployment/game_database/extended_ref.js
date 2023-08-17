@@ -8,17 +8,16 @@ db.recordings.createIndex({"location": 1, "Player.Nickname": 1, "_id": 1}, {uniq
 var pipeline = [
     {
         "$set": {
-            "DateTime": {$toDate: "$DateTime"},
-            "Player._id": {$toObjectId: "$Player._id"},
+            "DateTime": {$toDate: "$DateTime"}
         },
     },
     {
         "$unset": [
             "Event.location",
             "Event.name",
+            "Player._id",
             "Player.Email",
             "Player.TeamName",
-            "Player.location"
         ]
     },
     {
@@ -38,12 +37,11 @@ var query = {
     "$or":
         [
             {"Event.location": {$exists: true}},
-            {"Event.name": {$exists: true}},
+            {"Event.name": { $exists: true } },
+            {"Player._id": { $exists: true } },
             {"Player.Email": {$exists: true}},
             {"Player.TeamName": {$exists: true}},
-            {"Player.location": {$exists: true}},
             {"DateTime": {$not: {$type: 9}}},
-            {"Player._id": {$not: {$type: 7}}},
             {"location": {$in: [null, '', "TESTING"]}}
         ]
 };
