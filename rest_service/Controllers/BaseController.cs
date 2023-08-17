@@ -8,6 +8,7 @@ namespace RestService.Controllers
     {
         protected readonly ILogger<BaseController> Logger;
         protected readonly IMongoDatabase? Database;
+        protected readonly IMongoClient? Client;
 
         public BaseController(ILogger<BaseController> logger)
         {
@@ -16,8 +17,8 @@ namespace RestService.Controllers
             var envVars = DotEnv.Read();
             var connectionString = envVars[Constants.ConnectionStringKey];
             var databaseName = envVars[Constants.DatabaseNameKey];
-            var mongoClient = new MongoClient(connectionString);
-            Database = mongoClient.GetDatabase(databaseName);
+            Client = new MongoClient(connectionString);
+            Database = Client.GetDatabase(databaseName);
         }
     }
 }

@@ -17,17 +17,4 @@ public class Player
     [JsonProperty("location")]
     [BsonElement("location")]
     public string? Location { get; set; }
-
-    public Player(PlayerRequest request)
-    {
-        Id = ObjectId.GenerateNewId();
-        Name = request.Name;
-        Team = request.Team;
-        Email = request.Email;
-        Location = request.Location;
-    }
-
-    protected Player()
-    {
-    }
 }

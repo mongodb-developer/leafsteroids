@@ -69,16 +69,22 @@ else
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
-            var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
-            var filteredEvents = events!.FindAll(e => e.Id!.Equals(_eventId));
-            Event = filteredEvents.FirstOrDefault();
+            var eventsFilter = new Dictionary<string, string>
+            {
+                { "id", _eventId }
+            };
+            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+            Event = events.FirstOrDefault();
 
             _chartUrl = ChartsUrl.CreateEventUrl(Constants.AtlasChartIdEvent, Event!.Id!, Event.Location!);
         }
-        catch (Exception)
+        catch (Exception e)
         {
-    // The exception itself can be ignored since the HTML is automatically adjusting to show
-    // an `[Unspecified Event]` message when no event was found.
+            // The exception itself can be ignored since the HTML is automatically adjusting to show
+            // an `[Unspecified Event]` message when no event was found.
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
         }
     }
 

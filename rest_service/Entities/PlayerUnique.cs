@@ -12,15 +12,4 @@ public class PlayerUnique
     [JsonProperty("location")]
     [BsonElement("location")]
     public string? Location { get; set; }
-
-    public PlayerUnique(Player player)
-    {
-        Id = player.Id;
-        Name = player.Name;
-        Location = player.Location;
-    }
-
-    protected PlayerUnique()
-    {
-    }
 }
