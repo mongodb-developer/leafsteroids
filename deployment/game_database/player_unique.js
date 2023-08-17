@@ -1,6 +1,6 @@
 ﻿// Re-create player_unique collection, now with range sharding on _id
 db.players_unique.drop({});
-sh.shardCollection("Leafsteroids.players_unique", { _id: 1 }, true, 16)
+sh.shardCollection("Leafsteroids.players_unique", { _id: 1 }, true)
 
 // Pipeline
 var pipeline = [
@@ -11,9 +11,8 @@ var pipeline = [
         },
     },
     {
-        $out: {
-            db: "Leafsteroids",
-            coll: "players_unique",
+        $merge: {
+            into: "players_unique"
         },
     },
 ];
