@@ -32,7 +32,6 @@ namespace _1_Loading
 
         private void Start()
         {
-            // InvokeRepeating(nameof(LoadRemoteConfig), 0f, 3f);
             LoadLocalConfig();
             LoadRemoteConfig();
         }
