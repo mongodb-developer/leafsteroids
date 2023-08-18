@@ -99,7 +99,7 @@ public class RecordingsController : BaseController
     private async Task AddPlayer(Recording recording)
     {
         var playerName = recording.Player.Name;
-        var playerFilter = Builders<Player>.Filter.Eq("Name", playerName);
+        var playerFilter = Builders<Player>.Filter.Eq("Nickname", playerName);
         var players = await _playersCollection.Find(playerFilter).ToListAsync();
         switch (players.Count)
         {
