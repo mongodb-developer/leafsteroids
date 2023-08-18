@@ -10,7 +10,7 @@ namespace _1_Loading
             EventSelection,
             Welcome,
             PlayerSelection,
-            Playground
+            MainDynamic
         }
 
         public SceneName sceneToSwitchTo;
@@ -56,8 +56,8 @@ namespace _1_Loading
                         case SceneName.PlayerSelection:
                             SceneNavigation.SwitchToPlayerSelection();
                             break;
-                        case SceneName.Playground:
-                            SceneNavigation.SwitchToPlayground();
+                        case SceneName.MainDynamic:
+                            SceneNavigation.SwitchToMainDynamic();
                             break;
                     }
                 })

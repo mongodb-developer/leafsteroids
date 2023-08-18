@@ -20,7 +20,7 @@
             public const string PlayerSelection = "4_PlayerSelection";
             public const string Instructions = "5_Instructions";
             public const string Main = "6_Main";
-            public const string Playground = "xx_Playground";
+            public const string MainDynamic = "6_Main_dynamic";
         }
 
         public static class DotEnvFileKeys

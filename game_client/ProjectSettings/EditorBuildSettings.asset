@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Scenes/6_Main.unity
     guid: 802b90222dccdca498500dad7f5d2b50
   - enabled: 1
-    path: Assets/Scenes/xx_Playground.unity
-    guid: 8d40ae567a80c43e7b61a7280eb64efe
+    path: Assets/Scenes/6_Main_dynamic.unity
+    guid: 1cc8da4bfb445ca4a876cd2890430aef
+  - enabled: 1
+    path: Assets/Scenes/6_Main_dynamic_Loader.unity
+    guid: 30c5d9b977fb47641a7a45a8afec4851
   m_configObjects: {}

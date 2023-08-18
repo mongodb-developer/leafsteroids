@@ -28,7 +28,7 @@ namespace _00_Shared
                     if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
                     if (ButtonMappings.CheckReloadKey()) SwitchToMain();
                     break;
-                case Constants.SceneNames.Playground:
+                case Constants.SceneNames.MainDynamic:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
                     if (ButtonMappings.CheckReloadKey()) SwitchToMain();
                     break;
@@ -61,10 +61,10 @@ namespace _00_Shared
             SceneManager.LoadScene(Constants.SceneNames.Main);
         }
 
-        public static void SwitchToPlayground()
+        public static void SwitchToMainDynamic()
         {
             SessionStatistics.Instance!.Reset();
-            SceneManager.LoadScene(Constants.SceneNames.Playground);
+            SceneManager.LoadScene(Constants.SceneNames.MainDynamic);
         }
     }
 }
