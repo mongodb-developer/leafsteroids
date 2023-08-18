@@ -4,9 +4,9 @@ using UnityEngine;
 namespace _6_Main._ReplaySystem
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public class Position
+    public class ObjectPosition
     {
-        public Position(Vector3 position)
+        public ObjectPosition(Vector3 position)
         {
             X = position.x;
             Y = position.y;

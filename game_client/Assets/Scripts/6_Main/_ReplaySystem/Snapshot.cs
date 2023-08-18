@@ -5,6 +5,6 @@ namespace _6_Main._ReplaySystem
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class Snapshot
     {
-        public Position Position { get; set; }
+        public ObjectPosition ObjectPosition { get; set; }
     }
 }

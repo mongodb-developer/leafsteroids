@@ -42,7 +42,7 @@ namespace _6_Main._ReplaySystem
         {
             var snapshot = new Snapshot
             {
-                Position = new Position(Helper.InvertY(player!.transform.position))
+                ObjectPosition = new ObjectPosition(Helper.InvertY(player!.transform.position))
             };
             _snapshots!.Add(snapshot);
         }
