@@ -40,7 +40,7 @@ public class PlayersController : BaseController
         {
             var playerUnique = _playersUniqueCollection
                 .Find(Builders<PlayerUnique>
-                    .Filter.Eq(x => x.Name, playerRequest.Name))
+                    .Filter.Eq(x => x.Id.Name, playerRequest.Name))
                 .First<PlayerUnique>();
 
             if (playerUnique != null)
@@ -60,36 +60,47 @@ public class PlayersController : BaseController
     {
         Logger.LogDebug($"Route {nameof(CreatePlayer)} called.");
 
+        var player = new Player()
+        {
+            Id = ObjectId.GenerateNewId(),
+            Name = playerRequest.Name,
+            Team = playerRequest.Team,
+            Email = playerRequest.Email,
+            Location = playerRequest.Location
+        };
+
+        var playerUnique = new PlayerUnique(
+            playerRequest.Name,
+            playerRequest.Location
+        );
+
         // ACID Transaction: player + player_unique
         using (var session = await Client.StartSessionAsync())
         {
-            session.StartTransaction();
+            try
+            {
+                session.StartTransaction();
+            }
+            catch (NotSupportedException e)
+            {
+                Console.WriteLine("Client does not support transactions.");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
 
             try
             {
-                var player = new Player()
-                {
-                    Id = ObjectId.GenerateNewId(),
-                    Name = playerRequest.Name,
-                    Team = playerRequest.Team,
-                    Email = playerRequest.Email,
-                    Location = playerRequest.Location
-                };
                 await _playersCollection.InsertOneAsync(session, player);
-
-                var playerUnique = new PlayerUnique
-                {
-                    Id = player.Id,
-                    Name = player.Name,
-                    Location = player.Location
-                };
+                
                 await _playersUniqueCollection.InsertOneAsync(session, playerUnique);
 
-                await session.CommitTransactionAsync();
+                if (session.IsInTransaction)
+                    await session.CommitTransactionAsync();
             }
             catch (Exception e)
             {
-                await session.AbortTransactionAsync();
+                if (session.IsInTransaction)
+                    await session.AbortTransactionAsync();
 
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
