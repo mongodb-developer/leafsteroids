@@ -1,6 +1,4 @@
-﻿using _6_Main._ReplaySystem;
-
-namespace _00_Shared.Map
+﻿namespace _00_Shared.Map
 {
     public class PalletDto
     {
