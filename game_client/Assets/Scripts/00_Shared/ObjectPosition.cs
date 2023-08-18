@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
-namespace _6_Main._ReplaySystem
+namespace _00_Shared
 {
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class ObjectPosition

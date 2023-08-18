@@ -1,3 +1,7 @@
+using System.Collections.Generic;
+using _00_Shared;
+using _00_Shared.Map;
+using _6_Main._ReplaySystem;
 using UnityEngine;
 
 namespace _6_Main_dynamic
@@ -7,11 +11,35 @@ namespace _6_Main_dynamic
         [SerializeField] private GameObject palletParent;
         [SerializeField] private GameObject palletLargeContainerPrefab;
 
+        private readonly Map _map = new()
+        {
+            Pallets = new List<PalletDto>
+            {
+                new()
+                {
+                    Position = new ObjectPosition(new Vector3(3f, 0.05f, 3f)),
+                    PalletType = PalletType.Large
+                }
+            },
+            PowerUps = new List<PowerUpDto>(),
+            Enemies = new List<EnemyDto>()
+        };
 
         private void Start()
         {
-            Instantiate(palletLargeContainerPrefab, new Vector3(3f, 0.05f, 3f), Quaternion.identity,
-                palletParent.gameObject.transform);
+            CreatePallets();
+        }
+
+        private void CreatePallets()
+        {
+            foreach (var pallet in _map.Pallets)
+            {
+                if (pallet.PalletType == PalletType.Large)
+                {
+                    Instantiate(palletLargeContainerPrefab, pallet.Position.ToVector3(), Quaternion.identity,
+                        palletParent.gameObject.transform);
+                }
+            }
         }
     }
 }
