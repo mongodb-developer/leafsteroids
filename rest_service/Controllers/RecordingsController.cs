@@ -16,11 +16,11 @@ public class RecordingsController : BaseController
 
     public RecordingsController(ILogger<RecordingsController> logger) : base(logger)
     {
-        /*  
+        /*
          *  Use players_unique collection to query by Name
          *  This avoids a collscan against the players globally sharded collection
          *  whose shard key is {location:1, Name:1}
-        */
+         */
         _playersCollection = Database!.GetCollection<Player>(Constants.PlayersUniqueCollectionName);
         _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
         _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
@@ -43,11 +43,15 @@ public class RecordingsController : BaseController
         }
         catch (EventNotFoundException)
         {
-            return BadRequest(new { Message = $"The event with id '{newRecording.Event.Id}' does not exist." });
+            var message = $"The event with id '{newRecording.Event.Id}' does not exist.";
+            Logger.LogError(message);
+            return BadRequest(new { Message = message });
         }
         catch (MultipleEventsFoundException)
         {
-            return BadRequest(new { Message = $"The event with id '{newRecording.Event.Id}' exists multiple times." });
+            var message = $"The event with id '{newRecording.Event.Id}' exists multiple times.";
+            Logger.LogError(message);
+            return BadRequest(new { Message = message });
         }
 
         try
@@ -56,12 +60,15 @@ public class RecordingsController : BaseController
         }
         catch (PlayerNotFoundException)
         {
-            return BadRequest(new { Message = $"The player '{newRecording.Player.Name}' does not exist." });
+            var message = $"The player '{newRecording.Player.Name}' does not exist.";
+            Logger.LogError(message);
+            return BadRequest(new { Message = message });
         }
         catch (MultiplePlayersFoundException)
         {
-            return BadRequest(new
-                { Message = $"The player '{newRecording.Player.Name}' exists multiple times." });
+            var message = $"The player '{newRecording.Player.Name}' exists multiple times.";
+            Logger.LogError(message);
+            return BadRequest(new { Message = message });
         }
 
         await _recordingsCollection.InsertOneAsync(newRecording);
