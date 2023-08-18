@@ -1,3 +1,22 @@
+// find offending recordings
+db.recordings.countDocuments({ "Player.location": { $exists: false } });
+
+// Ensure every player in a recording has their location stored
+db.players.find({ location: { $exists: true } }).forEach(function (player) {
+    print("Updating " + player.Nickname + "'s location of " + player.location + " into recordings");
+    db.recordings.updateMany(
+        { "Player.Nickname": player.Nickname },
+        {
+            $set: {
+                "Player.location": player.location
+            }
+        }
+    );
+});
+
+// Ensure all players in recordings have a location. This should equate to 0
+db.recordings.countDocuments({ "Player.location": { $exists: false } });
+
 // Clean-up old and test data
 db.recordings.deleteMany({"location": {$in: [null, '', "TESTING"]}});
 
@@ -36,7 +55,8 @@ db.recordings.aggregate(pipeline);
 var query = {
     "$or":
         [
-            {"Event.location": {$exists: true}},
+            {"Player.location": { $exists: false } },
+            {"Event.location": { $exists: true } },
             {"Event.name": { $exists: true } },
             {"Player._id": { $exists: true } },
             {"Player.Email": {$exists: true}},
@@ -46,3 +66,5 @@ var query = {
         ]
 };
 db.recordings.countDocuments(query);
+
+
