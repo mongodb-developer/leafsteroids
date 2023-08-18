@@ -20,26 +20,37 @@ public class PlayersController : BaseController
         _playersUniqueCollection = Database!.GetCollection<PlayerUnique>(Constants.PlayersUniqueCollectionName);
     }
 
-    [HttpGet("All", Name = "GetPlayers")]
-    public async Task<List<PlayerResponse>> GetPlayers()
+    [HttpGet(Name = "GetPlayers")]
+    public async Task<List<PlayerResponse>> GetPlayers([FromQuery] PlayerRequest playerRequest)
     {
         Logger.LogDebug($"Route {nameof(GetPlayers)} called.");
 
-        var players = await _playersCollection.FindAsync(new BsonDocument());
+        FilterDefinition<Player> filter = Builders<Player>.Filter.Empty;
+        if (!string.IsNullOrEmpty(playerRequest.Name))
+            filter &= Builders<Player>.Filter.Eq("Name", playerRequest.Name);
+        if (!string.IsNullOrEmpty(playerRequest.Location))
+            filter &= Builders<Player>.Filter.Eq("Location", playerRequest.Location);
+        if (!string.IsNullOrEmpty(playerRequest.Team))
+            filter &= Builders<Player>.Filter.Eq("Team", playerRequest.Team);
+        if (!string.IsNullOrEmpty(playerRequest.Id))
+            filter &= Builders<Player>.Filter.Eq("Id", playerRequest.Id);
+
+        // If Name but no Location, then get Location from players_unique
+        if (!string.IsNullOrEmpty(playerRequest.Name) && string.IsNullOrEmpty(playerRequest.Location))
+        {
+            var playerUnique = _playersUniqueCollection
+                .Find(Builders<PlayerUnique>
+                    .Filter.Eq(x => x.Id.Name, playerRequest.Name))
+                .First<PlayerUnique>();
+
+            if (playerUnique != null)
+                filter &= Builders<Player>.Filter.Eq("Location", playerUnique.Location);
+        }
+
+        var players = await _playersCollection.FindAsync(filter);
+
         var playersResponse =
             players.ToList().Select(player => new PlayerResponse(player)).ToList();
-
-        return playersResponse;
-    }
-
-    [HttpGet("Unique", Name = "GetPlayersUnique")]
-    public async Task<List<PlayerUniqueResponse>> GetPlayersUnique()
-    {
-        Logger.LogDebug($"Route {nameof(GetPlayersUnique)} called.");
-
-        var playersUnique = await _playersUniqueCollection.FindAsync(new BsonDocument());
-        var playersUniqueList = playersUnique.ToList();
-        var playersResponse = playersUniqueList.Select(player => new PlayerUniqueResponse(player)).ToList();
 
         return playersResponse;
     }
@@ -49,11 +60,52 @@ public class PlayersController : BaseController
     {
         Logger.LogDebug($"Route {nameof(CreatePlayer)} called.");
 
-        var player = new Player(playerRequest);
-        await _playersCollection.InsertOneAsync(player);
+        var player = new Player()
+        {
+            Id = ObjectId.GenerateNewId(),
+            Name = playerRequest.Name,
+            Team = playerRequest.Team,
+            Email = playerRequest.Email,
+            Location = playerRequest.Location
+        };
 
-        var playerUnique = new PlayerUnique(player);
-        await _playersUniqueCollection.InsertOneAsync(playerUnique);
+        var playerUnique = new PlayerUnique(
+            playerRequest.Name,
+            playerRequest.Location
+        );
+
+        // ACID Transaction: player + player_unique
+        using (var session = await Client.StartSessionAsync())
+        {
+            try
+            {
+                session.StartTransaction();
+            }
+            catch (NotSupportedException e)
+            {
+                Console.WriteLine("Client does not support transactions.");
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+
+            try
+            {
+                await _playersCollection.InsertOneAsync(session, player);
+                
+                await _playersUniqueCollection.InsertOneAsync(session, playerUnique);
+
+                if (session.IsInTransaction)
+                    await session.CommitTransactionAsync();
+            }
+            catch (Exception e)
+            {
+                if (session.IsInTransaction)
+                    await session.AbortTransactionAsync();
+
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+            }
+        }
 
         return CreatedAtRoute("GetPlayers", null, null);
     }

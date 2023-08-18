@@ -110,27 +110,31 @@
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
-            var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
-            var filteredEvents = events!.FindAll(e => e.Id!.Equals(_eventId));
-            Event = filteredEvents.FirstOrDefault();
+            var eventsFilter = new Dictionary<string, string>
+            {
+                { "id", _eventId }
+            };
+            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+            Event = events.First();
 
             _name = queryParameters[Constants.QueryParameterName];
-            var players = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersAll);
-            var filteredPlayers = players!.FindAll(p => p.Name.Equals(_name));
-            Player = filteredPlayers.First();
+            var playerFilter = new Dictionary<string, string>
+            {
+                { "name", _name }
+            };
+            string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
+            var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
+            Player = players.First();
 
-            var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersUnique);
-            var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(_name));
-            var uniquePlayer = filteredPlayersUnique.FirstOrDefault()!;
-            Player = players.FindAll(p => p.Location!.Equals(uniquePlayer.Location) && p.Name!.Equals(uniquePlayer.Name)).First();
-
-            _location = queryParameters["location"];
+            _location = Event.Location;
             _chartUrl = ChartsUrl.CreatePlayerUrl(Constants.AtlasChartIdPlayer, _name, _location, _eventId);
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
             _errorMessage = "PLAYER NOT FOUND";
         }
     }
-
 }

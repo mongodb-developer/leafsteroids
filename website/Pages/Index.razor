@@ -148,9 +148,15 @@
             queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
                 Constants.DefaultEventId;
 
-        var events = await _restClient.GetJsonAsync<List<Event>>(Constants.RestServiceEndpointEvents);
-        var filteredEvents = events!.FindAll(e => e.Id!.Equals(_eventId));
-        _event = filteredEvents.FirstOrDefault();
+        var eventsFilter = new Dictionary<string, string>
+            {
+                { "id", _eventId }
+            };
+
+        string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+        var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+
+        _event = events.FirstOrDefault();
     }
 
     private async Task CreatePlayer()
@@ -163,7 +169,7 @@
 
         _errorMessage = "";
 
-        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersUnique);
+        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
         var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
@@ -193,7 +199,7 @@
 
         _errorMessage = "";
 
-        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayersUnique);
+        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
         var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
@@ -210,28 +216,28 @@
 
     private async Task AutoCompleteName(ChangeEventArgs e)
     {
-    // var input = e.Value!.ToString()!;
+        // var input = e.Value!.ToString()!;
 
-    // if (input.Length >= 2)
-    // {
-    //     var names = await Players
-    //         .Aggregate()
-    //         .Search(Builders<Player>
-    //             .Search
-    //             .Autocomplete(p => p.Name, input), indexName: "autocomplete")
-    //         .Project<Player>(Builders<Player>
-    //             .Projection
-    //             .Include(p => p.Name)
-    //             .Exclude(p => p.Id))
-    //         .Limit(10)
-    //         .ToListAsync();
-    //
-    //     _suggestedNames = names.Select(p => p.Name).ToList()!;
-    // }
-    // else
-    // {
+        // if (input.Length >= 2)
+        // {
+        //     var names = await Players
+        //         .Aggregate()
+        //         .Search(Builders<Player>
+        //             .Search
+        //             .Autocomplete(p => p.Name, input), indexName: "autocomplete")
+        //         .Project<Player>(Builders<Player>
+        //             .Projection
+        //             .Include(p => p.Name)
+        //             .Exclude(p => p.Id))
+        //         .Limit(10)
+        //         .ToListAsync();
+        //
+        //     _suggestedNames = names.Select(p => p.Name).ToList()!;
+        // }
+        // else
+        // {
         _suggestedNames.Clear();
-    // }
+        // }
     }
 
     private void SelectName(string name)

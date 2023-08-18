@@ -6,7 +6,7 @@
         {
             public const string GetEvents = "http://{0}:{1}/events";
             public const string GetConfig = "http://{0}:{1}/configs";
-            public const string GetPlayers = "http://{0}:{1}/players/all";
+            public const string GetPlayers = "http://{0}:{1}/players";
             public const string PostInsertOne = "http://{0}:{1}/recordings";
         }
 
