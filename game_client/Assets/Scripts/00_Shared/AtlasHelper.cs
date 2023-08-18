@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using _1_Loading;
+using _6_Main._ReplaySystem;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
-using Event = _6_Main._ReplaySystem.Event;
 
 namespace _00_Shared
 {
@@ -37,7 +37,7 @@ namespace _00_Shared
             }
         }
 
-        public static IEnumerator GetEvents(Action<List<Event>> callback = null)
+        public static IEnumerator GetEvents(Action<List<Conference>> callback = null)
         {
             Debug.Log(nameof(GetEvents));
             var url = string.Format(Constants.GameServerEndpoints.GetEvents,
@@ -55,7 +55,7 @@ namespace _00_Shared
             }
             else
             {
-                var events = JsonConvert.DeserializeObject<List<Event>>(request.downloadHandler!.text!);
+                var events = JsonConvert.DeserializeObject<List<Conference>>(request.downloadHandler!.text!);
                 callback?.Invoke(events);
             }
         }

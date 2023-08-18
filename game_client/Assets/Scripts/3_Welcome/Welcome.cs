@@ -10,7 +10,7 @@ namespace _3_Welcome
 
         private void Start()
         {
-            welcomeTextField!.text = $"Welcome to\n{GameConfigLoader.Instance!.GameConfig!.Event!.Name}";
+            welcomeTextField!.text = $"Welcome to\n{GameConfigLoader.Instance!.GameConfig!.Conference!.Name}";
         }
     }
 }

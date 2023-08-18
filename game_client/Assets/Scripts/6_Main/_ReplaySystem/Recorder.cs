@@ -29,7 +29,7 @@ namespace _6_Main._ReplaySystem
             {
                 Snapshots = _snapshots,
                 PlayerName = gameConfig.Player!.Name,
-                EventId = gameConfig.Event!.Id
+                EventId = gameConfig.Conference!.Id
             };
             StartCoroutine(
                 AtlasHelper.RecordSnapshot(

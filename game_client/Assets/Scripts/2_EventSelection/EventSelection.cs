@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using _00_Shared;
 using _1_Loading;
+using _6_Main._ReplaySystem;
 using TMPro;
 using UnityEngine;
-using Event = _6_Main._ReplaySystem.Event;
 
 namespace _2_EventSelection
 {
@@ -16,12 +16,12 @@ namespace _2_EventSelection
         [SerializeField] private TMP_Text slot5;
         private int _currentIndex;
 
-        private List<Event> _events;
+        private List<Conference> _events;
         private bool _stickMoved;
 
         private void Awake()
         {
-            _events = new List<Event>();
+            _events = new List<Conference>();
             ReloadEventList();
         }
 
@@ -84,7 +84,7 @@ namespace _2_EventSelection
         private void SelectEvent()
         {
             if (_events == null || _events.Count == 0) return;
-            GameConfigLoader.Instance!.GameConfig!.Event = _events![_currentIndex];
+            GameConfigLoader.Instance!.GameConfig!.Conference = _events![_currentIndex];
             SceneNavigation.SwitchToWelcome();
         }
     }
