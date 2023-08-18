@@ -1,4 +1,5 @@
 using _00_Shared;
+using _6_Main._ReplaySystem;
 using UnityEngine;
 
 namespace _1_Loading
@@ -57,6 +58,21 @@ namespace _1_Loading
                             SceneNavigation.SwitchToPlayerSelection();
                             break;
                         case SceneName.MainDynamic:
+                            if (sceneToSwitchTo.Equals(SceneName.MainDynamic))
+                            {
+                                // This is a playground case.
+                                GameConfig!.RoundDuration = 5;
+                                GameConfig!.Player = new RegisteredPlayer
+                                {
+                                    Name = "Player 1"
+                                };
+                                GameConfig!.Conference = new Conference
+                                {
+                                    Id = "mdb-internal",
+                                    Name = "MDB Internal"
+                                };
+                            }
+
                             SceneNavigation.SwitchToMainDynamic();
                             break;
                     }
