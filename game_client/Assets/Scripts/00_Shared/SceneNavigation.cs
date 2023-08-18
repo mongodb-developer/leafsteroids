@@ -1,5 +1,4 @@
-using _1_Loading;
-using _3_Main;
+using _6_Main;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -44,13 +43,6 @@ namespace _00_Shared
         public static void SwitchToWelcome()
         {
             SceneManager.LoadScene(Constants.SceneNames.Welcome);
-        }
-
-        private static void SwitchToLoading()
-        {
-            // if (GameConfigLoader.Instance != null)
-            //     GameConfigLoader.Instance.GameConfig = null;
-            SceneManager.LoadScene(Constants.SceneNames.Loading);
         }
 
         public static void SwitchToPlayerSelection()

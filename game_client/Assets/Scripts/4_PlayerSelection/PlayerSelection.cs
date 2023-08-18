@@ -5,7 +5,7 @@ using _1_Loading;
 using TMPro;
 using UnityEngine;
 
-namespace _2_PlayerSelection
+namespace _4_PlayerSelection
 {
     public class PlayerSelection : MonoBehaviour
     {
@@ -40,7 +40,7 @@ namespace _2_PlayerSelection
                 && Input.inputString.Length == 1)
             {
                 char pressedCharacter = Input.inputString[0];
-             
+
                 if (char.IsLetter(pressedCharacter) && _players is { Count: > 0 })
                 {
                     Debug.Log("Detected key code: " + pressedCharacter);

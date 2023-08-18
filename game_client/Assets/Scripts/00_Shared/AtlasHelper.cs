@@ -7,7 +7,7 @@ using _1_Loading;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
-using Event = _3_Main._ReplaySystem.Event;
+using Event = _6_Main._ReplaySystem.Event;
 
 namespace _00_Shared
 {

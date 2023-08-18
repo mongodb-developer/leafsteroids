@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics.CodeAnalysis;
+using UnityEngine;
 
-namespace _3_Main._ReplaySystem
+namespace _6_Main._ReplaySystem
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class Position
     {
         public Position(Vector3 position)

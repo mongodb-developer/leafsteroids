@@ -1,10 +1,10 @@
 using _00_Shared;
 using _1_Loading;
-using _3_Main._ReplaySystem;
+using _6_Main._ReplaySystem;
 using TMPro;
 using UnityEngine;
 
-namespace _3_Main
+namespace _6_Main
 {
     public class GameManager : MonoBehaviour
     {

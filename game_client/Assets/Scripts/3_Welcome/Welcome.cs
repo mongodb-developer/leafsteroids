@@ -2,7 +2,7 @@ using _1_Loading;
 using TMPro;
 using UnityEngine;
 
-namespace _0_Welcome
+namespace _3_Welcome
 {
     public class Welcome : MonoBehaviour
     {

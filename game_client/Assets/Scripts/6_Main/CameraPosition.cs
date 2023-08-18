@@ -1,8 +1,8 @@
-using _3_Main._ReplaySystem;
+using _6_Main._ReplaySystem;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace _3_Main
+namespace _6_Main
 {
     public class CameraPosition : MonoBehaviour
     {

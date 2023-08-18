@@ -1,5 +1,8 @@
-namespace _3_Main
+using System.Diagnostics.CodeAnalysis;
+
+namespace _6_Main
 {
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class SessionStatisticsPlain
     {
         public int BulletsFired { get; set; }

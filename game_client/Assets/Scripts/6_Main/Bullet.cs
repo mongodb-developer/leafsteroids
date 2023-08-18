@@ -2,7 +2,7 @@ using System.Collections;
 using _1_Loading;
 using UnityEngine;
 
-namespace _3_Main
+namespace _6_Main
 {
     public class Bullet : MonoBehaviour
     {

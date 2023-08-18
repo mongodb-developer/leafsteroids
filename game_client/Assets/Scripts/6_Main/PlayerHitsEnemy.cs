@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _3_Main
+namespace _6_Main
 {
     public class PlayerHitsEnemy : MonoBehaviour
     {
@@ -13,10 +13,10 @@ namespace _3_Main
             if (collision == null) return;
             if (collision.gameObject == null) return;
             if (collision.gameObject.GetComponentInParent<Enemy>() == null) return;
-            
+
             if (playerHitEnemy) return;
             playerHitEnemy = true;
-            
+
             SessionStatistics.Instance!.Score = 0;
             gameManager!.GameOver();
         }
