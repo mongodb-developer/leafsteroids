@@ -44,7 +44,7 @@ public class PlayersController : BaseController
                 .First<PlayerUnique>();
 
             if (playerUnique != null)
-                filter &= Builders<Player>.Filter.Eq("Location", playerUnique.Location);
+                filter &= Builders<Player>.Filter.Eq(x => x.Location, playerUnique.Location);
         }
 
         var players = await _playersCollection.FindAsync(filter);
@@ -69,10 +69,11 @@ public class PlayersController : BaseController
             Location = playerRequest.Location
         };
 
-        var playerUnique = new PlayerUnique(
-            playerRequest.Name,
-            playerRequest.Location
-        );
+        var playerUnique = new PlayerUnique()
+        {
+            Name = playerRequest.Name,
+            Location = playerRequest.Location
+        };
 
         // ACID Transaction: player + player_unique
         using (var session = await Client.StartSessionAsync())
