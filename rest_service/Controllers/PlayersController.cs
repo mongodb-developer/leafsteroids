@@ -13,11 +13,18 @@ public class PlayersController : BaseController
 {
     private readonly IMongoCollection<Player> _playersCollection;
     private readonly IMongoCollection<PlayerUnique> _playersUniqueCollection;
+    private readonly IMongoCollection<PlayerUnique> _playersUniqueCollectionOnSecondary;
 
     public PlayersController(ILogger<PlayersController> logger) : base(logger)
     {
         _playersCollection = Database!.GetCollection<Player>(Constants.PlayersCollectionName);
+
         _playersUniqueCollection = Database!.GetCollection<PlayerUnique>(Constants.PlayersUniqueCollectionName);
+
+        _playersUniqueCollectionOnSecondary = Database!.GetCollection<PlayerUnique>(
+            Constants.PlayersUniqueCollectionName,
+            new MongoCollectionSettings() { ReadPreference = ReadPreference.SecondaryPreferred }
+        );
     }
 
     [HttpGet(Name = "GetPlayers")]
@@ -132,7 +139,7 @@ public class PlayersController : BaseController
             )
         };
 
-        var result = await _playersUniqueCollection.AggregateAsync<BsonDocument>(pipeline);
+        var result = await _playersUniqueCollectionOnSecondary.AggregateAsync<BsonDocument>(pipeline);
 
         BsonDocument arrMatches = result.First();
 
@@ -254,7 +261,7 @@ public class PlayersController : BaseController
             )
         };
 
-        var result = await _playersUniqueCollection.AggregateAsync<Player>(pipeline);
+        var result = await _playersUniqueCollectionOnSecondary.AggregateAsync<Player>(pipeline);
 
         var playersResponse =
             result.ToList().Select(player => new PlayerResponse(player)).ToList();
