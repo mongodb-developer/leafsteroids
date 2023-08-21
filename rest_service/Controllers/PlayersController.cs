@@ -159,15 +159,9 @@ public class PlayersController : BaseController
         [
             {
             $search: {
-                index: "autocomplete",
-                autocomplete: {
+                index: "default",
                 query: "hbrt",
-                path: "_id",
-                fuzzy: {
-                    maxEdits: 2,
-                    prefixLength: 1,
-                    maxExpansions: 256,
-                },
+                path: "*"
                 },
             },
             },
@@ -218,7 +212,7 @@ public class PlayersController : BaseController
         {
             // TO-DO: $search could be used on a variety of fields or use a dynamic index
             new JsonPipelineStageDefinition<PlayerUnique, BsonDocument>(
-                "{ $search: { index: 'autocomplete', autocomplete: { query: '" + input + "', path: '_id', fuzzy: { maxEdits: 2, prefixLength: 1, maxExpansions: 256 } } } }"
+                "{$search: {index: 'default', text:{query: '" + input + "', path:{wildcard: '*'}, fuzzy: { maxEdits: 2, prefixLength: 1, maxExpansions: 256 }}}}"
             ),
             new BsonDocumentPipelineStageDefinition<BsonDocument, BsonDocument>(
                 new BsonDocument("$limit", 5)
