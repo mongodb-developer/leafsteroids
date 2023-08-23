@@ -1,0 +1,131 @@
+{
+	"exportVersion": 6,
+	"dashboards": {
+		"dashboard-1": {
+			"description": "",
+			"embedding": {
+				"anonymousAuthEnabled": true,
+				"allowAllFieldsAnonymousAuth": false,
+				"anonymousAuthWhitelist": ["location", "Event._id"]
+			},
+			"filters": [{
+				"type": "String",
+				"disabled": false,
+				"name": "location",
+				"settings": {
+					"allOthers": false,
+					"values": ["US-CA"]
+				},
+				"linkedFields": [{
+					"dataSourceId": "data-source-1",
+					"fieldPath": "location"
+				}]
+			}, {
+				"type": "String",
+				"disabled": false,
+				"name": "_id",
+				"settings": {
+					"allOthers": false,
+					"values": ["gdc-2023-sf"]
+				},
+				"linkedFields": [{
+					"dataSourceId": "data-source-1",
+					"fieldPath": "Event._id"
+				}]
+			}],
+			"layout": [{
+				"i": "item-1",
+				"w": 2,
+				"h": 4,
+				"x": 0,
+				"y": 0
+			}],
+			"title": "Leafsteroids STAGE - Event Top Scores"
+		}
+	},
+	"items": {
+		"item-1": {
+			"calculatedFields": [],
+			"channels": {
+				"group": {
+					"channelType": "category",
+					"inferredType": "String",
+					"field": "Player.Nickname",
+					"type": "nominal",
+					"isBinning": false
+				},
+				"value": {
+					"channelType": "aggregation",
+					"inferredType": "Number",
+					"field": "SessionStatisticsPlain.Score",
+					"type": "quantitative",
+					"aggregate": "max"
+				}
+			},
+			"chartType": "Data Table",
+			"convertedFields": [],
+			"customisations": {
+				"options": {
+					"totalsColumn": {
+						"enabled": false,
+						"value": null
+					}
+				},
+				"conditionalFormatting": [],
+				"axes": {},
+				"channels": {
+					"group": {
+						"labelOverride": {
+							"enabled": true,
+							"value": "Player"
+						}
+					},
+					"value": {
+						"labelOverride": {
+							"enabled": true,
+							"value": "Score"
+						},
+						"numberFormatting": {
+							"enabled": true,
+							"value": "Default"
+						}
+					}
+				}
+			},
+			"dashboardId": "dashboard-1",
+			"dataSourceId": "data-source-1",
+			"description": "",
+			"filters": [],
+			"iconValue": "data-table",
+			"interactiveFiltering": "filter",
+			"itemType": "chart",
+			"lookupFields": [],
+			"meta": {
+				"sortModel": [{
+					"colId": "value",
+					"sort": "desc"
+				}],
+				"columnWidths": {
+					"group": 150
+				}
+			},
+			"missedFields": [],
+			"query": null,
+			"queryId": null,
+			"reductions": {},
+			"sample": false,
+			"title": "Leaderboard",
+			"embedding": {}
+		}
+	},
+	"dataSources": {
+		"data-source-1": {
+			"alias": "recordings",
+			"collection": "recordings",
+			"database": "Leafsteroids",
+			"deployment": "Leafsteroids-stage--federated",
+			"sourceType": "datalake"
+		}
+	},
+	"queries": {}
+}
