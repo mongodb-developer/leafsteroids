@@ -23,9 +23,16 @@ public static class Constants
     */
 
     // PRODUCTION
+    /*
     public const string AtlasChartIdEvent = "6453fb66-c2fc-4212-8dbd-4ab8365f1ac0";
     public const string AtlasChartIdPlayer = "64540ea3-f8b8-4211-8c3b-cff2506301a4";
     public const string AtlasChartIdHome = "645abbc7-2258-4908-8eb4-94bbe0c6d324";
+    */
+
+    // PRODUCTION WITH DATA TIERING
+    public const string AtlasChartIdEvent = "64e708fe-ada2-48cd-87b6-6cfb7cfed55a";
+    public const string AtlasChartIdPlayer = "64e70904-ada2-41b9-89f5-6cfb7cfed84d";
+    public const string AtlasChartIdHome = "64e7090a-b528-46b7-83e7-445f8407329d";
 
 
     public const string RestServiceEndpointEvents = "events";
