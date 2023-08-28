@@ -1,8 +1,10 @@
-﻿namespace _00_Shared.Map
+﻿using Newtonsoft.Json;
+
+namespace _00_Shared.Map
 {
     public class PalletDto
     {
-        public ObjectPosition Position { get; set; }
-        public PalletType PalletType { get; set; }
+        [JsonProperty("position")] public ObjectPosition Position { get; set; }
+        [JsonProperty("pallet_type")] public PalletType PalletType { get; set; }
     }
 }

@@ -33,6 +33,7 @@ namespace _6_Main
 
         private void Update()
         {
+            // ReSharper disable once PossibleLossOfFraction
             var alpha = Mathf.Lerp(1f, 0.25f, 1f - currentHealth / maxHealth);
 
             var colorInner = itemRendererInner!.material!.color;

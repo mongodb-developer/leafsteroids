@@ -35,9 +35,9 @@ namespace _00_Shared
             }
         }
 
-        public static void SwitchToEventSelection()
+        public static void SwitchToConferenceSelection()
         {
-            SceneManager.LoadScene(Constants.SceneNames.EventSelection);
+            SceneManager.LoadScene(Constants.SceneNames.ConferenceSelection);
         }
 
         public static void SwitchToWelcome()

@@ -26,7 +26,7 @@ namespace _00_Shared
         private IEnumerator WaitForTimeline()
         {
             while (playableDirector!.state == PlayState.Playing) yield return null;
-            SceneNavigation.SwitchToMain();
+            SceneNavigation.SwitchToMainDynamic();
         }
     }
 }

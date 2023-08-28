@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using _00_Shared;
 using _1_Loading;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace _6_Main._ReplaySystem
@@ -22,20 +22,17 @@ namespace _6_Main._ReplaySystem
             _snapshots!.Clear();
         }
 
-        public void PersistRecording()
+        public async Task PersistRecording()
         {
             var gameConfig = GameConfigLoader.Instance!.GameConfig!;
             var recording = new Recording
             {
                 Snapshots = _snapshots,
                 PlayerName = gameConfig.Player!.Name,
-                EventId = gameConfig.Conference!.Id
+                ConferenceId = gameConfig.Conference!.Id
             };
-            StartCoroutine(
-                AtlasHelper.RecordSnapshot(
-                    JsonConvert.SerializeObject(recording),
-                    _ => { Debug.Log("Recording persisted."); })
-            );
+            var result = await RestClient.PostRecording(recording);
+            Debug.Log(result);
         }
 
         private void CreateSnapshot()

@@ -797,6 +797,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   palletParent: {fileID: 2135279794}
   palletLargeContainerPrefab: {fileID: 6867481591959052377, guid: 228cc949ac2de40efa81e978ecd9af3a, type: 3}
+  palletMediumContainerPrefab: {fileID: 7477863750178412103, guid: f3808ff27570342c29770ccbb8fe4ab0, type: 3}
+  palletSmallContainerPrefab: {fileID: 3281258104567123643, guid: 13312673f205b4372bd8c89f730814d8, type: 3}
 --- !u!1 &480211452
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using _00_Shared;
 using _1_Loading;
 using TMPro;
@@ -19,15 +21,19 @@ namespace _4_PlayerSelection
         private List<RegisteredPlayer> _players;
         private bool _stickMoved;
 
-        private void Awake()
+        [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private async Task Awake()
         {
             _players = new List<RegisteredPlayer>();
-            ReloadPlayerList();
+            await ReloadPlayerList();
         }
 
-        private void Update()
+        [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private async Task Update()
         {
-            if (ButtonMappings.CheckReloadKey()) ReloadPlayerList();
+            if (ButtonMappings.CheckReloadKey()) await ReloadPlayerList();
             CheckJoystickInput();
             CheckKeyboardInput();
             UpdatePlayerList();
@@ -69,16 +75,11 @@ namespace _4_PlayerSelection
             _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
         }
 
-        private void ReloadPlayerList()
+        private async Task ReloadPlayerList()
         {
-            StartCoroutine(
-                AtlasHelper.GetPlayers(result =>
-                {
-                    _players = result;
-                    _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name, StringComparison.Ordinal));
-                    UpdatePlayerList();
-                })
-            );
+            _players = await RestClient.GetPlayers();
+            _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name, StringComparison.Ordinal));
+            UpdatePlayerList();
         }
 
         private void UpdatePlayerList()

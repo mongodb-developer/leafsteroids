@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using _6_Main._ReplaySystem;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ namespace _00_Shared
         [JsonProperty("pelletHealthLarge")] public int PelletHealthLarge { get; set; }
         [CanBeNull] public RegisteredPlayer Player { get; set; }
         [CanBeNull] public Conference Conference { get; set; }
+        [CanBeNull] public List<Map.Map> Maps { get; set; }
         [JsonProperty("playerMoveSpeed")] public int PlayerMoveSpeed { get; set; }
         [JsonProperty("playerRotateSpeed")] public int PlayerRotateSpeed { get; set; }
         [JsonProperty("roundDuration")] public int RoundDuration { get; set; }

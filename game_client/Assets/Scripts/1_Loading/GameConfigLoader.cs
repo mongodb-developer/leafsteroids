@@ -1,3 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
 using _00_Shared;
 using _6_Main._ReplaySystem;
 using UnityEngine;
@@ -8,7 +11,7 @@ namespace _1_Loading
     {
         public enum SceneName
         {
-            EventSelection,
+            ConferenceSelection,
             Welcome,
             PlayerSelection,
             MainDynamic
@@ -31,53 +34,14 @@ namespace _1_Loading
             DontDestroyOnLoad(gameObject);
         }
 
-        private void Start()
+        [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private async Task Start()
         {
             LoadLocalConfig();
-            LoadRemoteConfig();
-        }
-
-        private void LoadRemoteConfig()
-        {
-            Debug.Log(nameof(LoadRemoteConfig));
-            if (Instance != null && Instance.GameConfig != null) return;
-
-            StartCoroutine(
-                AtlasHelper.GetConfig(result =>
-                {
-                    GameConfig = result;
-                    switch (sceneToSwitchTo)
-                    {
-                        case SceneName.EventSelection:
-                            SceneNavigation.SwitchToEventSelection();
-                            break;
-                        case SceneName.Welcome:
-                            SceneNavigation.SwitchToWelcome();
-                            break;
-                        case SceneName.PlayerSelection:
-                            SceneNavigation.SwitchToPlayerSelection();
-                            break;
-                        case SceneName.MainDynamic:
-                            if (sceneToSwitchTo.Equals(SceneName.MainDynamic))
-                            {
-                                // This is a playground case.
-                                GameConfig!.RoundDuration = 5;
-                                GameConfig!.Player = new RegisteredPlayer
-                                {
-                                    Name = "Player 1"
-                                };
-                                GameConfig!.Conference = new Conference
-                                {
-                                    Id = "mdb-internal",
-                                    Name = "MDB Internal"
-                                };
-                            }
-
-                            SceneNavigation.SwitchToMainDynamic();
-                            break;
-                    }
-                })
-            );
+            await LoadRemoteConfig();
+            await LoadMaps();
+            SwitchToNextScene();
         }
 
         private void LoadLocalConfig()
@@ -89,6 +53,55 @@ namespace _1_Loading
                 RestServiceIp = envVars["REST_SERVICE_IP"],
                 RestServicePort = envVars["REST_SERVICE_PORT"]
             };
+        }
+
+        private async Task LoadRemoteConfig()
+        {
+            Debug.Log(nameof(LoadRemoteConfig));
+            if (Instance != null && Instance.GameConfig != null) return;
+
+            var configs = await RestClient.GetConfig();
+            GameConfig = configs!.First();
+        }
+
+        private async Task LoadMaps()
+        {
+            var maps = await RestClient.GetMaps();
+            GameConfig!.Maps = maps;
+        }
+
+        private void SwitchToNextScene()
+        {
+            switch (sceneToSwitchTo)
+            {
+                case SceneName.ConferenceSelection:
+                    SceneNavigation.SwitchToConferenceSelection();
+                    break;
+                case SceneName.Welcome:
+                    SceneNavigation.SwitchToWelcome();
+                    break;
+                case SceneName.PlayerSelection:
+                    SceneNavigation.SwitchToPlayerSelection();
+                    break;
+                case SceneName.MainDynamic:
+                    if (sceneToSwitchTo.Equals(SceneName.MainDynamic))
+                    {
+                        // This is a playground case.
+                        GameConfig!.RoundDuration = 5;
+                        GameConfig!.Player = new RegisteredPlayer
+                        {
+                            Name = "Player 1"
+                        };
+                        GameConfig!.Conference = new Conference
+                        {
+                            Id = "mdb-internal",
+                            Name = "MDB Internal"
+                        };
+                    }
+
+                    SceneNavigation.SwitchToMainDynamic();
+                    break;
+            }
         }
     }
 }

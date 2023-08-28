@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using _00_Shared;
 using _1_Loading;
 using _6_Main._ReplaySystem;
@@ -43,21 +44,21 @@ namespace _6_Main
             _timeRemainingS = _gameConfig!.RoundDuration;
         }
 
-        public void GameOver()
+        public async Task GameOver()
         {
             Time.timeScale = 0f;
             ToggleGameOverOverlay(true);
-            recorder!.PersistRecording();
-            recorder!.StartNewRecording();
+            await recorder.PersistRecording();
+            recorder.StartNewRecording();
         }
 
-        private void UpdateTimer()
+        private async Task UpdateTimer()
         {
             _timeRemainingS--;
             _timeRemainingS = Mathf.Clamp(_timeRemainingS, 0, _gameConfig!.RoundDuration);
             timeTextField!.text = $"Time remaining: {_timeRemainingS}";
             if (_timeRemainingS <= 0)
-                GameOver();
+                await GameOver();
         }
 
         private void ToggleGameOverOverlay(bool shouldShow)

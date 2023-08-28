@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace _6_Main
@@ -8,7 +10,9 @@ namespace _6_Main
 
         private bool playerHitEnemy;
 
-        private void OnCollisionEnter(Collision collision)
+        [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private async Task OnCollisionEnter(Collision collision)
         {
             if (collision == null) return;
             if (collision.gameObject == null) return;
@@ -18,7 +22,7 @@ namespace _6_Main
             playerHitEnemy = true;
 
             SessionStatistics.Instance!.Score = 0;
-            gameManager!.GameOver();
+            await gameManager!.GameOver();
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace _00_Shared.Map
 {
     public class Map
     {
-        public List<PalletDto> Pallets;
-        public List<PowerUpDto> PowerUps;
-        public List<EnemyDto> Enemies;
+        [JsonProperty("pallets")] public List<PalletDto> Pallets;
+        [JsonProperty("power_ups")] public List<PowerUpDto> PowerUps;
+        [JsonProperty("enemies")] public List<EnemyDto> Enemies;
     }
 }
