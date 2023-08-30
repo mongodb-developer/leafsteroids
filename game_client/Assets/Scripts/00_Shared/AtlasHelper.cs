@@ -82,6 +82,29 @@ namespace _00_Shared
             }
         }
 
+        public static IEnumerator GetPlayerSearch(string name, Action<List<RegisteredPlayer>> callback = null)
+        {
+            Debug.Log(nameof(GetPlayerSearch));
+            var url = string.Format(Constants.GameServerEndpoints.GetPlayerSearch,
+                GameConfigLoader.Instance!.LocalConfig!.RestServiceIp,
+                GameConfigLoader.Instance.LocalConfig.RestServicePort);
+            url = url + "?Name=" + name;
+            Debug.Log(url);
+            using var request = UnityWebRequest.Get(url);
+            request!.SetRequestHeader("Content-Type", "application/json");
+            yield return request.SendWebRequest();
+            if (request.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError)
+            {
+                Debug.Log(request.error);
+                callback?.Invoke(null);
+            }
+            else
+            {
+                var players = JsonConvert.DeserializeObject<List<RegisteredPlayer>>(request.downloadHandler!.text!);
+                callback?.Invoke(players);
+            }
+        }
+
         // public static IEnumerator GetSnapshots(Action<List<Recording>> callback = null)
         // {
         //     using var request = UnityWebRequest.Get(Constants.DataApiUrlGetMany);
