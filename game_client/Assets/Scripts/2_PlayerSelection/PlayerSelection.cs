@@ -19,19 +19,29 @@ namespace _2_PlayerSelection
         private List<RegisteredPlayer> _players;
         private bool _stickMoved;
 
+        private string playerName;
+
+        [SerializeField] private TMP_Text nameInputField;
+
         private void Awake()
         {
             _players = new List<RegisteredPlayer>();
-            ReloadPlayerList();
+            InitialPlayerList();
         }
 
         private void Update()
         {
-            if (ButtonMappings.CheckReloadKey()) ReloadPlayerList();
             CheckJoystickInput();
             CheckKeyboardInput();
-            UpdatePlayerList();
             if (ButtonMappings.CheckConfirmKey()) SelectPlayer();
+        }
+
+        private void CheckPlayerName() {
+            if (playerName!.Length > 2) {
+                ReloadPlayerList(playerName);
+            } else if (playerName!.Length == 0) {
+                InitialPlayerList();
+            }
         }
 
         private void CheckKeyboardInput()
@@ -40,12 +50,24 @@ namespace _2_PlayerSelection
                 && Input.inputString.Length == 1)
             {
                 char pressedCharacter = Input.inputString[0];
-             
-                if (char.IsLetter(pressedCharacter) && _players is { Count: > 0 })
-                {
-                    Debug.Log("Detected key code: " + pressedCharacter);
-                    _currentIndex = _players.FindIndex(p => p!.Name!.StartsWith(pressedCharacter));
+                Debug.Log("Detected key code: " + pressedCharacter);
+
+                if (char.IsLetter(pressedCharacter) || char.IsNumber(pressedCharacter) || pressedCharacter.Equals('_'))
+                {   
+                    playerName = playerName + pressedCharacter;
+                    nameInputField.text = playerName;
+                    CheckPlayerName();
                 }
+
+                if (pressedCharacter.Equals('\b') && playerName.Length > 0)
+                {   
+                    playerName = playerName.Remove(playerName.Length - 1, 1); 
+                    nameInputField.text = playerName;
+                    CheckPlayerName();
+                }                
+
+                Debug.Log("PlayerName: " + playerName);
+                
             }
         }
 
@@ -67,15 +89,33 @@ namespace _2_PlayerSelection
             }
 
             _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
+
+            if(_stickMoved) {
+                UpdatePlayerList();
+            }
         }
 
-        private void ReloadPlayerList()
+        private void ReloadPlayerList(string name)
+        {
+            StartCoroutine(
+                AtlasHelper.GetPlayerSearch(name, result =>
+                {
+                    _currentIndex = 0;
+                    _players = result;
+                    _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name!, StringComparison.Ordinal));
+                    UpdatePlayerList();
+                })
+            );
+        }
+
+        private void InitialPlayerList()
         {
             StartCoroutine(
                 AtlasHelper.GetPlayers(result =>
                 {
+                    _currentIndex = 0;
                     _players = result;
-                    _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name, StringComparison.Ordinal));
+                    _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name!, StringComparison.Ordinal));
                     UpdatePlayerList();
                 })
             );

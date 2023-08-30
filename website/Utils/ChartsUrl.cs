@@ -1,3 +1,5 @@
+using dotenv.net;
+
 namespace website.Utils;
 
 public static class ChartsUrl
@@ -35,7 +37,11 @@ public static class ChartsUrl
 
     private static string CreateBaseUrl(string chartsId)
     {
-        return Constants.AtlasChartEmbedDashboardUrl
+        DotEnv.Load();
+        var envVars = DotEnv.Read();
+        var atlasChartEmbedDashboardUrl = envVars["ATLAS_CHART_EMBED_DASHBOARD_URL"];
+        
+        return atlasChartEmbedDashboardUrl
                + "?id="
                + chartsId
                + "&theme=light"
