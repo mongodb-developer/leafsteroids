@@ -7,6 +7,7 @@
             public const string GetEvents = "http://{0}:{1}/events";
             public const string GetConfig = "http://{0}:{1}/configs";
             public const string GetPlayers = "http://{0}:{1}/players";
+            public const string GetPlayerSearch = "http://{0}:{1}/players/search";
             public const string PostInsertOne = "http://{0}:{1}/recordings";
         }
 
