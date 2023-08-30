@@ -2,6 +2,7 @@
 @using RestSharp
 @using website.Data
 @using website.Utils
+@using dotenv.net
 
 @inject NavigationManager NavigationManager
 
@@ -128,7 +129,12 @@
             Player = players.First();
 
             _location = Event.Location;
-            _chartUrl = ChartsUrl.CreatePlayerUrl(Constants.AtlasChartIdPlayer, _name, _location, _eventId);
+
+            DotEnv.Load();
+            var envVars = DotEnv.Read();
+            var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
+
+            _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
         }
         catch (Exception e)
         {

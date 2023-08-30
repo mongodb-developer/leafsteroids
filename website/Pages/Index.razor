@@ -2,6 +2,7 @@
 @using RestSharp
 @using website.Data
 @using website.Utils
+@using dotenv.net
 
 @inject NavigationManager NavigationManager
 
@@ -144,7 +145,11 @@
     protected override async Task OnInitializedAsync()
     {
         await SetEventFromUrlParameters();
-        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event!.Id!, _event.Location!);
+        DotEnv.Load();
+        var envVars = DotEnv.Read();
+        var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
+        
+        _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
     }
 
     private async Task SetEventFromUrlParameters()

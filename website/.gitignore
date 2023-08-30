@@ -403,3 +403,5 @@ FodyWeavers.xsd
 Library/
 
 website/deploy.zip
+
+*.env*
