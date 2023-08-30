@@ -62,7 +62,7 @@
 
                 @if (_suggestedNames.Count > 0)
                 {
-                    <div class="autocomplete">
+                    <div id="autocomplete" class="autocomplete">
                         <ul class="options">
                             @foreach (var name in _suggestedNames)
                             {
@@ -74,6 +74,12 @@
                             }
                         </ul>
                     </div>
+                    <script type="text/javascript">
+                        d = document.getElementById("autocomplete");
+                        d.addEventListener("click",     function(e){e.stopPropagation()},true);
+                        addEventListener("click",       function() {d.style.display="none"},false);
+                        addEventListener("keyup",    function(e){e.keyCode==27 &&(d.style.display="none")},false);
+                    </script>
                 }
             </div> <!-- form-group// -->
 
