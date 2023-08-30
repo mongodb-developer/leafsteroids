@@ -75,12 +75,6 @@
                             }
                         </ul>
                     </div>
-                    <script type="text/javascript">
-                        d = document.getElementById("autocomplete");
-                        d.addEventListener("click",     function(e){e.stopPropagation()},true);
-                        addEventListener("click",       function() {d.style.display="none"},false);
-                        addEventListener("keyup",    function(e){e.keyCode==27 &&(d.style.display="none")},false);
-                    </script>
                 }
             </div> <!-- form-group// -->
 
@@ -148,7 +142,7 @@
         DotEnv.Load();
         var envVars = DotEnv.Read();
         var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
-        
+
         _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
     }
 
