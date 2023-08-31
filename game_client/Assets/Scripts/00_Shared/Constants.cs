@@ -9,6 +9,7 @@
             public const string GetPlayers = "http://{0}:{1}/players";
             public const string GetMaps = "http://{0}:{1}/maps";
             public const string PostRecording = "http://{0}:{1}/recordings";
+            public const string GetPlayerSearch = "http://{0}:{1}/players/search?Name={2}";
         }
 
         public const float RecordingSpeed = 0.1f;

@@ -12,16 +12,16 @@ public class RecordingsController : BaseController
 {
     private readonly IMongoCollection<Recording> _recordingsCollection;
     private readonly IMongoCollection<Event> _eventsCollection;
-    private readonly IMongoCollection<Player> _playersCollection;
+    private readonly IMongoCollection<PlayerUnique> _playersUniqueCollection;
 
     public RecordingsController(ILogger<RecordingsController> logger) : base(logger)
     {
         /*
          *  Use players_unique collection to query by Name
-         *  This avoids a collscan against the players globally sharded collection
-         *  whose shard key is {location:1, Name:1}
-         */
-        _playersCollection = Database!.GetCollection<Player>(Constants.PlayersUniqueCollectionName);
+         *  This avoids a collscan against the globally sharded collection "players"
+         *  whose shard key is {location:1, Nickname:1}
+        */
+        _playersUniqueCollection = Database!.GetCollection<PlayerUnique>(Constants.PlayersUniqueCollectionName);
         _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
         _eventsCollection = Database!.GetCollection<Event>(Constants.EventsCollectionName);
     }
@@ -36,7 +36,23 @@ public class RecordingsController : BaseController
             return BadRequest(ModelState);
         }
 
-        var newRecording = new Recording(recordingRequest);
+        var newRecording = new Recording()
+        {
+            SessionStatisticsPlain = recordingRequest.SessionStatisticsPlain,
+            DateTime = DateTime.UtcNow,
+            Player = new RecordingPlayer { Name = recordingRequest.PlayerName },
+            Event = new RecordingEvent { Id = recordingRequest.EventId },
+            Snapshots = recordingRequest.Snapshots.Select(dto => new Snapshot
+            {
+                Position = new Position
+                {
+                    X = dto.Position.X,
+                    Y = dto.Position.Y,
+                    Z = dto.Position.Z
+                }
+            }).ToList()
+        };
+
         try
         {
             await AddLocation(newRecording);
@@ -70,6 +86,11 @@ public class RecordingsController : BaseController
             Logger.LogError(message);
             return BadRequest(new { Message = message });
         }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+        }
 
         await _recordingsCollection.InsertOneAsync(newRecording);
 
@@ -99,14 +120,14 @@ public class RecordingsController : BaseController
     private async Task AddPlayer(Recording recording)
     {
         var playerName = recording.Player.Name;
-        var playerFilter = Builders<Player>.Filter.Eq("Nickname", playerName);
-        var players = await _playersCollection.Find(playerFilter).ToListAsync();
+        var playerFilter = Builders<PlayerUnique>.Filter.Eq(x => x.Name, playerName);
+        var players = await _playersUniqueCollection.Find(playerFilter).ToListAsync();
         switch (players.Count)
         {
             case 1:
             {
-                var playerId = players[0].Id;
-                recording.Player.Id = playerId;
+                recording.Player.Name = players[0].Name;
+                recording.Player.Location = players[0].Location;
                 break;
             }
             case 0:

@@ -2,6 +2,7 @@
 @using RestSharp
 @using website.Data
 @using website.Utils
+@using dotenv.net
 
 @inject NavigationManager NavigationManager
 
@@ -62,7 +63,7 @@
 
                 @if (_suggestedNames.Count > 0)
                 {
-                    <div class="autocomplete">
+                    <div id="autocomplete" class="autocomplete">
                         <ul class="options">
                             @foreach (var name in _suggestedNames)
                             {
@@ -74,6 +75,12 @@
                             }
                         </ul>
                     </div>
+                    <script type="text/javascript">
+                        d = document.getElementById("autocomplete");
+                        d.addEventListener("click",     function(e){e.stopPropagation()},true);
+                        addEventListener("click",       function() {d.style.display="none"},false);
+                        addEventListener("keyup",    function(e){e.keyCode==27 &&(d.style.display="none")},false);
+                    </script>
                 }
             </div> <!-- form-group// -->
 
@@ -138,7 +145,11 @@
     protected override async Task OnInitializedAsync()
     {
         await SetEventFromUrlParameters();
-        _chartUrl = ChartsUrl.CreateHomeUrl(Constants.AtlasChartIdHome, _event!.Id!, _event.Location!);
+        DotEnv.Load();
+        var envVars = DotEnv.Read();
+        var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
+        
+        _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
     }
 
     private async Task SetEventFromUrlParameters()
@@ -216,28 +227,24 @@
 
     private async Task AutoCompleteName(ChangeEventArgs e)
     {
-        // var input = e.Value!.ToString()!;
+        var input = e.Value!.ToString()!;
 
-        // if (input.Length >= 2)
-        // {
-        //     var names = await Players
-        //         .Aggregate()
-        //         .Search(Builders<Player>
-        //             .Search
-        //             .Autocomplete(p => p.Name, input), indexName: "autocomplete")
-        //         .Project<Player>(Builders<Player>
-        //             .Projection
-        //             .Include(p => p.Name)
-        //             .Exclude(p => p.Id))
-        //         .Limit(10)
-        //         .ToListAsync();
-        //
-        //     _suggestedNames = names.Select(p => p.Name).ToList()!;
-        // }
-        // else
-        // {
-        _suggestedNames.Clear();
-        // }
+        if (input.Length >= 3) {
+
+            var args = new Dictionary<string, string>
+            {
+                { "Name", input }
+            };
+
+            string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayersAutoComplete, args);
+
+            var names = await _restClient.GetJsonAsync<List<string>>(urlWithQuery);
+
+            _suggestedNames = names;
+
+        } else {
+            _suggestedNames.Clear();
+        }
     }
 
     private void SelectName(string name)

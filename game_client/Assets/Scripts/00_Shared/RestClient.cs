@@ -33,6 +33,12 @@ namespace _00_Shared
             return await Get<List<GameConfig>>(Constants.GameServerEndpoints.GetConfig);
         }
 
+        public static async Task<List<RegisteredPlayer>> GetPlayerSearchResults(string name)
+        {
+            var url = Constants.GameServerEndpoints.GetPlayerSearch + "?Name=" + name;
+            return await Get<List<RegisteredPlayer>>(url);
+        }
+
         public static async Task<string> PostRecording(Recording recording)
         {
             return await PostJson<string>(Constants.GameServerEndpoints.PostRecording, recording);

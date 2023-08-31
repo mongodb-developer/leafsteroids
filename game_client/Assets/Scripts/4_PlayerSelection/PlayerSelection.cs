@@ -16,42 +16,65 @@ namespace _4_PlayerSelection
         [SerializeField] private TMP_Text slot3;
         [SerializeField] private TMP_Text slot4;
         [SerializeField] private TMP_Text slot5;
-        private int _currentIndex;
+        [SerializeField] private TMP_Text nameInputField;
 
         private List<RegisteredPlayer> _players;
+        private int _currentIndex;
         private bool _stickMoved;
+        private string _playerName;
 
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private async Task Awake()
         {
             _players = new List<RegisteredPlayer>();
-            await ReloadPlayerList();
+            await InitialPlayerList();
         }
 
         [SuppressMessage("ReSharper", "Unity.IncorrectMethodSignature")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private async Task Update()
         {
-            if (ButtonMappings.CheckReloadKey()) await ReloadPlayerList();
             CheckJoystickInput();
-            CheckKeyboardInput();
-            UpdatePlayerList();
+            await CheckKeyboardInput();
             if (ButtonMappings.CheckConfirmKey()) SelectPlayer();
         }
 
-        private void CheckKeyboardInput()
+        private async Task CheckPlayerName()
+        {
+            if (_playerName!.Length > 2)
+            {
+                await ReloadPlayerList(_playerName);
+            }
+            else if (_playerName!.Length == 0)
+            {
+                await InitialPlayerList();
+            }
+        }
+
+        private async Task CheckKeyboardInput()
         {
             if (Input.inputString != null
                 && Input.inputString.Length == 1)
             {
                 char pressedCharacter = Input.inputString[0];
+                Debug.Log("Detected key code: " + pressedCharacter);
 
-                if (char.IsLetter(pressedCharacter) && _players is { Count: > 0 })
+                if (char.IsLetter(pressedCharacter) || char.IsNumber(pressedCharacter) || pressedCharacter.Equals('_'))
                 {
-                    Debug.Log("Detected key code: " + pressedCharacter);
-                    _currentIndex = _players.FindIndex(p => p!.Name!.StartsWith(pressedCharacter));
+                    _playerName = _playerName + pressedCharacter;
+                    nameInputField.text = _playerName;
+                    await CheckPlayerName();
                 }
+
+                if (pressedCharacter.Equals('\b') && _playerName.Length > 0)
+                {
+                    _playerName = _playerName.Remove(_playerName.Length - 1, 1);
+                    nameInputField.text = _playerName;
+                    await CheckPlayerName();
+                }
+
+                Debug.Log("PlayerName: " + _playerName);
             }
         }
 
@@ -73,10 +96,24 @@ namespace _4_PlayerSelection
             }
 
             _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
+
+            if (_stickMoved)
+            {
+                UpdatePlayerList();
+            }
         }
 
-        private async Task ReloadPlayerList()
+        private async Task ReloadPlayerList(string playerName)
         {
+            _currentIndex = 0;
+            _players = await RestClient.GetPlayerSearchResults(playerName);
+            _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name!, StringComparison.Ordinal));
+            UpdatePlayerList();
+        }
+
+        private async Task InitialPlayerList()
+        {
+            _currentIndex = 0;
             _players = await RestClient.GetPlayers();
             _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name, StringComparison.Ordinal));
             UpdatePlayerList();
