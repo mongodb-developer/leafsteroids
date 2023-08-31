@@ -105,16 +105,16 @@ namespace _4_PlayerSelection
 
         private async Task ReloadPlayerList(string playerName)
         {
-            _currentIndex = 0;
             _players = await RestClient.GetPlayerSearchResults(playerName);
+            _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
             _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name!, StringComparison.Ordinal));
             UpdatePlayerList();
         }
 
         private async Task InitialPlayerList()
         {
-            _currentIndex = 0;
             _players = await RestClient.GetPlayers();
+            _currentIndex = Mathf.Clamp(_currentIndex, 0, _players!.Count - 1);
             _players!.Sort((x, y) => string.Compare(x!.Name!, y!.Name, StringComparison.Ordinal));
             UpdatePlayerList();
         }
