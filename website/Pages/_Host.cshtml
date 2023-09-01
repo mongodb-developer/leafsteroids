@@ -44,16 +44,26 @@
         <a class="dismiss">🗙</a>
     </div>
 
-    @* ReSharper disable Html.PathError *@
-    <script src="_framework/blazor.server.js"></script>
-    @* ReSharper restore Html.PathError *@
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+@* ReSharper disable Html.PathError *@
+<script src="_framework/blazor.server.js"></script>
+@* ReSharper restore Html.PathError *@
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+<script type="text/javascript">
+    function enableListener() {
+        d = document.getElementById('autocomplete');
+        addEventListener(
+            'keydown',
+            function (e) {
+            (e.keyCode == 27 || e.keyCode == 9) && (d.style.display = 'none');
+            },
+            false
+        );
+    }
 
-    <!-- address autocomplete in Index.razor -->
-    <script type="text/javascript">d = document.getElementById("autocomplete");
-        d.addEventListener("click", function (e) { e.stopPropagation() }, true);
-        addEventListener("click", function () { d.style.display = "none" }, false);
-        addEventListener("keyup", function (e) { e.keyCode == 27 && (d.style.display = "none") }, false);
-    </script>
+    function showAutoComplete() {
+        d = document.getElementById('autocomplete');
+        d.style.display = 'block';
+    }
+</script>
 </body>
 </html>

@@ -5,7 +5,7 @@
 @using dotenv.net
 
 @inject NavigationManager NavigationManager
-
+@inject IJSRuntime JS
 
 <style>
     body {
@@ -61,21 +61,22 @@
                        @oninput="AutoCompleteName"
                        required>
 
-                @if (_suggestedNames.Count > 0)
-                {
+                
                     <div id="autocomplete" class="autocomplete">
-                        <ul class="options">
-                            @foreach (var name in _suggestedNames)
-                            {
-                                <li id="option_@name"
-                                    class="option"
-                                    @onclick=@(_ => SelectName(name))>
-                                    @name <!-- visible suggestion -->
-                                </li>
-                            }
-                        </ul>
+                        @if (_suggestedNames.Count > 0)
+                        {
+                            <ul class="options">
+                                @foreach (var name in _suggestedNames)
+                                {
+                                    <li id="option_@name"
+                                        class="option"
+                                        @onclick=@(_ => SelectName(name))>
+                                        @name <!-- visible suggestion -->
+                                    </li>
+                                }
+                            </ul>
+                        }
                     </div>
-                }
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -127,7 +128,6 @@
 </div>
 
 @code {
-
     private Player Player { get; } = new();
     private List<string> _suggestedNames = new();
     private Event? _event;
@@ -135,6 +135,12 @@
     private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
+
+    protected override async Task OnAfterRenderAsync (bool firstRender){
+        if (firstRender) {
+            await JS.InvokeAsync<string>("enableListener");
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -235,7 +241,8 @@
             var names = await _restClient.GetJsonAsync<List<string>>(urlWithQuery);
 
             _suggestedNames = names;
-
+            await JS.InvokeAsync<string>("showAutoComplete");
+ 
         } else {
             _suggestedNames.Clear();
         }
