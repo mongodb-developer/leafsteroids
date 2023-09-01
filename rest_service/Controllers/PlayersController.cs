@@ -139,13 +139,22 @@ public class PlayersController : BaseController
             )
         };
 
-        var result = await _playersUniqueCollectionOnSecondary.AggregateAsync<BsonDocument>(pipeline);
+        try
+        {
+            var result = await _playersUniqueCollectionOnSecondary.AggregateAsync<BsonDocument>(pipeline);
 
-        BsonDocument arrMatches = result.First();
+            BsonDocument arrMatches = result.First();
 
-        return arrMatches.GetElement("matches").Value.AsBsonArray
-                         .Select(x => x.ToString())
-                         .ToList();
+            return arrMatches.GetElement("matches").Value.AsBsonArray
+                             .Select(x => x.ToString())
+                             .ToList();
+        } catch (Exception e)
+        {
+            Logger.LogError("GetPlayerAutoComplete did not find matches");
+            Logger.LogError(e.Message);
+
+            return new List<string>();
+        }
     }
 
     [HttpGet("search", Name = "GetPlayerSearch")]
