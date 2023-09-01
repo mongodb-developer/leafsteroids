@@ -8,16 +8,30 @@ on:
 
 env:
   EC2_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
+
   PROD_IP: ${{ secrets.PROD_IP }}
   STAGING_IP: ${{ secrets.STAGING_IP }}
-  CONNECTION_STRING_STAGING: ${{ secrets.CONNECTION_STRING_STAGING }}
+
   CONNECTION_STRING_PROD: ${{ secrets.CONNECTION_STRING_PROD }}
+  REST_SERVICE_IP_PROD: ${{ secrets.REST_SERVICE_IP_PROD }}
+  REST_SERVICE_PORT_PROD: ${{ secrets.REST_SERVICE_PORT_PROD }}
+  ATLAS_CHART_EMBED_DASHBOARD_URL_PROD: ${{ secrets.ATLAS_CHART_EMBED_DASHBOARD_URL_PROD }}
+  ATLAS_CHART_ID_EVENT_PROD: ${{ secrets.ATLAS_CHART_ID_EVENT_PROD }}
+  ATLAS_CHART_ID_PLAYER_PROD: ${{ secrets.ATLAS_CHART_ID_PLAYER_PROD }}
+  ATLAS_CHART_ID_HOME_PROD: ${{ secrets.ATLAS_CHART_ID_HOME_PROD }}
+
+  CONNECTION_STRING_STAGING: ${{ secrets.CONNECTION_STRING_STAGING }}
+  REST_SERVICE_IP_STAGING: ${{ secrets.REST_SERVICE_IP_STAGING }}
+  REST_SERVICE_PORT_STAGING: ${{ secrets.REST_SERVICE_PORT_STAGING }}
+  ATLAS_CHART_EMBED_DASHBOARD_URL_STAGING: ${{ secrets.ATLAS_CHART_EMBED_DASHBOARD_URL_STAGING }}
+  ATLAS_CHART_ID_EVENT_STAGING: ${{ secrets.ATLAS_CHART_ID_EVENT_STAGING }}
+  ATLAS_CHART_ID_PLAYER_STAGING: ${{ secrets.ATLAS_CHART_ID_PLAYER_STAGING}}
+  ATLAS_CHART_ID_HOME_STAGING: ${{ secrets.ATLAS_CHART_ID_HOME_STAGING }}
 
 jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-
       # Environment
 
       - name: Set Environment Variables For PROD And STAGING
@@ -26,10 +40,26 @@ jobs:
             echo "ENVIRONMENT_IP=${STAGING_IP}" >> $GITHUB_ENV
             echo "DATABASE_NAME=Leafsteroids_stage" >> $GITHUB_ENV
             echo "CONNECTION_STRING=${CONNECTION_STRING_STAGING}" >> $GITHUB_ENV
+
+            echo "REST_SERVICE_IP=${REST_SERVICE_IP_STAGING}" >> $GITHUB_ENV
+            echo "REST_SERVICE_PORT=${REST_SERVICE_PORT_STAGING}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_EMBED_DASHBOARD_URL=${ATLAS_CHART_EMBED_DASHBOARD_URL_STAGING}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_ID_EVENT=${ATLAS_CHART_ID_EVENT_STAGING}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_ID_PLAYER=${ATLAS_CHART_ID_PLAYER_STAGING}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_ID_HOME=${ATLAS_CHART_ID_HOME_STAGING}" >> $GITHUB_ENV
+
           else
             echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
             echo "DATABASE_NAME=Leafsteroids" >> $GITHUB_ENV
             echo "CONNECTION_STRING=${CONNECTION_STRING_PROD}" >> $GITHUB_ENV
+
+            echo "REST_SERVICE_IP=${REST_SERVICE_IP_PROD}" >> $GITHUB_ENV
+            echo "REST_SERVICE_PORT=${REST_SERVICE_PORT_PROD}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_EMBED_DASHBOARD_URL=${ATLAS_CHART_EMBED_DASHBOARD_URL_PROD}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_ID_EVENT=${ATLAS_CHART_ID_EVENT_PROD}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_ID_PLAYER=${ATLAS_CHART_ID_PLAYER_PROD}" >> $GITHUB_ENV
+            echo "ATLAS_CHART_ID_HOME=${ATLAS_CHART_ID_HOME_PROD}" >> $GITHUB_ENV
+
           fi
 
       - name: Checkout Code
@@ -50,7 +80,7 @@ jobs:
       - name: Create The .env File Inside The `rest_service` Directory
         run: |
           echo "CONNECTION_STRING=${{ env.CONNECTION_STRING }}" > ./rest_service/.env
-          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env     
+          echo "DATABASE_NAME=${{ env.DATABASE_NAME }}" >> ./rest_service/.env
 
       - name: Copy The rest_service Directory To The AWS EC2 Instance
         run: |
@@ -71,10 +101,14 @@ jobs:
 
       # Website
 
-      - name: Create The .env File Inside The `website` Directory
+      - name: Create The .env File Inside website Directory
         run: |
-          echo "REST_SERVICE_IP=${{ env.STAGING_IP }}" > ./website/.env
-          echo "REST_SERVICE_PORT=8000" >> ./website/.env     
+          echo "REST_SERVICE_IP=${{ env.REST_SERVICE_IP }}" > ./website/.env
+          echo "REST_SERVICE_PORT=${{ env.REST_SERVICE_PORT }}" >> ./website/.env
+          echo "ATLAS_CHART_EMBED_DASHBOARD_URL=${{ env.ATLAS_CHART_EMBED_DASHBOARD_URL }}" >> ./website/.env
+          echo "ATLAS_CHART_ID_EVENT=${{ env.ATLAS_CHART_ID_EVENT }}" >> ./website/.env
+          echo "ATLAS_CHART_ID_PLAYER=${{ env.ATLAS_CHART_ID_PLAYER }}" >> ./website/.env
+          echo "ATLAS_CHART_ID_HOME=${{ env.ATLAS_CHART_ID_HOME }}" >> ./website/.env
 
       - name: Copy The website Directory To The AWS EC2 Instance
         run: |
