@@ -17,15 +17,4 @@
 
     </ItemGroup>
 
-
-
-
-    <ItemGroup>
-      <None Remove="Dtos\" />
-      <None Remove="Dtos\RequestObjects\" />
-      <None Remove="Dtos\ResponseObjects\" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="Dtos\" />
-    </ItemGroup>
 </Project>
