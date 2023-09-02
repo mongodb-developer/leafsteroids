@@ -1,1 +1,0 @@
-﻿db.recordings.createIndex({ DateTime: 1 });
