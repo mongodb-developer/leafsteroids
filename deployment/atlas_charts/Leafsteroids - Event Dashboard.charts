@@ -10,23 +10,11 @@
 			},
 			"filters": [{
 				"type": "String",
-				"disabled": true,
-				"name": "DateTime",
-				"settings": {
-					"allOthers": true,
-					"values": [null, "", "2023-03-22T16:54:43.0237652Z", "2023-03-22T17:26:40.5307982Z", "2023-03-22T17:42:17.8491458Z", "2023-03-22T18:09:21.1234055Z", "2023-03-22T19:01:13.8491565Z", "2023-03-22T19:07:16.827622Z", "2023-03-22T19:13:42.459265Z", "2023-03-22T19:21:19.2251935Z", "2023-03-22T19:46:03.1561755Z", "2023-03-22T19:54:08.8854326Z", "2023-03-22T20:00:17.9214215Z", "2023-03-22T22:00:45.0914022Z", "2023-03-22T22:09:38.3658714Z", "2023-03-22T22:15:28.6340605Z", "2023-03-22T22:29:40.3666591Z", "2023-03-22T23:19:39.8369564Z", "2023-03-22T23:24:59.4745029Z", "2023-03-22T23:46:44.5247699Z", "2023-03-22T23:48:41.9151363Z", "2023-03-23T00:28:57.9465764Z"]
-				},
-				"linkedFields": [{
-					"dataSourceId": "data-source-1",
-					"fieldPath": "DateTime"
-				}]
-			}, {
-				"type": "String",
 				"disabled": false,
 				"name": "location",
 				"settings": {
-					"allOthers": true,
-					"values": [null, ""]
+					"allOthers": false,
+					"values": ["US-CA"]
 				},
 				"linkedFields": [{
 					"dataSourceId": "data-source-1",
@@ -38,7 +26,7 @@
 				"name": "_id",
 				"settings": {
 					"allOthers": false,
-					"values": ["gdc-2023-sf"]
+					"values": ["mdb-internal"]
 				},
 				"linkedFields": [{
 					"dataSourceId": "data-source-1",
@@ -47,8 +35,8 @@
 			}],
 			"layout": [{
 				"i": "item-1",
-				"w": 4,
-				"h": 3,
+				"w": 3,
+				"h": 2,
 				"x": 0,
 				"y": 0
 			}, {
@@ -56,43 +44,49 @@
 				"w": 1,
 				"h": 1,
 				"x": 0,
-				"y": 3
+				"y": 2
 			}, {
 				"i": "item-3",
-				"w": 2,
-				"h": 4,
-				"x": 7,
-				"y": 0
+				"w": 3,
+				"h": 3,
+				"x": 3,
+				"y": 1
 			}, {
 				"i": "item-4",
-				"w": 3,
+				"w": 1,
 				"h": 1,
-				"x": 4,
-				"y": 2
+				"x": 0,
+				"y": 3
 			}, {
 				"i": "item-5",
 				"w": 1,
 				"h": 1,
 				"x": 1,
-				"y": 3
+				"y": 2
 			}, {
 				"i": "item-6",
-				"w": 2,
+				"w": 1,
 				"h": 1,
 				"x": 2,
-				"y": 3
+				"y": 2
 			}, {
 				"i": "item-7",
-				"w": 3,
-				"h": 2,
-				"x": 4,
+				"w": 2,
+				"h": 1,
+				"x": 3,
 				"y": 0
 			}, {
 				"i": "item-8",
-				"w": 3,
+				"w": 2,
 				"h": 1,
-				"x": 4,
+				"x": 1,
 				"y": 3
+			}, {
+				"i": "item-9",
+				"w": 1,
+				"h": 1,
+				"x": 5,
+				"y": 0
 			}],
 			"title": "Leafsteroids - Event Dashboard"
 		}
@@ -183,7 +177,7 @@
 			"lookupFields": [],
 			"meta": {},
 			"missedFields": [],
-			"query": "[\n  {\n    $unwind: \"$Snapshots\"\n  },\n  {\n    $project: {\n      _id: 0,\n      \"Snapshots.PlayerPosition\": 1\n    }\n  },\n  {\n    $match: {\n      $and: [\n        {\n          $or: [\n            {\n              \"Snapshots.PlayerPosition.X\": {\n                $gte: 2\n              }\n            },\n            {\n              \"Snapshots.PlayerPosition.X\": {\n                $lte: -2\n              }\n            }\n          ]\n        },\n        {\n          $or: [\n            {\n              \"Snapshots.PlayerPosition.Z\": {\n                $gte: 1\n              }\n            },\n            {\n              \"Snapshots.PlayerPosition.Z\": {\n                $lte: 0\n              }\n            }\n          ]\n        }\n      ]\n    }\n  }\n]",
+			"query": null,
 			"queryId": null,
 			"reductions": {
 				"x": [{
@@ -664,6 +658,49 @@
 			"reductions": {},
 			"sample": false,
 			"title": "Power Ups Collected",
+			"embedding": {}
+		},
+		"item-9": {
+			"calculatedFields": [],
+			"channels": {
+				"value": {
+					"channelType": "aggregation",
+					"inferredType": "String",
+					"field": "Player.Nickname",
+					"type": "quantitative",
+					"aggregate": "distinct"
+				}
+			},
+			"chartType": "Number",
+			"convertedFields": [],
+			"customisations": {
+				"options": {},
+				"axes": {},
+				"channels": {
+					"value": {
+						"numberFormatting": {
+							"enabled": true,
+							"value": "Default"
+						}
+					}
+				},
+				"conditionalFormatting": []
+			},
+			"dashboardId": "dashboard-1",
+			"dataSourceId": "data-source-1",
+			"description": "",
+			"filters": [],
+			"iconValue": "number",
+			"interactiveFiltering": "highlight",
+			"itemType": "chart",
+			"lookupFields": [],
+			"meta": {},
+			"missedFields": [],
+			"query": null,
+			"queryId": null,
+			"reductions": {},
+			"sample": false,
+			"title": "# Unique Players",
 			"embedding": {}
 		}
 	},
