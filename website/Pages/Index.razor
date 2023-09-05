@@ -148,7 +148,7 @@
         DotEnv.Load();
         var envVars = DotEnv.Read();
         var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
-        
+
         _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
     }
 

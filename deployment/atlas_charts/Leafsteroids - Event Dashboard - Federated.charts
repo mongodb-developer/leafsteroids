@@ -709,8 +709,8 @@
 			"alias": "recordings",
 			"collection": "recordings",
 			"database": "Leafsteroids",
-			"deployment": "demo",
-			"sourceType": "cluster"
+			"deployment": "Leafsteroids--federated",
+			"sourceType": "datalake"
 		}
 	},
 	"queries": {}
