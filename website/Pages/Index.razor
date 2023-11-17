@@ -210,9 +210,16 @@
 
         _errorMessage = "";
 
-        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
-        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
-        var existingPlayer = filteredPlayersUnique.FirstOrDefault();
+        var args = new Dictionary<string, string>
+            {
+                { "Name", Player.Name }
+            };
+
+        string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, args);
+
+        var players = await _restClient.GetJsonAsync<List<Player>>(urlWithQuery);
+        var filteredPlayers = players!.FindAll(p => p.Name!.Equals(Player.Name));
+        var existingPlayer = filteredPlayers.FirstOrDefault();
 
         if (existingPlayer != null)
         {
