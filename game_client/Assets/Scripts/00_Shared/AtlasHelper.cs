@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using System.Xml.Linq;
 using _1_Loading;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -43,6 +45,7 @@ namespace _00_Shared
             var url = string.Format(Constants.GameServerEndpoints.GetEvents,
                 GameConfigLoader.Instance!.LocalConfig!.RestServiceIp,
                 GameConfigLoader.Instance.LocalConfig.RestServicePort);
+            url = url + "?Id=" + GameConfigLoader.Instance!.LocalConfig!.EventId;
             Debug.Log(url);
             using var request = UnityWebRequest.Get(url);
             // request!.SetRequestHeader("Content-Type", "application/json");
@@ -56,6 +59,11 @@ namespace _00_Shared
             else
             {
                 var events = JsonConvert.DeserializeObject<List<Event>>(request.downloadHandler!.text!);
+
+                if (events.Count == 0) {
+                    events.Add(new Event() {Id = "ERROR", Name = "EVENT NOT FOUND. Check EVENT_ID in .env file"});
+                }
+                
                 callback?.Invoke(events);
             }
         }
