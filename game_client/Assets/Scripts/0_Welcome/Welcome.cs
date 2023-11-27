@@ -43,7 +43,7 @@ namespace _0_Welcome
 
         private void Start()
         {
-            StartCoroutine(GetEventQR($"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://leafsteroids.net/?event={GameConfigLoader.Instance!.GameConfig!.Event!.Id}"));
+            StartCoroutine(GetEventQR($"https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={GameConfigLoader.Instance!.LocalConfig!.WebsiteURL}/?event={GameConfigLoader.Instance!.GameConfig!.Event!.Id}"));
         }
     }
 }
