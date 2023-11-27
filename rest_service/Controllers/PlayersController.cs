@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -54,11 +55,11 @@ public class PlayersController : BaseController
                 filter &= Builders<Player>.Filter.Eq(x => x.Location, playerUnique.Location);
         }
 
-        var players = await _playersCollection.FindAsync(filter);
+        var players = await _playersCollection.FindAsync(filter, new FindOptions<Player,Player>() { Limit = 10 });
 
         var playersResponse =
             players.ToList().Select(player => new PlayerResponse(player)).ToList();
-
+            
         return playersResponse;
     }
 
@@ -126,7 +127,7 @@ public class PlayersController : BaseController
         var pipeline = new List<IPipelineStageDefinition>
         {
             new JsonPipelineStageDefinition<PlayerUnique, BsonDocument>(
-                "{ $search: { index: 'autocomplete', autocomplete: { query: '" + Name + "', path: '_id', fuzzy: { maxEdits: 2, prefixLength: 1, maxExpansions: 256 } } } }"
+                "{ $search: { index: 'autocomplete', autocomplete: { query: '" + Name + "', path: '_id', tokenOrder: 'sequential' } } }"
             ),
             new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
                 "{ $limit: 5 }"
@@ -221,10 +222,10 @@ public class PlayersController : BaseController
         {
             // TO-DO: $search could be used on a variety of fields or use a dynamic index
             new JsonPipelineStageDefinition<PlayerUnique, BsonDocument>(
-                "{$search: {index: 'default', text:{query: '" + input + "', path:{wildcard: '*'}, fuzzy: { maxEdits: 2, prefixLength: 1, maxExpansions: 256 }}}}"
+                "{ $search: { index: 'autocomplete', autocomplete: { query: '" + input + "', path: '_id', tokenOrder: 'sequential' } } }"
             ),
             new BsonDocumentPipelineStageDefinition<BsonDocument, BsonDocument>(
-                new BsonDocument("$limit", 5)
+                new BsonDocument("$limit", 30)
             ),
             new BsonDocumentPipelineStageDefinition<BsonDocument, BsonDocument>(
                 new BsonDocument("$lookup", new BsonDocument

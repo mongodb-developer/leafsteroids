@@ -6,9 +6,21 @@
 			"embedding": {
 				"anonymousAuthEnabled": true,
 				"allowAllFieldsAnonymousAuth": false,
-				"anonymousAuthWhitelist": ["location", "Event._id"]
+				"anonymousAuthWhitelist": ["Player.Nickname", "location", "Event._id"]
 			},
 			"filters": [{
+				"type": "String",
+				"disabled": false,
+				"name": "Nickname",
+				"settings": {
+					"allOthers": false,
+					"values": ["Wolffles"]
+				},
+				"linkedFields": [{
+					"dataSourceId": "data-source-1",
+					"fieldPath": "Player.Nickname"
+				}]
+			}, {
 				"type": "String",
 				"disabled": false,
 				"name": "location",
@@ -26,7 +38,7 @@
 				"name": "_id",
 				"settings": {
 					"allOthers": false,
-					"values": ["mdb-internal"]
+					"values": ["gdc-2023-sf"]
 				},
 				"linkedFields": [{
 					"dataSourceId": "data-source-1",
@@ -35,60 +47,54 @@
 			}],
 			"layout": [{
 				"i": "item-1",
-				"w": 3,
+				"w": 2,
 				"h": 2,
 				"x": 0,
-				"y": 0
+				"y": 2
 			}, {
 				"i": "item-2",
 				"w": 1,
 				"h": 1,
 				"x": 0,
-				"y": 2
+				"y": 4
 			}, {
 				"i": "item-3",
-				"w": 3,
-				"h": 3,
-				"x": 3,
-				"y": 1
+				"w": 2,
+				"h": 4,
+				"x": 0,
+				"y": 8
 			}, {
 				"i": "item-4",
-				"w": 1,
+				"w": 2,
 				"h": 1,
 				"x": 0,
-				"y": 3
+				"y": 7
 			}, {
 				"i": "item-5",
 				"w": 1,
 				"h": 1,
 				"x": 1,
-				"y": 2
+				"y": 4
 			}, {
 				"i": "item-6",
-				"w": 1,
+				"w": 2,
 				"h": 1,
-				"x": 2,
-				"y": 2
+				"x": 0,
+				"y": 5
 			}, {
 				"i": "item-7",
 				"w": 2,
-				"h": 1,
-				"x": 3,
+				"h": 2,
+				"x": 0,
 				"y": 0
 			}, {
 				"i": "item-8",
 				"w": 2,
 				"h": 1,
-				"x": 1,
-				"y": 3
-			}, {
-				"i": "item-9",
-				"w": 1,
-				"h": 1,
-				"x": 5,
-				"y": 0
+				"x": 0,
+				"y": 6
 			}],
-			"title": "Leafsteroids - Event Dashboard"
+			"title": "Leafsteroids - Player Dashboard"
 		}
 	},
 	"items": {
@@ -195,9 +201,7 @@
 			},
 			"sample": false,
 			"title": "Heat Map: Player Location",
-			"embedding": {
-				"anonymousAuthEnabled": true
-			}
+			"embedding": {}
 		},
 		"item-2": {
 			"calculatedFields": [],
@@ -245,19 +249,20 @@
 		"item-3": {
 			"calculatedFields": [],
 			"channels": {
-				"group": {
-					"channelType": "category",
-					"inferredType": "String",
-					"field": "Player.Nickname",
-					"type": "nominal",
-					"isBinning": false
-				},
 				"value": {
 					"channelType": "aggregation",
 					"inferredType": "Number",
 					"field": "SessionStatisticsPlain.Score",
 					"type": "quantitative",
 					"aggregate": "max"
+				},
+				"group": {
+					"channelType": "category",
+					"inferredType": "Date",
+					"field": "DateTime",
+					"type": "nominal",
+					"isBinning": true,
+					"temporalBinning": ["year", "month", "date", "hours", "minutes"]
 				}
 			},
 			"chartType": "Data Table",
@@ -272,12 +277,6 @@
 				"conditionalFormatting": [],
 				"axes": {},
 				"channels": {
-					"group": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Player"
-						}
-					},
 					"value": {
 						"labelOverride": {
 							"enabled": true,
@@ -287,6 +286,12 @@
 							"enabled": true,
 							"value": "Default"
 						}
+					},
+					"group": {
+						"dateTimeFormatting": {
+							"enabled": true,
+							"value": "DD-MMM-YYYY HH:mm"
+						}
 					}
 				}
 			},
@@ -295,7 +300,7 @@
 			"description": "",
 			"filters": [],
 			"iconValue": "data-table",
-			"interactiveFiltering": "filter",
+			"interactiveFiltering": "highlight",
 			"itemType": "chart",
 			"lookupFields": [],
 			"meta": {
@@ -303,19 +308,15 @@
 					"colId": "value",
 					"sort": "desc"
 				}],
-				"columnWidths": {
-					"group": 150
-				}
+				"columnWidths": {}
 			},
 			"missedFields": [],
-			"query": null,
+			"query": "{ DateTime: { $gt: ISODate(\"2023-03-23T09:00:00.000000Z\") } }",
 			"queryId": null,
 			"reductions": {},
 			"sample": false,
-			"title": "Leaderboard",
-			"embedding": {
-				"anonymousAuthEnabled": true
-			}
+			"title": "Game Plays",
+			"embedding": {}
 		},
 		"item-4": {
 			"calculatedFields": [],
@@ -500,14 +501,14 @@
 					"field": "DateTime",
 					"type": "nominal",
 					"isBinning": true,
-					"temporalBinning": ["hours"]
+					"temporalBinning": ["year", "month", "date", "hours", "minutes"]
 				},
 				"y": {
 					"channelType": "aggregation",
-					"inferredType": "String",
-					"field": "Player.Nickname",
+					"inferredType": "Number",
+					"field": "SessionStatisticsPlain.Score",
 					"type": "quantitative",
-					"aggregate": "count"
+					"aggregate": "max"
 				}
 			},
 			"chartType": "Line",
@@ -531,6 +532,7 @@
 						"value": null
 					}
 				},
+				"conditionalFormatting": [],
 				"axes": {
 					"x": {
 						"categoryLabelAngle": {
@@ -546,26 +548,37 @@
 							"enabled": true,
 							"value": "Time"
 						},
+						"datePreset": {
+							"enabled": true,
+							"value": "Custom"
+						},
+						"minutePreset": {
+							"enabled": true,
+							"value": "Custom"
+						},
 						"dateTimeFormatting": {
 							"enabled": true,
-							"value": "HH:00"
+							"value": "HH:mm"
 						}
 					},
 					"y": {
+						"labelOverride": {
+							"enabled": true,
+							"value": "Score"
+						},
 						"numberFormatting": {
 							"enabled": true,
 							"value": "Default"
 						}
 					}
-				},
-				"conditionalFormatting": []
+				}
 			},
 			"dashboardId": "dashboard-1",
 			"dataSourceId": "data-source-1",
 			"description": "",
 			"filters": [],
 			"iconValue": "line-discrete",
-			"interactiveFiltering": "filter",
+			"interactiveFiltering": "highlight",
 			"itemType": "chart",
 			"lookupFields": [],
 			"meta": {},
@@ -659,49 +672,6 @@
 			"sample": false,
 			"title": "Power Ups Collected",
 			"embedding": {}
-		},
-		"item-9": {
-			"calculatedFields": [],
-			"channels": {
-				"value": {
-					"channelType": "aggregation",
-					"inferredType": "String",
-					"field": "Player.Nickname",
-					"type": "quantitative",
-					"aggregate": "distinct"
-				}
-			},
-			"chartType": "Number",
-			"convertedFields": [],
-			"customisations": {
-				"options": {},
-				"axes": {},
-				"channels": {
-					"value": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				},
-				"conditionalFormatting": []
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "number",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "# Unique Players",
-			"embedding": {}
 		}
 	},
 	"dataSources": {
@@ -709,8 +679,8 @@
 			"alias": "recordings",
 			"collection": "recordings",
 			"database": "Leafsteroids",
-			"deployment": "demo",
-			"sourceType": "cluster"
+			"deployment": "Leafsteroids--federated",
+			"sourceType": "datalake"
 		}
 	},
 	"queries": {}
