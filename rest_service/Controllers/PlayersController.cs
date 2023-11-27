@@ -54,11 +54,11 @@ public class PlayersController : BaseController
                 filter &= Builders<Player>.Filter.Eq(x => x.Location, playerUnique.Location);
         }
 
-        var players = await _playersCollection.FindAsync(filter);
+        var players = await _playersCollection.FindAsync(filter, new FindOptions<Player,Player>() { Limit = 10 });
 
         var playersResponse =
             players.ToList().Select(player => new PlayerResponse(player)).ToList();
-
+            
         return playersResponse;
     }
 

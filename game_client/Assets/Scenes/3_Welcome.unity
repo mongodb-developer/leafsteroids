@@ -237,6 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   welcomeTextField: {fileID: 1854290894}
+  image: {fileID: 0}
 --- !u!4 &745806835
 Transform:
   m_ObjectHideFlags: 0
@@ -408,6 +409,7 @@ GameObject:
   - component: {fileID: 1424336417}
   - component: {fileID: 1424336416}
   - component: {fileID: 1424336415}
+  - component: {fileID: 1424336419}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -498,6 +500,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1424336419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424336414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 214fb04ea64b45ac93167ca3193421e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  welcomeTextField: {fileID: 1854290894}
+  image: {fileID: 971379063}
 --- !u!1 &1854290892
 GameObject:
   m_ObjectHideFlags: 0
@@ -583,7 +599,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 116.55
+  m_fontSize: 124.1
   m_fontSizeBase: 160
   m_fontWeight: 400
   m_enableAutoSizing: 1

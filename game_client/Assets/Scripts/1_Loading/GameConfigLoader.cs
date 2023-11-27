@@ -72,7 +72,8 @@ namespace _1_Loading
             LocalConfig = new LocalConfig
             {
                 RestServiceIp = envVars["REST_SERVICE_IP"],
-                RestServicePort = envVars["REST_SERVICE_PORT"]
+                RestServicePort = envVars["REST_SERVICE_PORT"],
+                EventId = envVars["EVENT_ID"]
             };
         }
     }
