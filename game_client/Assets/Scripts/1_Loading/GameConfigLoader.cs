@@ -73,7 +73,8 @@ namespace _1_Loading
             {
                 RestServiceIp = envVars["REST_SERVICE_IP"],
                 RestServicePort = envVars["REST_SERVICE_PORT"],
-                EventId = envVars["EVENT_ID"]
+                EventId = envVars["EVENT_ID"],
+                WebsiteURL = envVars["WEBSITE_URL"]
             };
         }
     }
