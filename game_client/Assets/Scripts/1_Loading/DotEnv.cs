@@ -2,27 +2,30 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
+using System.Runtime.InteropServices;
 
 public static class DotEnv
 {
     private const string EnvVarFileName = ".env";
 
+    [DllImport("__Internal")]
+    private static extern string GetEventId();
+    [DllImport("__Internal")]
+    private static extern string GetServiceIP();
+    [DllImport("__Internal")]
+    private static extern string GetServicePort();
+
     public static IDictionary<string, string> Read()
     {
-        string filePath = Path.Combine(Application.dataPath, EnvVarFileName);
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException($"The file '{EnvVarFileName}' does not exist.");
-        }
-
-        string[] rawEnvRows = File.ReadAllLines(filePath, Encoding.UTF8);
-        KeyValuePair<string, string>[] envRows = rawEnvRows.Length == 0 ? new KeyValuePair<string, string>[0] : Parse(rawEnvRows);
-
         var response = new Dictionary<string, string>();
-        foreach (var envRow in envRows)
-        {
-            response[envRow.Key] = envRow.Value;
-        }
+
+        var eventId = GetEventId();
+        var serviceIP = GetServiceIP();
+        var servicePort = GetServicePort();
+
+        response["REST_SERVICE_IP"] = serviceIP;
+        response["REST_SERVICE_PORT"] = servicePort;
+        response["EVENT_ID"] = eventId;
 
         return response;
     }

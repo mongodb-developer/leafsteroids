@@ -1,5 +1,8 @@
 using _00_Shared;
 using UnityEngine;
+using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using Event = _3_Main._ReplaySystem.Event;
 
 namespace _1_Loading
 {
@@ -7,7 +10,6 @@ namespace _1_Loading
     {
         public enum SceneName
         {
-            EventSelection,
             Welcome,
             PlayerSelection,
             Playground
@@ -17,6 +19,11 @@ namespace _1_Loading
         public static GameConfigLoader Instance;
         public GameConfig GameConfig;
         public LocalConfig LocalConfig;
+
+        private List<Event> _events;
+
+        [DllImport("__Internal")]
+        private static extern string GetPlayerName();
 
         private void Awake()
         {
@@ -32,9 +39,24 @@ namespace _1_Loading
 
         private void Start()
         {
-            // InvokeRepeating(nameof(LoadRemoteConfig), 0f, 3f);
             LoadLocalConfig();
             LoadRemoteConfig();
+        }
+
+        private void GetEventDetails()
+        {
+            StartCoroutine(
+                AtlasHelper.GetEvents(result =>
+                {
+                    _events = result;
+                    GameConfig.Event = _events![0];
+
+                    var playerName = GetPlayerName();
+                    GameConfig.Player.Name = playerName;
+
+                    SceneNavigation.SwitchToWelcome();
+                })
+            );
         }
 
         private void LoadRemoteConfig()
@@ -46,21 +68,7 @@ namespace _1_Loading
                 AtlasHelper.GetConfig(result =>
                 {
                     GameConfig = result;
-                    switch (sceneToSwitchTo)
-                    {
-                        case SceneName.EventSelection:
-                            SceneNavigation.SwitchToEventSelection();
-                            break;
-                        case SceneName.Welcome:
-                            SceneNavigation.SwitchToWelcome();
-                            break;
-                        case SceneName.PlayerSelection:
-                            SceneNavigation.SwitchToPlayerSelection();
-                            break;
-                        case SceneName.Playground:
-                            SceneNavigation.SwitchToPlayground();
-                            break;
-                    }
+                    GetEventDetails();
                 })
             );
         }
@@ -73,8 +81,7 @@ namespace _1_Loading
             {
                 RestServiceIp = envVars["REST_SERVICE_IP"],
                 RestServicePort = envVars["REST_SERVICE_PORT"],
-                EventId = envVars["EVENT_ID"],
-                WebsiteURL = envVars["WEBSITE_URL"]
+                EventId = envVars["EVENT_ID"]
             };
         }
     }

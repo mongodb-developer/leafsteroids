@@ -2,11 +2,15 @@ using _1_Loading;
 using _3_Main;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Runtime.InteropServices;
 
 namespace _00_Shared
 {
     public class SceneNavigation : MonoBehaviour
     {
+
+        [DllImport("__Internal")]
+        private static extern string QuitGame();
         private void Update()
         {
             switch (SceneManager.GetActiveScene().name!)
@@ -15,8 +19,12 @@ namespace _00_Shared
                     if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
                     break;
                 case Constants.SceneNames.Welcome:
-                    if (ButtonMappings.CheckEscapeKey()) Application.Quit();
-                    if (ButtonMappings.CheckConfirmKey()) SwitchToPlayerSelection();
+                    if (ButtonMappings.CheckEscapeKey())
+                    {
+                        QuitGame();
+                        Application.Quit();
+                    }
+                    if (ButtonMappings.CheckConfirmKey()) SwitchToMain();
                     break;
                 case Constants.SceneNames.PlayerSelection:
                     if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
@@ -26,7 +34,7 @@ namespace _00_Shared
                     if (ButtonMappings.CheckConfirmKey()) SwitchToMain();
                     break;
                 case Constants.SceneNames.Main:
-                    if (ButtonMappings.CheckEscapeKey()) SwitchToPlayerSelection();
+                    if (ButtonMappings.CheckEscapeKey()) SwitchToWelcome();
                     if (ButtonMappings.CheckReloadKey()) SwitchToMain();
                     break;
                 case Constants.SceneNames.Playground:

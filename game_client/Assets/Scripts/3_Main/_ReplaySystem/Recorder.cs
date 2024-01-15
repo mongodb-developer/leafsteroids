@@ -25,6 +25,8 @@ namespace _3_Main._ReplaySystem
         public void PersistRecording()
         {
             var gameConfig = GameConfigLoader.Instance!.GameConfig!;
+            Debug.Log("PlayerName: " + gameConfig.Player!.Name);
+            Debug.Log("EventId: " + gameConfig.Event!.Id);
             var recording = new Recording
             {
                 Snapshots = _snapshots,

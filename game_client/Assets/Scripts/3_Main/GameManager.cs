@@ -23,6 +23,10 @@ namespace _3_Main
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
+
+            Debug.Log("GameManager - PlayerName: " + _gameConfig.Player!.Name);
+            Debug.Log("GameManager - EventId: " + _gameConfig.Event!.Id);
+            Debug.Log("GameManager - EventName: " + _gameConfig.Event!.Name);
         }
 
         private void Start()
@@ -47,6 +51,8 @@ namespace _3_Main
         {
             Time.timeScale = 0f;
             ToggleGameOverOverlay(true);
+            Debug.Log("PlayerName: " + _gameConfig!.Player!.Name);
+            Debug.Log("EventId: " + _gameConfig!.Event!.Id);
             recorder!.PersistRecording();
             recorder!.StartNewRecording();
         }
