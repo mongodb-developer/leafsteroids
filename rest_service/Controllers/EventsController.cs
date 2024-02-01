@@ -36,4 +36,28 @@ public class EventsController : BaseController
 
         return eventsResponse;
     }
+
+    [HttpPost(Name = "CreateEvent")]
+    public async Task<Event> CreateEvent(EventRequest eventRequest)
+    {
+        Logger.LogDebug($"Route {nameof(CreateEvent)} called.");
+        var newEvent = new Event()
+        {
+            Id = eventRequest.Id,
+            Name = eventRequest.Name,
+            Location = eventRequest.Location
+        };
+        try
+        {
+            await _eventsCollection.InsertOneAsync(newEvent);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+        }
+
+
+        return newEvent;
+    }
 }
