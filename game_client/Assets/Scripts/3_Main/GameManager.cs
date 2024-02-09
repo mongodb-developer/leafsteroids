@@ -61,7 +61,7 @@ namespace _3_Main
         {
             _timeRemainingS--;
             _timeRemainingS = Mathf.Clamp(_timeRemainingS, 0, _gameConfig!.RoundDuration);
-            timeTextField!.text = $"Time remaining: {_timeRemainingS}";
+            timeTextField!.text = $"Time: {_timeRemainingS}";
             if (_timeRemainingS <= 0)
                 GameOver();
         }
