@@ -10,12 +10,11 @@
 </head>
 
 <body>
-  <div style="display: flex; justify-content: center; margin-top: 20px;">
+  </div>
+  <div id="unity-container" class="unity-desktop">
     <a href="\">
       <img src="mongodb-logo-green-bg.jpg" alt="logo">
     </a>
-  </div>
-  <div id="unity-container" class="unity-desktop">
     <canvas id="unity-canvas" width=800 height=600></canvas>
     <div id="unity-loading-bar">
       <div id="unity-logo"></div>
@@ -25,9 +24,14 @@
     </div>
     <div id="unity-warning"> </div>
     <div id="unity-footer">
-      <div id="unity-webgl-logo"></div>
-      <div id="unity-fullscreen-button"></div>
-      <div id="unity-build-title">Leafsteroids</div>
+      <div>
+        <div id="unity-webgl-logo"></div>
+      </div>
+
+      <div id="unity-fullscreen">
+        <div id="unity-build-title">Leafsteroids</div>
+        <div id="unity-fullscreen-button"></div>
+      </div>
     </div>
   </div>
   <script>
