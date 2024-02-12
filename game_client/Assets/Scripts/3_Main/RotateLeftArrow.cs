@@ -10,8 +10,7 @@ namespace _3_Main
 
     public class RotateLeftArrow : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {   
-
-        public void OnPointerDown(PointerEventData pointerEventData)
+	public void OnPointerDown(PointerEventData pointerEventData)
         {
             ButtonMappings.rotateLeftArrowActive = true;
         }

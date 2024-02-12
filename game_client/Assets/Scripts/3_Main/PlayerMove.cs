@@ -50,6 +50,7 @@ namespace _3_Main
                 {
                     DetectedInputDevice.Joystick => "Move using the Joystick!",
                     DetectedInputDevice.Keyboard => "Move using WASD!",
+		    DetectedInputDevice.TouchScreen => "Move with the virtual joystick on the left!",
                     _ => moveInstructions!.text
                 };
 

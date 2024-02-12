@@ -1173,6 +1173,7 @@ GameObject:
   - component: {fileID: 503858896}
   - component: {fileID: 503858899}
   - component: {fileID: 503858900}
+  - component: {fileID: 503858901}
   m_Layer: 5
   m_Name: RotateRightArrow
   m_TagString: Untagged
@@ -3238,7 +3239,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 270}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -51, y: 50}
+  m_AnchoredPosition: {x: -37, y: 140}
   m_SizeDelta: {x: 53, y: 53}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &503858899
@@ -3295,6 +3296,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b16ab49fe58b4fc5b74ac077ac81c9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &503858901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 241574414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5cba36724f24f4081028fd19541f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &507286043
@@ -3411,6 +3424,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5392928070156930399, guid: 7b1632f9d86c84484a5403ce11dc9f46, type: 3}
   m_PrefabInstance: {fileID: 527876559}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &528146253 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2929252283123773939, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
+  m_PrefabInstance: {fileID: 1767745800}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &528428663 stripped
 Transform:
@@ -6435,6 +6453,7 @@ GameObject:
   - component: {fileID: 963969482}
   - component: {fileID: 963969481}
   - component: {fileID: 963969484}
+  - component: {fileID: 963969485}
   m_Layer: 5
   m_Name: ShootButton
   m_TagString: Untagged
@@ -6451,14 +6470,14 @@ RectTransform:
   m_GameObject: {fileID: 963969479}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.6, y: 1.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 217392924}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -112, y: 50}
+  m_AnchoredPosition: {x: -136, y: 140}
   m_SizeDelta: {x: 40, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &963969481
@@ -6565,6 +6584,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3a61b5d3e6bf4d7c9d0bb80d1b194a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &963969485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963969479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5cba36724f24f4081028fd19541f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &981084506
@@ -7767,6 +7798,7 @@ GameObject:
   - component: {fileID: 1189774788}
   - component: {fileID: 1189774787}
   - component: {fileID: 1189774790}
+  - component: {fileID: 1189774791}
   m_Layer: 5
   m_Name: RotateLeftArrow
   m_TagString: Untagged
@@ -7790,7 +7822,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -178, y: 50}
+  m_AnchoredPosition: {x: -235, y: 140}
   m_SizeDelta: {x: 53, y: 53}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1189774787
@@ -7885,6 +7917,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e57ceeb0a4a1e48f3ad2ec256b1ddab9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1189774791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1189774785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5cba36724f24f4081028fd19541f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1260625004
@@ -11407,11 +11451,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 69.4798
+      value: 71
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 56.559814
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 2929252283123773938, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -11436,7 +11480,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2929252283123773939, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1767745805}
   m_SourcePrefab: {fileID: 100100000, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
 --- !u!224 &1767745801 stripped
 RectTransform:
@@ -11448,10 +11495,22 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2929252283123773951, guid: aaa2c939c0359ac4dbce3f49e8b90252, type: 3}
   m_PrefabInstance: {fileID: 1767745800}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 528146253}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45977bbae16431c46a013576a1aea384, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1767745805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 528146253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a5cba36724f24f4081028fd19541f54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1792134128

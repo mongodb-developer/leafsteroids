@@ -10,8 +10,8 @@ namespace _3_Main
 
     public class ShootButton : MonoBehaviour, IPointerDownHandler
     {   
-
-        public void OnPointerDown(PointerEventData pointerEventData)
+	
+	public void OnPointerDown(PointerEventData pointerEventData)
         {
             ButtonMappings.shootButtonActive = true;
         }
