@@ -52,6 +52,7 @@ namespace _1_Loading
                     GameConfig.Event = _events![0];
 
                     var playerName = GetPlayerName();
+                    GameConfig.Player = new RegisteredPlayer();
                     GameConfig.Player.Name = playerName;
 
                     SceneNavigation.SwitchToWelcome();
