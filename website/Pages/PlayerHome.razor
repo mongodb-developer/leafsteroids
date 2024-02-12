@@ -5,6 +5,8 @@
 @using dotenv.net
 
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject IJSRuntime JSRuntime
 
 <style>
     /* this in inside the body tag */
@@ -60,7 +62,8 @@
                             <i class="fa fa-users"></i>
                         </span>
                     </div>
-                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text"
+                        disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -70,7 +73,12 @@
                         </span>
                     </div>
                     <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+
                 </div> <!-- form-group// -->
+
+                <div class="text-center">
+                    <a href="/player.html" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Play Now</a>
+                </div>
             </form>
 
         </article>
@@ -112,18 +120,18 @@
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var eventsFilter = new Dictionary<string, string>
-            {
-                { "id", _eventId }
-            };
+{
+{ "id", _eventId }
+};
             string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
             var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
             Event = events.First();
 
             _name = queryParameters[Constants.QueryParameterName];
             var playerFilter = new Dictionary<string, string>
-            {
-                { "name", _name }
-            };
+{
+{ "name", _name }
+};
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
             Player = players.First();
@@ -134,7 +142,15 @@
             var envVars = DotEnv.Read();
             var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
 
+            var serviceIP = envVars["REST_SERVICE_IP"];
+            var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
+
             _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
+
+            await localStore.SetItemAsStringAsync("eventId", _eventId);
+            await localStore.SetItemAsStringAsync("playerName", Player.Name);
+            await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
+            await localStore.SetItemAsStringAsync("servicePort", servicePort);
         }
         catch (Exception e)
         {
@@ -143,4 +159,12 @@
             _errorMessage = "PLAYER NOT FOUND";
         }
     }
+
+    private async Task LaunchGame()
+    {
+        //NavigationManager!.NavigateTo("/player.html", true);
+
+        await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
+    }
+
 }
