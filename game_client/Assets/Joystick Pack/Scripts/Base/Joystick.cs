@@ -70,7 +70,18 @@ public class Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             return;
         }
-        OnPointerMove(Input.mousePosition);
+
+	float screenWidth = Screen.width; 
+	foreach (Touch touch in Input.touches)
+        {
+            if (touch.phase != TouchPhase.Ended && touch.phase != TouchPhase.Canceled)
+            {
+                if(touch.position.x < (screenWidth/2)) {
+			OnPointerMove(touch.position);
+			break;
+		}
+            }
+        }
     }
 
     public void OnPointerMove(Vector2 mousePosition)
