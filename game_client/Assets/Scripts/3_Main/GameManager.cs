@@ -2,6 +2,7 @@ using _00_Shared;
 using _1_Loading;
 using _3_Main._ReplaySystem;
 using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 
 namespace _3_Main
@@ -13,6 +14,8 @@ namespace _3_Main
         [SerializeField] private TMP_Text gameOverText;
         [SerializeField] private TMP_Text gameOverSubText;
         [SerializeField] private GameObject blurPanel;
+	[SerializeField] private Button reloadButton;
+	[SerializeField] private Button exitButton;
         [SerializeField] private Recorder recorder;
         [SerializeField] private Canvas canvas;
         [SerializeField] private Camera mainCamera;
@@ -69,8 +72,13 @@ namespace _3_Main
         private void ToggleGameOverOverlay(bool shouldShow)
         {
             gameOverText!.gameObject.SetActive(shouldShow);
-            gameOverSubText!.gameObject.SetActive(shouldShow);
             blurPanel!.SetActive(shouldShow);
+	    if (ButtonMappings.DetectedInputDevice == DetectedInputDevice.TouchScreen) {
+		reloadButton!.gameObject.SetActive(shouldShow);
+                exitButton!.gameObject.SetActive(shouldShow);
+	    } else {
+		gameOverSubText!.gameObject.SetActive(shouldShow);
+	    }
         }
     }
 }

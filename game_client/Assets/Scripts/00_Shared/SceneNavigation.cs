@@ -21,8 +21,7 @@ namespace _00_Shared
                 case Constants.SceneNames.Welcome:
                     if (ButtonMappings.CheckEscapeKey())
                     {
-                        QuitGame();
-                        Application.Quit();
+                        Quit();   
                     }
                     if (ButtonMappings.CheckConfirmKey()) SwitchToMain();
                     break;
@@ -43,6 +42,13 @@ namespace _00_Shared
                     break;
             }
         }
+
+
+	public static void Quit()
+	{
+		QuitGame();
+                Application.Quit();
+	}
 
         public static void SwitchToEventSelection()
         {
