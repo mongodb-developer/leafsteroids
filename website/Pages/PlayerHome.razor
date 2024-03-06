@@ -28,6 +28,15 @@
 <a href="\?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
 <div class="card bg-white">
     @if (Event == null)
     {
@@ -40,7 +49,18 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
             <h4 class="card-title mt-3 text-center">
-                <b>@Event!.Name</b>
+                @if ((Event != null))
+                {
+                    if ((Event.Location != null) && (Event.Name != null))
+                    {
+                        <a target="_blank" href="/eventHome/?location=@Event.Location&EventId=@Event.Id">@Event.Name</a>
+                    }
+                    else
+                    {
+                        @Event.Name
+                    }
+                }
+                <!--<b>@Event!.Name</b> << URL to EVENT DASHBOARD-->
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
