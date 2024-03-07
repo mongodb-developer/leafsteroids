@@ -12,6 +12,8 @@ env:
   PROD_IP: ${{ secrets.PROD_IP }}
   STAGING_IP: ${{ secrets.STAGING_IP }}
 
+  GAME_CLIENT_PORT: ${{ secrets.GAME_CLIENT_PORT }}
+
   CONNECTION_STRING_PROD: ${{ secrets.CONNECTION_STRING_PROD }}
   REST_SERVICE_IP_PROD: ${{ secrets.REST_SERVICE_IP_PROD }}
   REST_SERVICE_PORT_PROD: ${{ secrets.REST_SERVICE_PORT_PROD }}
@@ -48,6 +50,8 @@ jobs:
             echo "ATLAS_CHART_ID_PLAYER=${ATLAS_CHART_ID_PLAYER_STAGING}" >> $GITHUB_ENV
             echo "ATLAS_CHART_ID_HOME=${ATLAS_CHART_ID_HOME_STAGING}" >> $GITHUB_ENV
 
+            echo "GAME_CLIENT_PORT=${GAME_CLIENT_PORT}" >> $GITHUB_ENV
+            
           else
             echo "ENVIRONMENT_IP=${PROD_IP}" >> $GITHUB_ENV
             echo "DATABASE_NAME=Leafsteroids" >> $GITHUB_ENV
@@ -59,6 +63,8 @@ jobs:
             echo "ATLAS_CHART_ID_EVENT=${ATLAS_CHART_ID_EVENT_PROD}" >> $GITHUB_ENV
             echo "ATLAS_CHART_ID_PLAYER=${ATLAS_CHART_ID_PLAYER_PROD}" >> $GITHUB_ENV
             echo "ATLAS_CHART_ID_HOME=${ATLAS_CHART_ID_HOME_PROD}" >> $GITHUB_ENV
+
+            echo "GAME_CLIENT_PORT=${GAME_CLIENT_PORT}" >> $GITHUB_ENV
 
           fi
 
@@ -109,6 +115,9 @@ jobs:
           echo "ATLAS_CHART_ID_EVENT=${{ env.ATLAS_CHART_ID_EVENT }}" >> ./website/.env
           echo "ATLAS_CHART_ID_PLAYER=${{ env.ATLAS_CHART_ID_PLAYER }}" >> ./website/.env
           echo "ATLAS_CHART_ID_HOME=${{ env.ATLAS_CHART_ID_HOME }}" >> ./website/.env
+          echo "ATLAS_CHART_ID_HOME=${{ env.ATLAS_CHART_ID_HOME }}" >> ./website/.env
+
+          echo "GAME_CLIENT_PORT=${{ env.GAME_CLIENT_PORT }}" >> ./website/.env
 
       - name: Copy The website Directory To The AWS EC2 Instance
         run: |

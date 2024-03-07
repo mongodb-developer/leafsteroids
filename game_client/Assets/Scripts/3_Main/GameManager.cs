@@ -2,6 +2,7 @@ using _00_Shared;
 using _1_Loading;
 using _3_Main._ReplaySystem;
 using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 
 namespace _3_Main
@@ -13,6 +14,8 @@ namespace _3_Main
         [SerializeField] private TMP_Text gameOverText;
         [SerializeField] private TMP_Text gameOverSubText;
         [SerializeField] private GameObject blurPanel;
+	[SerializeField] private Button reloadButton;
+	[SerializeField] private Button exitButton;
         [SerializeField] private Recorder recorder;
         [SerializeField] private Canvas canvas;
         [SerializeField] private Camera mainCamera;
@@ -23,6 +26,10 @@ namespace _3_Main
         private void Awake()
         {
             _gameConfig = GameConfigLoader.Instance!.GameConfig;
+
+            Debug.Log("GameManager - PlayerName: " + _gameConfig.Player!.Name);
+            Debug.Log("GameManager - EventId: " + _gameConfig.Event!.Id);
+            Debug.Log("GameManager - EventName: " + _gameConfig.Event!.Name);
         }
 
         private void Start()
@@ -47,6 +54,8 @@ namespace _3_Main
         {
             Time.timeScale = 0f;
             ToggleGameOverOverlay(true);
+            Debug.Log("PlayerName: " + _gameConfig!.Player!.Name);
+            Debug.Log("EventId: " + _gameConfig!.Event!.Id);
             recorder!.PersistRecording();
             recorder!.StartNewRecording();
         }
@@ -55,7 +64,7 @@ namespace _3_Main
         {
             _timeRemainingS--;
             _timeRemainingS = Mathf.Clamp(_timeRemainingS, 0, _gameConfig!.RoundDuration);
-            timeTextField!.text = $"Time remaining: {_timeRemainingS}";
+            timeTextField!.text = $"Time: {_timeRemainingS}";
             if (_timeRemainingS <= 0)
                 GameOver();
         }
@@ -63,8 +72,13 @@ namespace _3_Main
         private void ToggleGameOverOverlay(bool shouldShow)
         {
             gameOverText!.gameObject.SetActive(shouldShow);
-            gameOverSubText!.gameObject.SetActive(shouldShow);
             blurPanel!.SetActive(shouldShow);
+	    if (ButtonMappings.DetectedInputDevice == DetectedInputDevice.TouchScreen) {
+		reloadButton!.gameObject.SetActive(shouldShow);
+                exitButton!.gameObject.SetActive(shouldShow);
+	    } else {
+		gameOverSubText!.gameObject.SetActive(shouldShow);
+	    }
         }
     }
 }

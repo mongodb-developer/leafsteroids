@@ -36,6 +36,7 @@ namespace _3_Main
                 {
                     DetectedInputDevice.Joystick => "Rotate using the X / Y buttons!",
                     DetectedInputDevice.Keyboard => "Rotate using left / right arrow!",
+	            DetectedInputDevice.TouchScreen => "Rotate using the arrows on the right!",
                     _ => rotateInstructions!.text
                 };
 
