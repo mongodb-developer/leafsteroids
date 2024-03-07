@@ -4,3 +4,7 @@
 .env
 .idea/
 
+game_client/build_web/Build/build_web.data
+game_client/build_web/Build/build_web.framework.js
+game_client/build_web/Build/build_web.loader.js
+game_client/build_web/Build/build_web.wasm

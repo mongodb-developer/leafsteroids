@@ -5,6 +5,8 @@
 @using dotenv.net
 
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject IJSRuntime JSRuntime
 
 <style>
     /* this in inside the body tag */
@@ -26,6 +28,15 @@
 <a href="\?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
 <div class="card bg-white">
     @if (Event == null)
     {
@@ -38,7 +49,17 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
             <h4 class="card-title mt-3 text-center">
-                <b>@Event!.Name</b>
+                @if ((Event != null))
+                {
+                    if ((Event.Location != null) && (Event.Name != null))
+                    {
+                        <a target="_blank" href="/eventHome/?location=@Event.Location&EventId=@Event.Id">@Event.Name</a>
+                    }
+                    else
+                    {
+                        @Event.Name
+                    }
+                }
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -60,7 +81,8 @@
                             <i class="fa fa-users"></i>
                         </span>
                     </div>
-                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text"
+                        disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -70,7 +92,12 @@
                         </span>
                     </div>
                     <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+
                 </div> <!-- form-group// -->
+
+                <div class="text-center">
+                    <a href="/player.html" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Play Now</a>
+                </div>
             </form>
 
         </article>
@@ -112,18 +139,18 @@
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var eventsFilter = new Dictionary<string, string>
-            {
-                { "id", _eventId }
-            };
+{
+{ "id", _eventId }
+};
             string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
             var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
             Event = events.First();
 
             _name = queryParameters[Constants.QueryParameterName];
             var playerFilter = new Dictionary<string, string>
-            {
-                { "name", _name }
-            };
+{
+{ "name", _name }
+};
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
             Player = players.First();
@@ -134,7 +161,15 @@
             var envVars = DotEnv.Read();
             var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
 
+            var serviceIP = envVars["REST_SERVICE_IP"];
+            var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
+
             _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
+
+            await localStore.SetItemAsStringAsync("eventId", _eventId);
+            await localStore.SetItemAsStringAsync("playerName", Player.Name);
+            await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
+            await localStore.SetItemAsStringAsync("servicePort", servicePort);
         }
         catch (Exception e)
         {
@@ -143,4 +178,12 @@
             _errorMessage = "PLAYER NOT FOUND";
         }
     }
+
+    private async Task LaunchGame()
+    {
+        //NavigationManager!.NavigateTo("/player.html", true);
+
+        await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
+    }
+
 }

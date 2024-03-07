@@ -33,7 +33,16 @@ namespace _00_Shared
 {
     public class ButtonMappings : MonoBehaviour
     {
-        public static DetectedInputDevice DetectedInputDevice;
+        
+	public Joystick virtualJoystick;
+
+	public static bool shootButtonActive = false;
+
+	public static bool rotateLeftArrowActive = false;
+
+	public static bool rotateRightArrowActive = false;
+
+	public static DetectedInputDevice DetectedInputDevice;
 
         public static bool CheckEscapeKey()
         {
@@ -47,6 +56,14 @@ namespace _00_Shared
 
         public static bool CheckConfirmKey()
         {
+
+	    if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
+            {
+                Debug.Log("Touch screen detected");
+		DetectedInputDevice = DetectedInputDevice.TouchScreen;
+                return true;
+            }
+
             if (Input.GetKeyDown(KeyCode.JoystickButton1))
             {
                 Debug.Log("Joystick detected.");
@@ -64,40 +81,50 @@ namespace _00_Shared
             return false;
         }
 
-        public static float GetVerticalAxis()
+        public float GetVerticalAxis()
         {
-            return Input.GetAxis("Vertical");
+	    if (DetectedInputDevice == DetectedInputDevice.TouchScreen)
+		return virtualJoystick.Vertical;
+	    else 
+	        return Input.GetAxis("Vertical");
         }
 
-        public static float GetHorizontalAxis()
+        public float GetHorizontalAxis()
         {
-            return Input.GetAxis("Horizontal");
+            if (DetectedInputDevice == DetectedInputDevice.TouchScreen)
+		return virtualJoystick.Horizontal;
+	    else 
+	        return Input.GetAxis("Horizontal");
         }
 
         public static bool CheckAnyUpKey()
         {
-            return GetVerticalAxis() > 0.5 || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W);
+            return false;
+	    //return GetVerticalAxis() > 0.5 || Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W);
         }
 
         public static bool CheckAnyDownKey()
         {
-            return GetVerticalAxis() < -0.5 || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S);
+	    return false;
+            //return GetVerticalAxis() < -0.5 || Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S);
         }
 
         public static bool CheckRotateLeftKey()
         {
-            return Input.GetKey(KeyCode.JoystickButton0) || Input.GetKey(KeyCode.LeftArrow);
+            return rotateLeftArrowActive || Input.GetKey(KeyCode.JoystickButton0) || Input.GetKey(KeyCode.LeftArrow);
         }
 
         public static bool CheckRotateRightKey()
         {
-            return Input.GetKey(KeyCode.JoystickButton3) || Input.GetKey(KeyCode.RightArrow);
+            return rotateRightArrowActive ||  Input.GetKey(KeyCode.JoystickButton3) || Input.GetKey(KeyCode.RightArrow);
         }
 
         public static bool CheckShootKey()
         {
-            return Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space) ||
+            bool status = shootButtonActive || Input.GetKeyDown(KeyCode.JoystickButton1) || Input.GetKeyDown(KeyCode.Space) ||
                    Input.GetKeyDown(KeyCode.UpArrow);
+	    shootButtonActive = false;
+	    return status;
         }
     }
 }

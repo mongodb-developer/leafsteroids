@@ -1,8 +1,10 @@
 using dotenv.net;
+using Blazored.LocalStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddBlazoredLocalStorage();
 
 DotEnv.Load();
 
