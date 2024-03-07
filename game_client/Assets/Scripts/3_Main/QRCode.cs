@@ -12,9 +12,9 @@ namespace _3_Main
         // Start is called before the first frame update
         void Start()
         {
-            string path = @"eventQRCode.png";
+            /* string path = @"eventQRCode.png";
             Sprite sprite = LoadSprite.LoadNewSprite(path);
-            image!.sprite = sprite;
+            image!.sprite = sprite; */
         }
     }
 }

@@ -10,6 +10,8 @@ namespace _3_Main
     {
         public float moveSpeed;
 
+	public ButtonMappings buttonMappings;
+
         [SerializeField] private TMP_Text moveInstructions;
 
         private bool _hasMoved;
@@ -22,8 +24,8 @@ namespace _3_Main
 
         private void FixedUpdate()
         {
-            var verticalMovement = ButtonMappings.GetVerticalAxis() * moveSpeed * Time.deltaTime;
-            var horizontalMovement = ButtonMappings.GetHorizontalAxis() * moveSpeed * Time.deltaTime;
+	    var verticalMovement = buttonMappings.GetVerticalAxis() * moveSpeed * Time.deltaTime;
+            var horizontalMovement = buttonMappings.GetHorizontalAxis() * moveSpeed * Time.deltaTime;
             if (Mathf.Abs(verticalMovement) > 0 || Mathf.Abs(horizontalMovement) > 0) _hasMoved = true;
             transform.Translate(horizontalMovement, 0, verticalMovement, Space.World);
         }
@@ -48,6 +50,7 @@ namespace _3_Main
                 {
                     DetectedInputDevice.Joystick => "Move using the Joystick!",
                     DetectedInputDevice.Keyboard => "Move using WASD!",
+		    DetectedInputDevice.TouchScreen => "Move with the virtual joystick on the left!",
                     _ => moveInstructions!.text
                 };
 

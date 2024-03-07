@@ -4,6 +4,7 @@ using _1_Loading;
 using TMPro;
 using UnityEngine;
 using Event = _3_Main._ReplaySystem.Event;
+using System.Runtime.InteropServices;
 
 public class EventSelection : MonoBehaviour
 {
@@ -57,7 +58,8 @@ public class EventSelection : MonoBehaviour
             AtlasHelper.GetEvents(result =>
             {
                 _events = result;
-                UpdateEventsList();
+                GameConfigLoader.Instance!.GameConfig!.Event = _events![0];
+                SceneNavigation.SwitchToWelcome();
             })
         );
     }
@@ -77,6 +79,8 @@ public class EventSelection : MonoBehaviour
             : "";
         slot4!.text = slot4Index >= 0 && slot4Index < _events!.Count ? _events[slot4Index]!.Name : "";
         slot5!.text = slot5Index >= 0 && slot5Index < _events!.Count ? _events[slot5Index]!.Name : "";
+
+
     }
 
     private void SelectEvent()

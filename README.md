@@ -64,7 +64,9 @@ Open http://127.0.0.1:8001/ to verify the website is running.
 
 - Switch into the `game_client` folder.
 - In the `Assets` folder, make a copy of the `.env.template` file and call it `.env`.
-- Adjust the IP in the `.env` folder to your `rest_service`. Leave as is when running locally.
+- Adjust the REST_SERVICE_IP in the `.env` folder to your `rest_service`. Leave as is when running locally.
+- Adjust the EVENT_ID to the event you want to use (from the `events` collection).
+- Adjust the WEBSITE_URL to your local website with port (don't add a trailing `/`).
 - Run the game.
 
 ## Contributors
@@ -73,3 +75,4 @@ Open http://127.0.0.1:8001/ to verify the website is running.
 - [Hubert Nguyen](https://)
 - [Nic Raboy](https://www.nraboy.com)
 - [Sig Narváez](https://www.linkedin.com/in/signarvaez/)
+- [Carlos Castro](https://www.linkedin.com/in/carloscastromdb/)

@@ -24,6 +24,15 @@
 <a href="\?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
         <h2 class="text-center">Player Registration & Login</h2>
@@ -33,7 +42,7 @@
                 {
                     if ((_event.Location != null) && (_event.Name != null))
                     {
-                        <a href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
+                        <a target="_blank" href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
                     }
                     else
                     {
@@ -56,7 +65,7 @@
                 <input id="name"
                        type="text"
                        class="form-control"
-                       placeholder="Name (case sensitive!)"
+                       placeholder="Nickname (case sensitive! no spaces!)"
                        @bind="Player.Name" name=""
                        @oninput="AutoCompleteName"
                        required>

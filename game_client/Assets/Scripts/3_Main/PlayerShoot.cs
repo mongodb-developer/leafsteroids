@@ -62,6 +62,7 @@ namespace _3_Main
                 {
                     DetectedInputDevice.Joystick => "Shoot with A!",
                     DetectedInputDevice.Keyboard => "Shoot using Space / Enter / Up Arrow!",
+		    DetectedInputDevice.TouchScreen => "Shoot using the round button on the right!",
                     _ => shootInstructions!.text
                 };
 
