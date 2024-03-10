@@ -1,4 +1,4 @@
-﻿@page "/playerHome"
+﻿@page "/playerSimilar"
 @using RestSharp
 @using website.Data
 @using website.Utils
@@ -25,41 +25,21 @@
     }
 </style>
 
-<a href="\?EventId=@_eventId">
-    <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
-</a>
-<div class="card" style="max-width:400px;background:yellow;text-align:center">
-    <div style="display:inline">
-        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
-        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
-        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
-    </div>
-</div>
+<img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+
 <div class="card bg-white">
-    @if (Event == null)
-    {
+    @if (Player == null)
+        {
         <p>
             <em>Loading...</em>
         </p>
-    }
-    else
-    {
+        }
+        else
+        {
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
             <h4 class="card-title mt-3 text-center">
-                @if ((Event != null))
-                {
-                    if ((Event.Location != null) && (Event.Name != null))
-                    {
-                        <a target="_blank" href="/eventHome/?location=@Event.Location&EventId=@Event.Id">@Event.Name</a>
-                    }
-                    else
-                    {
-                        @Event.Name
-                    }
-                }
+                Similar Players by Speed and Acceleration
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -101,13 +81,13 @@
             </form>
 
         </article>
-    }
+        }
 
 </div> <!-- card.// -->
 
 
 <div class="card bg-white">
-    @if (_chartUrl.Length == 0)
+    @if (Player == null)
     {
         <p>
             <em>Loading...</em>
@@ -115,28 +95,34 @@
     }
     else
     {
-        <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-            <div style="display:inline">
-                &nbsp;&nbsp;&nbsp;
-                <a target="_blank" href="/playerSimilar/?location=@Event.Location&EventId=@Event.Id&Name=@Player.Name">View Similar Players to @Player.Name</a>
-                &nbsp;&nbsp;&nbsp;
-            </div>
-        </div>
-        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
+        <h4 class="card-title mt-3 text-center">Similar Players by Speed</h4>
+        // Iterate through every similar by speed
+        foreach (SimilarRecordings rec in SimilarBySpeed)
+        {
+            //TO-DO: Get Chart URL and ID from helper and env constants
+            <h5>@rec.Name</h5>
+            string chartUrl = string.Concat("https://charts.mongodb.com/charts-aws-reinvent-2023-bojgz/embed/charts?id=0a7ef9ba-e9ab-40dc-b291-a8c836d39381&maxDataAge=3600&theme=light&autoRefresh=true",
+                "&filter={%27_id%27:{%27$oid%27:%27",
+                rec.Id.ToString(),
+                "%27}}");
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="480" height="480" src=@chartUrl></iframe>
+        }
     }
 </div>
 
 
 @code {
 
-    private Event? Event { get; set; }
     private Player Player { get; set; } = new();
-    private string _eventId = string.Empty;
-    private string _location = string.Empty;
+    private List<SimilarRecordings> SimilarBySpeed { get; set; } = new();
+    //private List<SimilarRecordings> SimilarByAccel { get; set; } = new();
+
     private string _name = string.Empty;
     private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
+
+    private string chartFilter = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,39 +130,21 @@
         {
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-            _eventId = queryParameters[Constants.QueryParameterEventId];
-            var eventsFilter = new Dictionary<string, string>
-            {
-                { "id", _eventId }
-            };
-            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
-            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
-            Event = events.First();
-
             _name = queryParameters[Constants.QueryParameterName];
             var playerFilter = new Dictionary<string, string>
             {
                 { "name", _name }
             };
+
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
             Player = players.First();
 
-            _location = Event.Location;
+            string similarBySpeedUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarBySpeed, playerFilter);
+            SimilarBySpeed = await _restClient.GetJsonAsync<List<SimilarRecordings>>(similarBySpeedUrlWithQuery);
 
-            DotEnv.Load();
-            var envVars = DotEnv.Read();
-            var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
-
-            var serviceIP = envVars["REST_SERVICE_IP"];
-            var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
-
-            _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
-
-            await localStore.SetItemAsStringAsync("eventId", _eventId);
-            await localStore.SetItemAsStringAsync("playerName", Player.Name);
-            await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
-            await localStore.SetItemAsStringAsync("servicePort", servicePort);
+            //string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarByAccel, playerFilter);
+            //SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecordings>>(similarByAccelUrlWithQuery);
         }
         catch (Exception e)
         {
@@ -185,12 +153,4 @@
             _errorMessage = "PLAYER NOT FOUND";
         }
     }
-
-    private async Task LaunchGame()
-    {
-        //NavigationManager!.NavigateTo("/player.html", true);
-
-        await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
-    }
-
 }
