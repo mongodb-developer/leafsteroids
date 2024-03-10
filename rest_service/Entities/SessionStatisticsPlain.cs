@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace RestService.Entities;
 
-[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+[BsonIgnoreExtraElements]
 public class SessionStatisticsPlain
 {
     public int BulletsFired { get; set; }

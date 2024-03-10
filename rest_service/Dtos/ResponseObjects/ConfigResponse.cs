@@ -3,7 +3,6 @@ using RestService.Entities;
 
 namespace RestService.Dtos.ResponseObjects;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class ConfigResponse
 {
     public float RoundDuration { get; set; }
