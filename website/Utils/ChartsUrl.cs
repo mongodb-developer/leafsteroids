@@ -26,6 +26,14 @@ public static class ChartsUrl
                + "%27}";
     }
 
+    public static string CreateSimilarUrl(string chartsId, string recordingId)
+    {
+        return CreateBaseUrl(chartsId)
+               + "&filter={%27_id%27:{%27$oid%27:%27"
+               + recordingId
+               + "%27}}";
+    }
+
     public static string CreateHomeUrl(string chartsId, string eventId, string eventLocation)
     {
         return CreateBaseUrl(chartsId)

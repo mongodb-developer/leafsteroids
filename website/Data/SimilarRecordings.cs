@@ -14,7 +14,7 @@ public class SessionStatisticsPlain
     public int PowerUpPlayerSpeedCollected { get; set; }
 }
 
-public class SimilarRecordings
+public class SimilarRecording
 {
     [JsonProperty("id")]
     public string? Id { get; set; }

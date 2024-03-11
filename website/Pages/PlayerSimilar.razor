@@ -39,7 +39,7 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
             <h4 class="card-title mt-3 text-center">
-                Similar Players by Speed and Acceleration
+                Similar Players by Speed based on Highest Score Run
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -74,10 +74,6 @@
                     <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
 
                 </div> <!-- form-group// -->
-
-                <div class="text-center">
-                    <a href="/player.html" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Play Now</a>
-                </div>
             </form>
 
         </article>
@@ -96,17 +92,23 @@
     else
     {
         <h4 class="card-title mt-3 text-center">Similar Players by Speed</h4>
-        // Iterate through every similar by speed
-        foreach (SimilarRecordings rec in SimilarBySpeed)
+        foreach (SimilarRecording rec in SimilarBySpeed)
         {
-            //TO-DO: Get Chart URL and ID from helper and env constants
             <h5>@rec.Name</h5>
-            string chartUrl = string.Concat("https://charts.mongodb.com/charts-aws-reinvent-2023-bojgz/embed/charts?id=0a7ef9ba-e9ab-40dc-b291-a8c836d39381&maxDataAge=3600&theme=light&autoRefresh=true",
-                "&filter={%27_id%27:{%27$oid%27:%27",
-                rec.Id.ToString(),
-                "%27}}");
+            string chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
             <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="480" height="480" src=@chartUrl></iframe>
         }
+
+        //TO-DO: Revisit acceleration
+        <!--
+        <h4 class="card-title mt-3 text-center">Similar Players by Acceleration</h4>
+            foreach (SimilarRecording rec in SimilarByAccel)
+            {
+            <h5>@rec.Name</h5>
+            string chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="480" height="480" src=@chartUrl></iframe>
+        }
+        -->
     }
 </div>
 
@@ -114,10 +116,11 @@
 @code {
 
     private Player Player { get; set; } = new();
-    private List<SimilarRecordings> SimilarBySpeed { get; set; } = new();
-    //private List<SimilarRecordings> SimilarByAccel { get; set; } = new();
+    private List<SimilarRecording> SimilarBySpeed { get; set; } = new();
+    private List<SimilarRecording> SimilarByAccel { get; set; } = new();
 
     private string _name = string.Empty;
+    private string _atlasChartIdSimilar = string.Empty;
     private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
@@ -141,10 +144,15 @@
             Player = players.First();
 
             string similarBySpeedUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarBySpeed, playerFilter);
-            SimilarBySpeed = await _restClient.GetJsonAsync<List<SimilarRecordings>>(similarBySpeedUrlWithQuery);
+            SimilarBySpeed = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarBySpeedUrlWithQuery);
 
+            //TO-DO: Revisit acceleration
             //string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarByAccel, playerFilter);
-            //SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecordings>>(similarByAccelUrlWithQuery);
+            //SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAccelUrlWithQuery);
+
+            DotEnv.Load();
+            var envVars = DotEnv.Read();
+            _atlasChartIdSimilar = envVars["ATLAS_CHART_ID_SIMILAR"];
         }
         catch (Exception e)
         {

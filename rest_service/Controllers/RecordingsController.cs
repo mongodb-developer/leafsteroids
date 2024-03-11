@@ -200,6 +200,7 @@ public class RecordingsController : BaseController
                 })
             .ToList();
 
+        // Return this player's top recording + top similar
         List<SimilarRecordingResponse> response = new()
         {
             new SimilarRecordingResponse(topRecording)
@@ -237,6 +238,7 @@ public class RecordingsController : BaseController
                 })
             .ToList();
 
+        // Return this player's top recording + top similar
         List<SimilarRecordingResponse> response = new()
         {
             new SimilarRecordingResponse(topRecording)
