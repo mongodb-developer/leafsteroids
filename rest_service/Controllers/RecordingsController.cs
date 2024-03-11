@@ -41,6 +41,7 @@ public class RecordingsController : BaseController
 
         var newRecording = new Recording()
         {
+            Id = ObjectId.GenerateNewId(),
             SessionStatisticsPlain = recordingRequest.SessionStatisticsPlain,
             DateTime = DateTime.UtcNow,
             Player = new RecordingPlayer { Name = recordingRequest.PlayerName },
@@ -55,6 +56,15 @@ public class RecordingsController : BaseController
                 }
             }).ToList()
         };
+
+        // Calculate vectors
+        try
+        {
+            newRecording.SpeedVector = CalculateSpeedVector(newRecording.Snapshots);
+            newRecording.AccelVector = CalculateAcceleration(newRecording.SpeedVector);
+        } catch (Exception) {
+            // Favor persisting Recording over setting vectors
+        }
 
         try
         {
@@ -131,6 +141,39 @@ public class RecordingsController : BaseController
             default:
                 throw new MultiplePlayersFoundException();
         }
+    }
+
+    private static double[] CalculateSpeedVector(List<Snapshot> snapshots)
+    {
+        long vectorSize = snapshots.Count - 1;
+        if (vectorSize != 589) // 590 represents movements in 60s
+            return Array.Empty<double>();
+
+        double[] speed = new double[vectorSize];
+        for (int i = 0; i < vectorSize; i++)
+        {
+            double speedX = snapshots[i + 1].Position.X - snapshots[i].Position.X;
+            //double Y = snapshots[i + 1].Position.X - snapshots[i].Position.X;
+            double speedY = snapshots[i + 1].Position.Z - snapshots[i].Position.Z;
+            speed[i] = Math.Sqrt(Math.Pow(speedX, 2) + Math.Pow(speedY, 2));
+        }
+
+        return speed;
+    }
+
+    private static double[] CalculateAcceleration(double[] speedVector)
+    {
+        long vectorSize = speedVector.Length - 1;
+        if (speedVector.Length != 589) // speed vector should be 1 less 60s run
+            return Array.Empty<double>();
+
+        double dt = 1; // Assuming a constant time step of 1 unit.
+        double[] accelVector = new double[vectorSize];
+
+        for (int i = 0; i < speedVector.Length - 1; i++)
+            accelVector[i] = (speedVector[i + 1] - speedVector[i]) / dt;
+
+        return accelVector;
     }
 
     [HttpGet("similarBySpeed", Name = "GetSimilarBySpeed")]
