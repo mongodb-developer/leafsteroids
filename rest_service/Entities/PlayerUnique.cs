@@ -1,18 +1,14 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using Newtonsoft.Json;
 
+namespace RestService.Entities;
 
-namespace RestService.Entities
+[BsonIgnoreExtraElements]
+public class PlayerUnique
 {
-    public class PlayerUnique
-    {
-        [BsonId]
-        [JsonProperty("Name")]
-        public string Name { get; set; }
+    [BsonId]
+    public string Name { get; set; }
 
-        [JsonProperty("location")]
-        [BsonElement("location")]
-        public string? Location { get; set; }
-    }
+    [BsonElement("location")]
+    public string? Location { get; set; }
 }
