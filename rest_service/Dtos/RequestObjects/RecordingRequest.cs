@@ -1,10 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using RestService.Entities;
+﻿using RestService.Entities;
 
 namespace RestService.Dtos.RequestObjects;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
 public class RecordingRequest
 {
     public SessionStatisticsPlain? SessionStatisticsPlain { get; set; }

@@ -1,9 +1,11 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson.Serialization.Serializers;
 
 namespace RestService.Entities;
 
+[BsonIgnoreExtraElements]
 public class RecordingEvent : Event
 {
     // This class is empty intentionally.
@@ -12,11 +14,15 @@ public class RecordingEvent : Event
     // https://www.mongodb.com/blog/post/building-with-patterns-the-extended-reference-pattern 
 }
 
-public class EventForRecordingSerializer : SerializerBase<RecordingEvent>
+public class RecordingEventSerializer : SerializerBase<RecordingEvent>, IBsonDocumentSerializer
 {
     public override RecordingEvent Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
     {
-        return BsonSerializer.Deserialize<RecordingEvent>(context.Reader);
+        var deserialized = BsonDocumentSerializer.Instance.Deserialize(context);
+        return new RecordingEvent()
+        {
+            Id = deserialized.GetValue("_id").ToString()
+        };
     }
 
     public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, RecordingEvent value)
@@ -27,5 +33,24 @@ public class EventForRecordingSerializer : SerializerBase<RecordingEvent>
             };
 
         BsonDocumentSerializer.Instance.Serialize(context, document);
+    }
+
+    public bool TryGetMemberSerializationInfo(string memberName, out BsonSerializationInfo? serializationInfo)
+    {
+        switch (memberName)
+        {
+            case "Id":
+                serializationInfo = new BsonSerializationInfo("_id", ObjectIdSerializer.Instance, typeof(ObjectId));
+                return true;
+            case "Name":
+                serializationInfo = new BsonSerializationInfo("name", StringSerializer.Instance, typeof(string));
+                return true;
+            case "Location":
+                serializationInfo = new BsonSerializationInfo("location", StringSerializer.Instance, typeof(string));
+                return true;
+            default:
+                serializationInfo = null;
+                return false;
+        }
     }
 }
