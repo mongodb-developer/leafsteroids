@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace RestService.Entities;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-[SuppressMessage("ReSharper", "PropertyCanBeMadeInitOnly.Global")]
+[BsonIgnoreExtraElements]
 public class Event
 {
     [BsonElement("_id")] public string? Id { get; set; }

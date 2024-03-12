@@ -1,10 +1,8 @@
-using System.Diagnostics.CodeAnalysis;
-
-#pragma warning disable CS8618
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace RestService.Entities;
 
-[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+[BsonIgnoreExtraElements]
 public class Snapshot
 {
     public Position Position { get; set; }
