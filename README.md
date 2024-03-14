@@ -71,8 +71,9 @@ Open http://127.0.0.1:8001/ to verify the website is running.
 
 ## Contributors
 
-- [Dominic Frei](https://linktr.ee/dominicfrei)
-- [Hubert Nguyen](https://)
-- [Nic Raboy](https://www.nraboy.com)
 - [Sig Narváez](https://www.linkedin.com/in/signarvaez/)
 - [Carlos Castro](https://www.linkedin.com/in/carloscastromdb/)
+- [Ángel Martínez](https://www.linkedin.com/in/amartinezgonzalez/)
+- [Hubert Nguyen](https://www.linkedin.com/in/hubertnguyen/)
+- [Nic Raboy](https://www.nraboy.com)
+- [Dominic Frei](https://linktr.ee/dominicfrei)
