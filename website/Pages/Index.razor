@@ -36,25 +36,36 @@
 </div>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Player Registration & Login</h2>
-        <h4 class="card-title mt-3 text-center">
-            <b>
-                @if ((_event != null))
-                {
-                    if ((_event.Location != null) && (_event.Name != null))
-                    {
-                        <a target="_blank" href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
-                    }
-                    else
-                    {
-                        @_event.Name
-                    }
-                }
-            </b>
-        </h4>
-        <div>
-            <img src="@GetCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
-        </div>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                    </div>
+                </td>
+                <td>
+                    <h2 class="card-title mt-3 text-center">
+                        <b>
+                            @if ((_event != null))
+                            {
+                                if ((_event.Location != null) && (_event.Name != null))
+                                {
+                                    <a target="_blank" href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
+                                }
+                                else
+                                {
+                                    @_event.Name
+                                }
+                            }
+                        </b>
+                    </h2>
+                </td>
+            </tr>
+        </table>
+
+
+        <h4 class="text-center">Registration & Login</h4>
+
         <h4 class="card-title mt-3 text-center">
             <b class="validation-message">@_errorMessage</b>
         </h4>
@@ -67,7 +78,7 @@
                     </span>
                 </div>
                 <input id="name" type="text" class="form-control" placeholder="Nickname (case sensitive! no spaces!)"
-                    @bind="Player.Name" name="" @oninput="AutoCompleteName" required>
+                       @bind="Player.Name" name="" @oninput="AutoCompleteName" required>
 
 
                 <div id="autocomplete" class="autocomplete">
@@ -92,7 +103,7 @@
                     </span>
                 </div>
                 <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="Team Name (optional)"
-                    type="text">
+                       type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -102,16 +113,20 @@
                     </span>
                 </div>
                 <input id="email" @bind="Player.Email" name="" class="form-control"
-                    placeholder="E-Mail for prizes (optional)" type="email">
+                       placeholder="E-Mail for prizes (optional)" type="email">
             </div> <!-- form-group// -->
 
 
             <div class="form-group">
                 <div class="text-center">
                     <button type="button" class="btn btn-block center" style="background-color:#00ed64"
-                        @onclick="CreatePlayer"> Register </button>
+                            @onclick="CreatePlayer">
+                        Register
+                    </button>
                     <button type="button" class="btn btn-block center" style="background-color:#00ed64"
-                        @onclick="LoginPlayer"> Login </button>
+                            @onclick="LoginPlayer">
+                        Login
+                    </button>
                 </div>
             </div> <!-- form-group// -->
         </form>
@@ -279,7 +294,7 @@
     }
 
     // return current url location
-    private string GetCurrentUrl()
+    private string GetQRCodeForCurrentUrl()
     {
         string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
         NavigationManager.Uri + "?EventId=" + _eventId;

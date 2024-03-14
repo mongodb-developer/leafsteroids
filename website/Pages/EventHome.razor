@@ -35,18 +35,23 @@
 </div>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Event Dashboard</h2>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                    </div>
+                </td>
+                <td>
+                    @if (Event?.Name != null)
+                    {
+                        <h2 class="card-title mt-3 text-center">@Event.Name</h2>
+                    }
+                </td>
+            </tr>
+        </table>
         <h4 class="card-title mt-3 text-center">
-            <b>
-                @if (Event?.Name != null)
-                {
-                    <span>@Event.Name</span>
-                }
-                else
-                {
-                    <span>[Unspecified Event]</span>
-                }
-            </b>
+            <h2 class="text-center">Event Dashboard</h2>
         </h4>
     </article>
 </div>
@@ -101,4 +106,12 @@ else
         }
     }
 
+    // return current url location
+    private string GetQRCodeForCurrentUrl()
+    {
+        string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+        NavigationManager.Uri + "?EventId=" + _eventId;
+        Console.WriteLine(url);
+        return url;
+    }
 }
