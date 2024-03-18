@@ -26,7 +26,8 @@
 </a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
     <div style="display:inline">
-        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution"
+            target="_blank">Solution</a>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
@@ -35,22 +36,36 @@
 </div>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <h2 class="text-center">Player Registration & Login</h2>
-        <h4 class="card-title mt-3 text-center">
-            <b>
-                @if ((_event != null))
-                {
-                    if ((_event.Location != null) && (_event.Name != null))
-                    {
-                        <a target="_blank" href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
-                    }
-                    else
-                    {
-                        @_event.Name
-                    }
-                }
-            </b>
-        </h4>
+        <table>
+            <tr>
+                <td>
+                    <div>
+                        <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                    </div>
+                </td>
+                <td>
+                    <h2 class="card-title mt-3 text-center">
+                        <b>
+                            @if ((_event != null))
+                            {
+                                if ((_event.Location != null) && (_event.Name != null))
+                                {
+                                    <a target="_blank" href="/eventHome/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
+                                }
+                                else
+                                {
+                                    @_event.Name
+                                }
+                            }
+                        </b>
+                    </h2>
+                </td>
+            </tr>
+        </table>
+
+
+        <h4 class="text-center">Registration & Login</h4>
+
         <h4 class="card-title mt-3 text-center">
             <b class="validation-message">@_errorMessage</b>
         </h4>
@@ -62,30 +77,23 @@
                         <i class="fa fa-user"></i>
                     </span>
                 </div>
-                <input id="name"
-                       type="text"
-                       class="form-control"
-                       placeholder="Nickname (case sensitive! no spaces!)"
-                       @bind="Player.Name" name=""
-                       @oninput="AutoCompleteName"
-                       required>
+                <input id="name" type="text" class="form-control" placeholder="Nickname (case sensitive! no spaces!)"
+                       @bind="Player.Name" name="" @oninput="AutoCompleteName" required>
 
-                
-                    <div id="autocomplete" class="autocomplete">
-                        @if (_suggestedNames.Count > 0)
-                        {
-                            <ul class="options">
-                                @foreach (var name in _suggestedNames)
-                                {
-                                    <li id="option_@name"
-                                        class="option"
-                                        @onclick=@(_ => SelectName(name))>
-                                        @name <!-- visible suggestion -->
-                                    </li>
-                                }
-                            </ul>
-                        }
-                    </div>
+
+                <div id="autocomplete" class="autocomplete">
+                    @if (_suggestedNames.Count > 0)
+                    {
+                        <ul class="options">
+                            @foreach (var name in _suggestedNames)
+                            {
+                                <li id="option_@name" class="option" @onclick=@(_ => SelectName(name))>
+                                    @name <!-- visible suggestion -->
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -94,7 +102,8 @@
                         <i class="fa fa-users"></i>
                     </span>
                 </div>
-                <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="Team Name (optional)" type="text">
+                <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="Team Name (optional)"
+                       type="text">
             </div> <!-- form-group// -->
 
             <div class="form-group input-group">
@@ -103,18 +112,21 @@
                         <i class="fa fa-comment"></i>
                     </span>
                 </div>
-                <input id="email" @bind="Player.Email"
-                       name=""
-                       class="form-control"
-                       placeholder="E-Mail for prizes (optional)"
-                       type="email">
+                <input id="email" @bind="Player.Email" name="" class="form-control"
+                       placeholder="E-Mail for prizes (optional)" type="email">
             </div> <!-- form-group// -->
 
 
             <div class="form-group">
                 <div class="text-center">
-                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="CreatePlayer"> Register </button>
-                    <button type="button" class="btn btn-block center" style="background-color:#00ed64" @onclick="LoginPlayer"> Login </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64"
+                            @onclick="CreatePlayer">
+                        Register
+                    </button>
+                    <button type="button" class="btn btn-block center" style="background-color:#00ed64"
+                            @onclick="LoginPlayer">
+                        Login
+                    </button>
                 </div>
             </div> <!-- form-group// -->
         </form>
@@ -145,8 +157,10 @@
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
-    protected override async Task OnAfterRenderAsync (bool firstRender){
-        if (firstRender) {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
             await JS.InvokeAsync<string>("enableListener");
         }
     }
@@ -165,13 +179,13 @@
     {
         var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
         _eventId = queryParameters.TryGetValue(Constants.QueryParameterEventId, out var eventIdValue) ? eventIdValue :
-            queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
-                Constants.DefaultEventId;
+        queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
+        Constants.DefaultEventId;
 
         var eventsFilter = new Dictionary<string, string>
-            {
-                { "id", _eventId }
-            };
+{
+{ "id", _eventId }
+};
 
         string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
         var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
@@ -220,9 +234,9 @@
         _errorMessage = "";
 
         var args = new Dictionary<string, string>
-            {
-                { "Name", Player.Name }
-            };
+{
+{ "Name", Player.Name }
+};
 
         string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, args);
 
@@ -245,12 +259,13 @@
     {
         var input = e.Value!.ToString()!;
 
-        if (input.Length >= 3) {
+        if (input.Length >= 3)
+        {
 
             var args = new Dictionary<string, string>
-            {
-                { "Name", input }
-            };
+{
+{ "Name", input }
+};
 
             string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayersAutoComplete, args);
 
@@ -258,8 +273,10 @@
 
             _suggestedNames = names;
             await JS.InvokeAsync<string>("showAutoComplete");
- 
-        } else {
+
+        }
+        else
+        {
             _suggestedNames.Clear();
         }
     }
@@ -274,6 +291,15 @@
     {
         var newDestination = "/playerHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
         return newDestination;
+    }
+
+    // return current url location
+    private string GetQRCodeForCurrentUrl()
+    {
+        string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+        NavigationManager.Uri + "?EventId=" + _eventId;
+        Console.WriteLine(url);
+        return url;
     }
 
 }

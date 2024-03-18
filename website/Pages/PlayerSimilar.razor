@@ -26,7 +26,15 @@
 </style>
 
 <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
-
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
 <div class="card bg-white">
     @if (Player == null)
         {
@@ -39,7 +47,7 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
             <h4 class="card-title mt-3 text-center">
-                Similar Players by Speed based on Highest Score Run
+                Similar Players based on Highest Score, Speed and Acceleration
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -91,31 +99,62 @@
     }
     else
     {
-        <h4 class="card-title mt-3 text-center">Similar Players by Speed</h4>
-        foreach (SimilarRecording rec in SimilarBySpeed)
-        {
-            <h5>@rec.Name</h5>
-            string chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="480" height="480" src=@chartUrl></iframe>
-        }
-
-        //TO-DO: Revisit acceleration
-        <!--
-        <h4 class="card-title mt-3 text-center">Similar Players by Acceleration</h4>
-            foreach (SimilarRecording rec in SimilarByAccel)
+        <h4 class="card-title mt-3 text-center">Similar Players</h4>
+            foreach (SimilarRecording rec in Similar)
             {
-            <h5>@rec.Name</h5>
-            string chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="480" height="480" src=@chartUrl></iframe>
+                string chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+                <center>
+                    <h5>@rec.Name</h5>
+                    <table style="width:60%;">
+                        <tr>
+                            <td>Score</td>
+                            <td>@rec.SessionStatisticsPlain.Score</td>
+                        </tr>
+                        <tr>
+                            <td>DamageDone</td>
+                            <td>@rec.SessionStatisticsPlain.DamageDone</td>
+                        </tr>
+                        <tr>
+                            <td>BulletsFired</td>
+                            <td>@rec.SessionStatisticsPlain.BulletsFired</td>
+                        </tr>
+                        <tr>
+                            <td>PelletsDestroyedLarge</td>
+                            <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
+                        </tr>
+                        <tr>
+                            <td>PelletsDestroyedMedium</td>
+                            <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
+                        </tr>
+                        <tr>
+                            <td>PelletsDestroyedSmall</td>
+                            <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
+                        </tr>
+                        <tr>
+                            <td>PowerUpBulletDamageCollected</td>
+                            <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
+                        </tr>
+                        <tr>
+                            <td>PowerUpBulletSpeedCollected</td>
+                            <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
+                        </tr>
+                        <tr>
+                            <td>PowerUpPlayerSpeedCollected</td>
+                            <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
+                        </tr>
+                    </table>
+                    <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+                </center>
+                }
+            }
         }
-        -->
-    }
 </div>
 
 
 @code {
 
     private Player Player { get; set; } = new();
+    private List<SimilarRecording> Similar { get; set; } = new();
     private List<SimilarRecording> SimilarBySpeed { get; set; } = new();
     private List<SimilarRecording> SimilarByAccel { get; set; } = new();
 
@@ -143,8 +182,11 @@
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
             Player = players.First();
 
-            string similarBySpeedUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarBySpeed, playerFilter);
-            SimilarBySpeed = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarBySpeedUrlWithQuery);
+            //string similarBySpeedUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarBySpeed, playerFilter);
+            //SimilarBySpeed = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarBySpeedUrlWithQuery);
+
+            string similarUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilar, playerFilter);
+            Similar = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarUrlWithQuery);
 
             //TO-DO: Revisit acceleration
             //string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointSimilarByAccel, playerFilter);

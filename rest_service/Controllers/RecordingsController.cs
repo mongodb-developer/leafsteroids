@@ -5,7 +5,6 @@ using RestService.Dtos.ResponseObjects;
 using RestService.Entities;
 using RestService.Exceptions;
 using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
 
 namespace RestService.Controllers;
 
@@ -60,8 +59,16 @@ public class RecordingsController : BaseController
         // Calculate vectors
         try
         {
+            newRecording.StatsVector = CalculateStatsVector(newRecording.SessionStatisticsPlain);
             newRecording.SpeedVector = CalculateSpeedVector(newRecording.Snapshots);
             newRecording.AccelVector = CalculateAcceleration(newRecording.SpeedVector);
+
+            newRecording.SimilarityVector = CalculateSimilarityVector(
+                new List<double[]>() {
+                    newRecording.StatsVector,
+                    newRecording.SpeedVector,
+                    newRecording.AccelVector });
+
         } catch (Exception) {
             // Favor persisting Recording over setting vectors
         }
@@ -143,6 +150,23 @@ public class RecordingsController : BaseController
         }
     }
 
+    private static double[] CalculateStatsVector(SessionStatisticsPlain ssp)
+    {
+        double[] stats = new double[9];
+
+        stats[0] = Convert.ToDouble(ssp.Score);
+        stats[1] = Convert.ToDouble(ssp.DamageDone);
+        stats[2] = Convert.ToDouble(ssp.BulletsFired);
+        stats[3] = Convert.ToDouble(ssp.PelletsDestroyedLarge);
+        stats[4] = Convert.ToDouble(ssp.PelletsDestroyedMedium);
+        stats[5] = Convert.ToDouble(ssp.PelletsDestroyedSmall);
+        stats[6] = Convert.ToDouble(ssp.PowerUpBulletDamageCollected);
+        stats[7] = Convert.ToDouble(ssp.PowerUpBulletSpeedCollected);
+        stats[8] = Convert.ToDouble(ssp.PowerUpPlayerSpeedCollected);
+
+        return stats;
+    }
+
     private static double[] CalculateSpeedVector(List<Snapshot> snapshots)
     {
         long vectorSize = snapshots.Count - 1;
@@ -174,6 +198,51 @@ public class RecordingsController : BaseController
             accelVector[i] = (speedVector[i + 1] - speedVector[i]) / dt;
 
         return accelVector;
+    }
+
+    private static double[] CalculateSimilarityVector(List<double[]> vectors)
+    {
+        double[] similar = Array.Empty<double>();
+        foreach (double[] vector in vectors)
+            similar = similar.Concat(vector).ToArray();
+        return similar;
+    }
+
+    [HttpGet("similar", Name = "GetSimilar")]
+    public async Task<List<SimilarRecordingResponse>> Similar([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.SimilarityVector,
+                topRecording.SimilarityVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
     }
 
     [HttpGet("similarBySpeed", Name = "GetSimilarBySpeed")]
@@ -212,7 +281,6 @@ public class RecordingsController : BaseController
 
         return response;
     }
-
     
     [HttpGet("similarByAcceleration", Name = "GetSimilarByAcceleration")]
     public async Task<List<SimilarRecordingResponse>> SimilarByAcceleration([FromQuery] PlayerRequest playerRequest)
@@ -250,5 +318,41 @@ public class RecordingsController : BaseController
 
         return response;
     }
-    
+
+    [HttpGet("similarByStats", Name = "GetSimilarByStats")]
+    public async Task<List<SimilarRecordingResponse>> SimilarByStats([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.StatsVector,
+                topRecording.StatsVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
+    }
 }

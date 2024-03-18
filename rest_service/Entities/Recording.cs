@@ -18,4 +18,8 @@ public class Recording
     public double[]? SpeedVector { get; set; }
     [BsonElement("accel_vector")]
     public double[]? AccelVector { get; set; }
+    [BsonElement("stats_vector")]
+    public double[]? StatsVector { get; set; }
+    [BsonElement("similarity_vector")]
+    public double[]? SimilarityVector { get; set; }
 }
