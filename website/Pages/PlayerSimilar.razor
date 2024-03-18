@@ -25,7 +25,9 @@
     }
 </style>
 
-<img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+<a href="\?EventId=@_eventId">
+    <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+</a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
     <div style="display:inline">
         <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
@@ -153,6 +155,8 @@
 
 @code {
 
+    private string _eventId = string.Empty;
+
     private Player Player { get; set; } = new();
     private List<SimilarRecording> Similar { get; set; } = new();
     private List<SimilarRecording> SimilarBySpeed { get; set; } = new();
@@ -173,6 +177,7 @@
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
             _name = queryParameters[Constants.QueryParameterName];
+            _eventId = queryParameters[Constants.QueryParameterEventId];
             var playerFilter = new Dictionary<string, string>
             {
                 { "name", _name }
