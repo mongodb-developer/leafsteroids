@@ -297,7 +297,7 @@
     private string GetQRCodeForCurrentUrl()
     {
         string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
-        NavigationManager.Uri + "?EventId=" + _eventId;
+        NavigationManager.BaseUri + "?EventId=" + _eventId;
         Console.WriteLine(url);
         return url;
     }
