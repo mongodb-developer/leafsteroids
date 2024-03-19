@@ -1,0 +1,97 @@
+﻿@page "/playerSimilar_json"
+@using RestSharp
+@using website.Utils
+@using dotenv.net
+
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject IJSRuntime JSRuntime
+
+<style>
+    /* this in inside the body tag */
+    body {
+        background-color: #023430;
+    }
+
+    .atlascharts_iframe {
+        /*background: #21313C; */
+        border: none;
+        border-radius: 2px;
+        /* box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2); */
+        width: 100%;
+        height: 200vh;
+        margin: auto;
+    }
+</style>
+
+<a href="\?EventId=@_eventId">
+
+    <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+</a>
+
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
+
+<div class="bg-white">
+    @if (recordingAsString == string.Empty)
+        if (_errorMessage != string.Empty)
+        {
+            <p>@_errorMessage</p>
+        }
+        else
+        {
+            <p><em>Loading... [@_recordingId]</em></p>
+        }
+    else
+    {
+        @recordingAsString
+    }
+</div>
+
+
+@code {
+
+    private string _eventId = string.Empty;
+    private string _recordingId = string.Empty;
+
+    private string recordingAsString = string.Empty;
+    private string _errorMessage = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
+
+    private string chartFilter = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
+
+            _eventId = queryParameters[Constants.QueryParameterEventId];
+            _recordingId = queryParameters[Constants.QueryParameterRecordingId].ToString();
+
+            var recordingFilter = new Dictionary<string, string>
+            {
+                { "id", _recordingId }
+            };
+
+            string recordingUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordings, recordingFilter);
+            recordingAsString = await _restClient.GetJsonAsync<string>(recordingUrlWithQuery);
+
+            DotEnv.Load();
+            var envVars = DotEnv.Read();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+            _errorMessage = "EXCEPTION: " + e.Message + e.StackTrace;
+        }
+    }
+}
