@@ -110,6 +110,17 @@ public class RecordingsController : BaseController
         return Ok(new { Message = "Recording created successfully." });
     }
 
+    [HttpGet(Name = "GetRecording")]
+    public async Task<string> GetRecording([FromQuery] string id)
+    {
+        Recording recording = _recordingsCollection
+            .Find(r => r.Id.ToString() == id)
+            .Limit(1).ToList().First();
+
+        return recording.ToJson();
+    }
+
+
     private async Task AddLocation(Recording recording)
     {
         var eventId = recording.Event.Id;
