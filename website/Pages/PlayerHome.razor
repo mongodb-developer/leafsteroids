@@ -204,7 +204,7 @@ else
     {
         if (string.IsNullOrEmpty(Event.Id) || string.IsNullOrEmpty(Event.Name))
         {
-            _errorMessage = "[please fill out the Event ID and Name]";
+            _errorMessage = "Please fill out both Event ID and Description";
             return;
         }
 
