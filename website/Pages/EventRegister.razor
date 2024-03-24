@@ -78,7 +78,7 @@
                     </span>
                 </div>
                 <input id="name" type="text" class="form-control" placeholder="Nickname (case sensitive! no spaces!)"
-                       @bind="Player.Name" name="" @oninput="AutoCompleteName" required>
+                       @bind="_player.Name" name="" @oninput="AutoCompleteName" required pattern="/^[a-zA-Z0-9_\-]+$/">
 
 
                 <div id="autocomplete" class="autocomplete">
@@ -102,7 +102,7 @@
                         <i class="fa fa-users"></i>
                     </span>
                 </div>
-                <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="Team Name (optional)"
+                <input id="teamname" @bind="_player.Team" name="" class="form-control" placeholder="Team Name (optional)"
                        type="text">
             </div> <!-- form-group// -->
 
@@ -112,8 +112,10 @@
                         <i class="fa fa-comment"></i>
                     </span>
                 </div>
-                <input id="email" @bind="Player.Email" name="" class="form-control"
-                       placeholder="E-Mail for prizes (optional)" type="email">
+                <input id="email" @bind="_player.Email" name="" class="form-control"
+                       placeholder="E-Mail for prizes (optional)" type="email"
+                       pattern="/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/">
+                        <!-- @@ escapes 'at' symbol in razor -->
             </div> <!-- form-group// -->
 
 
@@ -149,7 +151,7 @@
 </div>
 
 @code {
-    private Player Player { get; } = new();
+    private Player _player { get; } = new();
     private List<string> _suggestedNames = new();
     private Event? _event;
     private string _eventId = string.Empty;
@@ -195,7 +197,7 @@
 
     private async Task CreatePlayer()
     {
-        if (string.IsNullOrEmpty(Player.Name) || string.IsNullOrEmpty(_event?.Location))
+        if (string.IsNullOrEmpty(_player.Name) || string.IsNullOrEmpty(_event?.Location))
         {
             _errorMessage = "[please fill out the form]";
             return;
@@ -205,28 +207,28 @@
 
         //TO-DO ADD FILTER FOR PLAYER!!!!
         var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
-        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
+        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(_player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
         if (existingPlayer != null)
         {
-            _errorMessage = $"[{Player.Name}] exists! Login instead?";
+            _errorMessage = $"[{_player.Name}] exists! Login instead?";
         }
         else
         {
-            Player.Location = _event.Location;
+            _player.Location = _event.Location;
 
-            var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(Player);
+            var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(_player);
             await _restClient.PostAsync<Player>(request);
 
-            var newDestination = UrlForPlayerAndEvent(Player.Location, Player.Name, _event.Id!);
+            var newDestination = UrlForPlayerAndEvent(_player.Location, _player.Name, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
 
     private async Task LoginPlayer()
     {
-        if (string.IsNullOrEmpty(Player.Name))
+        if (string.IsNullOrEmpty(_player.Name))
         {
             _errorMessage = "[Enter your name!]";
             return;
@@ -236,13 +238,13 @@
 
         var args = new Dictionary<string, string>
 {
-{ "Name", Player.Name }
+{ "Name", _player.Name }
 };
 
         string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, args);
 
         var players = await _restClient.GetJsonAsync<List<Player>>(urlWithQuery);
-        var filteredPlayers = players!.FindAll(p => p.Name!.Equals(Player.Name));
+        var filteredPlayers = players!.FindAll(p => p.Name!.Equals(_player.Name));
         var existingPlayer = filteredPlayers.FirstOrDefault();
 
         if (existingPlayer != null)
@@ -252,7 +254,7 @@
         }
         else
         {
-            _errorMessage = $"[{Player.Name}] not found. Register instead?";
+            _errorMessage = $"[{_player.Name}] not found. Register instead?";
         }
     }
 
@@ -284,7 +286,7 @@
 
     private void SelectName(string name)
     {
-        Player.Name = name;
+        _player.Name = name;
         _suggestedNames.Clear();
     }
 
@@ -298,7 +300,7 @@
     private string GetQRCodeForCurrentUrl()
     {
         string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
-        NavigationManager.BaseUri + "?EventId=" + _eventId;
+        NavigationManager.BaseUri + "/EventRegister?EventId=" + _eventId;
         Console.WriteLine(url);
         return url;
     }

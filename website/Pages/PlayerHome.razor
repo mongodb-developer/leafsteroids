@@ -99,19 +99,21 @@
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-user"></i>
+                            <i class="fa-solid fa-barcode"></i>
                         </span>
                     </div>
-                    <input id="eventId" @bind="Event.Id" name="" class="form-control" placeholder="" type="text">
+                    <input id="eventId" @bind="Event.Id" name="" class="form-control"
+                           placeholder="event-id (lower & hyphenated)" type="text" pattern="/^[a-z0-9\-]+$/">
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-users"></i>
+                            <i class="fa-solid fa-comment-dots"></i>
                         </span>
                     </div>
-                    <input id="eventName" @bind="Event.Name" name="" class="form-control" placeholder="" type="text">
+                    <input id="eventName" @bind="Event.Name" name="" class="form-control"
+                           placeholder="Friendly description" type="text">
                 </div> <!-- form-group// -->
 
                 <!-- TO DO: Obtain location from autocomplete box -->

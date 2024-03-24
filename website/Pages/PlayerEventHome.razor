@@ -37,8 +37,41 @@
         <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
     </div>
 </div>
+
+@if (_event != null)
+{
+    <div class="card bg-white">
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                        </div>
+                    </td>
+                    <td>
+                        <h2 class="card-title mt-3 text-center"><b>@_event.Name</b></h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <div class="text-center">
+                            <a href="/EventRegister/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Event Register</a>
+                        </div>
+                    </td>
+                    <td align="center">
+                        <div class="text-center">
+                            <a href="/EventDashboard/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Event Dashboard</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </article>
+    </div>
+}
+
 <div class="card bg-white">
-    @if (Event == null)
+    @if (_event == null)
     {
         <p>
             <em>Loading...</em>
@@ -47,20 +80,8 @@
     else
     {
         <article class="card-body mx-auto" style="max-width: 400px;">
-            <h2 class="text-center">Player Dashboard</h2>
-            <h4 class="card-title mt-3 text-center">
-                @if ((Event != null))
-                {
-                    if ((Event.Location != null) && (Event.Name != null))
-                    {
-                        <a target="_blank" href="/eventDashboard/?location=@Event.Location&EventId=@Event.Id">@Event.Name</a>
-                    }
-                    else
-                    {
-                        @Event.Name
-                    }
-                }
-            </h4>
+            <h2 class="text-center">Player</h2>
+
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
             </h4>
@@ -72,7 +93,7 @@
                             <i class="fa fa-user"></i>
                         </span>
                     </div>
-                    <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="name" @bind="_player.Name" name="" class="form-control" placeholder="" type="text" disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -81,8 +102,8 @@
                             <i class="fa fa-users"></i>
                         </span>
                     </div>
-                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text"
-                        disabled>
+                    <input id="teamname" @bind="_player.Team" name="" class="form-control" placeholder="" type="text"
+                           disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -91,7 +112,7 @@
                             <i class="fa fa-comment"></i>
                         </span>
                     </div>
-                    <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="email" @bind="_player.Email" name="" class="form-control" placeholder="" type="text" disabled>
 
                 </div> <!-- form-group// -->
 
@@ -115,13 +136,17 @@
     }
     else
     {
-        <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-            <div style="display:inline">
-                &nbsp;&nbsp;&nbsp;
-                <a target="_blank" href="/playerSimilar/?location=@Event.Location&Name=@Player.Name&EventId=@Event.Id">View Similar Players to @Player.Name</a>
-                &nbsp;&nbsp;&nbsp;
-            </div>
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Player Dashboard</h2>
+        </article>
+
+        <div class="text-center">
+            <a href="/playerSimilar/?location=@_event.Location&Name=@_player.Name&EventId=@_event.Id"
+               style="background-color:#00ed64" target="_blank" class="btn btn-block center">
+                View Similar Players to @_player.Name
+            </a>
         </div>
+
         <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
     }
 </div>
@@ -129,8 +154,8 @@
 
 @code {
 
-    private Event? Event { get; set; }
-    private Player Player { get; set; } = new();
+    private Event? _event { get; set; }
+    private Player _player { get; set; } = new();
     private string _eventId = string.Empty;
     private string _location = string.Empty;
     private string _name = string.Empty;
@@ -146,23 +171,23 @@
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var eventsFilter = new Dictionary<string, string>
-            {
+    {
                 { "id", _eventId }
             };
             string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
             var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
-            Event = events.First();
+            _event = events.First();
 
             _name = queryParameters[Constants.QueryParameterName];
             var playerFilter = new Dictionary<string, string>
-            {
+    {
                 { "name", _name }
             };
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
-            Player = players.First();
+            _player = players.First();
 
-            _location = Event.Location;
+            _location = _event.Location;
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
@@ -174,7 +199,7 @@
             _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
 
             await localStore.SetItemAsStringAsync("eventId", _eventId);
-            await localStore.SetItemAsStringAsync("playerName", Player.Name);
+            await localStore.SetItemAsStringAsync("playerName", _player.Name);
             await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
             await localStore.SetItemAsStringAsync("servicePort", servicePort);
         }
@@ -191,6 +216,15 @@
         //NavigationManager!.NavigateTo("/player.html", true);
 
         await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
+    }
+
+    // return current url location
+    private string GetQRCodeForCurrentUrl()
+    {
+        string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+        NavigationManager.BaseUri + "/EventRegister?EventId=" + _eventId;
+        Console.WriteLine(url);
+        return url;
     }
 
 }
