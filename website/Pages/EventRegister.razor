@@ -203,6 +203,7 @@
 
         _errorMessage = "";
 
+        //TO-DO ADD FILTER FOR PLAYER!!!!
         var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
         var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
@@ -218,7 +219,7 @@
             var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(Player);
             await _restClient.PostAsync<Player>(request);
 
-            var newDestination = UrlForPlayer(Player.Location, Player.Name, _event.Id!);
+            var newDestination = UrlForPlayerAndEvent(Player.Location, Player.Name, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
@@ -246,7 +247,7 @@
 
         if (existingPlayer != null)
         {
-            var newDestination = UrlForPlayer(_event!.Location!, existingPlayer.Name!, _event.Id!);
+            var newDestination = UrlForPlayerAndEvent(_event!.Location!, existingPlayer.Name!, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
         else
@@ -287,9 +288,9 @@
         _suggestedNames.Clear();
     }
 
-    private static string UrlForPlayer(string location, string name, string eventId)
+    private static string UrlForPlayerAndEvent(string location, string name, string eventId)
     {
-        var newDestination = "/playerHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
+        var newDestination = "/playerEventHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
         return newDestination;
     }
 

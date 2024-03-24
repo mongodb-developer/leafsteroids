@@ -21,7 +21,7 @@
         height: 90vh;
     }
 </style>
-<a href="/EventRegister?EventId=@_eventId">
+<a href="/">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
@@ -36,33 +36,6 @@
 </div>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <table>
-            <tr>
-                <td>
-                    <div>
-                        <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
-                    </div>
-                </td>
-                <td>
-                    <h2 class="card-title mt-3 text-center">
-                        <b>
-                            @if ((_event != null))
-                            {
-                                if ((_event.Location != null) && (_event.Name != null))
-                                {
-                                    <a target="_blank" href="/eventDashboard/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
-                                }
-                                else
-                                {
-                                    @_event.Name
-                                }
-                            }
-                        </b>
-                    </h2>
-                </td>
-            </tr>
-        </table>
-
 
         <h4 class="text-center">Registration & Login</h4>
 
@@ -133,27 +106,9 @@
     </article>
 </div> <!-- card.// -->
 
-<div class="card bg-white">
-    @if (_chartUrl.Length == 0)
-    {
-        <p>
-            <em>Loading...</em>
-        </p>
-    }
-    else
-    {
-        <div class="iframe-wrapper">
-            <iframe class="chartsiframe" src="@_chartUrl"></iframe>
-        </div>
-    }
-</div>
-
 @code {
     private Player Player { get; } = new();
     private List<string> _suggestedNames = new();
-    private Event? _event;
-    private string _eventId = string.Empty;
-    private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
@@ -167,35 +122,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await SetEventFromUrlParameters();
         DotEnv.Load();
         var envVars = DotEnv.Read();
-        var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
-
-        _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
-    }
-
-    private async Task SetEventFromUrlParameters()
-    {
-        var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
-        _eventId = queryParameters.TryGetValue(Constants.QueryParameterEventId, out var eventIdValue) ? eventIdValue :
-        queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
-        Constants.DefaultEventId;
-
-        var eventsFilter = new Dictionary<string, string>
-{
-{ "id", _eventId }
-};
-
-        string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
-        var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
-
-        _event = events.FirstOrDefault();
     }
 
     private async Task CreatePlayer()
     {
-        if (string.IsNullOrEmpty(Player.Name) || string.IsNullOrEmpty(_event?.Location))
+        if (string.IsNullOrEmpty(Player.Name))
         {
             _errorMessage = "[please fill out the form]";
             return;
@@ -213,12 +146,12 @@
         }
         else
         {
-            Player.Location = _event.Location;
+            Player.Location = "US"; // TO-DO Obtain from autocomplete input box
 
             var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(Player);
             await _restClient.PostAsync<Player>(request);
 
-            var newDestination = UrlForPlayer(Player.Location, Player.Name, _event.Id!);
+            var newDestination = UrlForPlayer(Player.Location, Player.Name);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
@@ -234,9 +167,9 @@
         _errorMessage = "";
 
         var args = new Dictionary<string, string>
-{
-{ "Name", Player.Name }
-};
+        {
+            { "Name", Player.Name }
+        };
 
         string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, args);
 
@@ -246,7 +179,7 @@
 
         if (existingPlayer != null)
         {
-            var newDestination = UrlForPlayer(_event!.Location!, existingPlayer.Name!, _event.Id!);
+            var newDestination = UrlForPlayer("US", existingPlayer.Name!); // TO-DO Obtain from autocomplete input box
             NavigationManager!.NavigateTo(newDestination);
         }
         else
@@ -263,9 +196,9 @@
         {
 
             var args = new Dictionary<string, string>
-{
-{ "Name", input }
-};
+            {
+                { "Name", input }
+            };
 
             string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayersAutoComplete, args);
 
@@ -287,19 +220,10 @@
         _suggestedNames.Clear();
     }
 
-    private static string UrlForPlayer(string location, string name, string eventId)
+    private static string UrlForPlayer(string location, string name)
     {
-        var newDestination = "/playerHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
+        var newDestination = "/playerHome?location=" + location + "&Name=" + name + "&hack=1"; // hack for players with trailing space
         return newDestination;
-    }
-
-    // return current url location
-    private string GetQRCodeForCurrentUrl()
-    {
-        string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
-        NavigationManager.BaseUri + "?EventId=" + _eventId;
-        Console.WriteLine(url);
-        return url;
     }
 
 }

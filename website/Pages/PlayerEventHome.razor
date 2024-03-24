@@ -1,0 +1,196 @@
+﻿@page "/playerEventHome"
+@using RestSharp
+@using website.Data
+@using website.Utils
+@using dotenv.net
+
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject IJSRuntime JSRuntime
+
+<style>
+    /* this in inside the body tag */
+    body {
+        background-color: #023430;
+    }
+
+    .atlascharts_iframe {
+        /*background: #21313C; */
+        border: none;
+        border-radius: 2px;
+        /* box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2); */
+        width: 100%;
+        height: 200vh;
+        margin: auto;
+    }
+</style>
+
+<a href="/EventRegister?EventId=@_eventId">
+    <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+</a>
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
+<div class="card bg-white">
+    @if (Event == null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Player Dashboard</h2>
+            <h4 class="card-title mt-3 text-center">
+                @if ((Event != null))
+                {
+                    if ((Event.Location != null) && (Event.Name != null))
+                    {
+                        <a target="_blank" href="/eventDashboard/?location=@Event.Location&EventId=@Event.Id">@Event.Name</a>
+                    }
+                    else
+                    {
+                        @Event.Name
+                    }
+                }
+            </h4>
+            <h4 class="card-title mt-3 text-center">
+                <b class="validation-message">@_errorMessage</b>
+            </h4>
+
+            <form>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-user"></i>
+                        </span>
+                    </div>
+                    <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-users"></i>
+                        </span>
+                    </div>
+                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text"
+                        disabled>
+                </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-comment"></i>
+                        </span>
+                    </div>
+                    <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+
+                </div> <!-- form-group// -->
+
+                <div class="text-center">
+                    <a href="/player.html" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Play Now</a>
+                </div>
+            </form>
+
+        </article>
+    }
+
+</div> <!-- card.// -->
+
+
+<div class="card bg-white">
+    @if (_chartUrl.Length == 0)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
+            <div style="display:inline">
+                &nbsp;&nbsp;&nbsp;
+                <a target="_blank" href="/playerSimilar/?location=@Event.Location&Name=@Player.Name&EventId=@Event.Id">View Similar Players to @Player.Name</a>
+                &nbsp;&nbsp;&nbsp;
+            </div>
+        </div>
+        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
+    }
+</div>
+
+
+@code {
+
+    private Event? Event { get; set; }
+    private Player Player { get; set; } = new();
+    private string _eventId = string.Empty;
+    private string _location = string.Empty;
+    private string _name = string.Empty;
+    private string _chartUrl = string.Empty;
+    private string _errorMessage = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
+
+            _eventId = queryParameters[Constants.QueryParameterEventId];
+            var eventsFilter = new Dictionary<string, string>
+            {
+                { "id", _eventId }
+            };
+            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+            Event = events.First();
+
+            _name = queryParameters[Constants.QueryParameterName];
+            var playerFilter = new Dictionary<string, string>
+            {
+                { "name", _name }
+            };
+            string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
+            var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
+            Player = players.First();
+
+            _location = Event.Location;
+
+            DotEnv.Load();
+            var envVars = DotEnv.Read();
+            var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
+
+            var serviceIP = envVars["REST_SERVICE_IP"];
+            var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
+
+            _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
+
+            await localStore.SetItemAsStringAsync("eventId", _eventId);
+            await localStore.SetItemAsStringAsync("playerName", Player.Name);
+            await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
+            await localStore.SetItemAsStringAsync("servicePort", servicePort);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+            _errorMessage = "PLAYER NOT FOUND";
+        }
+    }
+
+    private async Task LaunchGame()
+    {
+        //NavigationManager!.NavigateTo("/player.html", true);
+
+        await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
+    }
+
+}
