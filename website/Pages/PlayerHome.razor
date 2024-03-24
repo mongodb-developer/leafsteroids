@@ -25,7 +25,7 @@
     }
 </style>
 
-<a href="\?EventId=@_eventId">
+<a href="/">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
@@ -37,30 +37,21 @@
         <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
     </div>
 </div>
-<div class="card bg-white">
-    @if (Event == null)
-    {
+
+@if (!ready)
+{
+    <div class="card bg-white">
         <p>
             <em>Loading...</em>
         </p>
-    }
-    else
-    {
+    </div>
+}
+else
+{
+    <!-- Player Details -->
+    <div class="card bg-white">
         <article class="card-body mx-auto" style="max-width: 400px;">
-            <h2 class="text-center">Player Dashboard</h2>
-            <h4 class="card-title mt-3 text-center">
-                @if ((Event != null))
-                {
-                    if ((Event.Location != null) && (Event.Name != null))
-                    {
-                        <a target="_blank" href="/eventHome/?location=@Event.Location&EventId=@Event.Id">@Event.Name</a>
-                    }
-                    else
-                    {
-                        @Event.Name
-                    }
-                }
-            </h4>
+            <h2 class="text-center">Player Home</h2>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
             </h4>
@@ -69,7 +60,9 @@
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-user"></i>
+                            <a href="/PlayerHome?Name=@Player.Name">
+                                <i class="fa fa-user"></i>
+                            </a>
                         </span>
                     </div>
                     <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
@@ -82,7 +75,7 @@
                         </span>
                     </div>
                     <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text"
-                        disabled>
+                           disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -94,49 +87,80 @@
                     <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
 
                 </div> <!-- form-group// -->
-
-                <div class="text-center">
-                    <a href="/player.html" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Play Now</a>
-                </div>
             </form>
-
         </article>
-    }
+    </div>
 
-</div> <!-- card.// -->
+    <!-- Event Creation -->
+    <div class="card bg-white">
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">New Event</h2>
+            <h4 class="card-title mt-3 text-center">
+                <b class="validation-message">@_errorMessage</b>
+            </h4>
 
+            <form>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-barcode"></i>
+                        </span>
+                    </div>
+                    <input id="eventId" @bind="Event.Id" name="" class="form-control"
+                           placeholder="event-id (lower & hyphenated)" type="text" pattern="/^[a-z0-9\-]+$/">
+                </div> <!-- form-group// -->
 
-<div class="card bg-white">
-    @if (_chartUrl.Length == 0)
-    {
-        <p>
-            <em>Loading...</em>
-        </p>
-    }
-    else
-    {
-        <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-            <div style="display:inline">
-                &nbsp;&nbsp;&nbsp;
-                <a target="_blank" href="/playerSimilar/?location=@Event.Location&Name=@Player.Name&EventId=@Event.Id">View Similar Players to @Player.Name</a>
-                &nbsp;&nbsp;&nbsp;
-            </div>
-        </div>
-        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
-    }
-</div>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-comment-dots"></i>
+                        </span>
+                    </div>
+                    <input id="eventName" @bind="Event.Name" name="" class="form-control"
+                           placeholder="Friendly description" type="text">
+                </div> <!-- form-group// -->
+                <!-- TO DO: Obtain location from autocomplete box -->
 
+                <div class="form-group">
+                    <div class="text-center">
+                        <button type="button" class="btn btn-block center" style="background-color:#00ed64"
+                                @onclick="CreateEvent">
+                            Create Event
+                        </button>
+                    </div>
+                </div> <!-- form-group// -->
+            </form>
+        </article>
+    </div>
+
+    <!-- All Events for this Player -->
+    <div class="card bg-white">
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Events Played In</h2>
+            <center>
+                @foreach (Event evt in Events)
+                {
+                    <h4 class="text-center">
+                        <a href="@UrlForPlayerAndEvent(evt.Location, Player.Name, evt.Id)" target="_blank">@evt.Id</a>
+                    </h4>
+                    <h6>@evt.Name</h6>
+                    <h6>&nbsp;</h6>
+                }
+            </center>
+        </article>
+    </div>
+}
 
 @code {
 
-    private Event? Event { get; set; }
+    private Event Event { get; set; } = new();
+    private List<Event> Events { get; set; } = new();
     private Player Player { get; set; } = new();
-    private string _eventId = string.Empty;
     private string _location = string.Empty;
     private string _name = string.Empty;
-    private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
+    private bool ready = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -144,39 +168,29 @@
         {
             var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
 
-            _eventId = queryParameters[Constants.QueryParameterEventId];
-            var eventsFilter = new Dictionary<string, string>
-            {
-                { "id", _eventId }
-            };
-            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
-            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
-            Event = events.First();
-
             _name = queryParameters[Constants.QueryParameterName];
+
+            // Get Player
             var playerFilter = new Dictionary<string, string>
-            {
+{
                 { "name", _name }
             };
+
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
-            Player = players.First();
 
-            _location = Event.Location;
+            Player = players.First();
+            _location = Player.Location;
+
+            // Get Player Events
+            string playersEventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayersEvents, playerFilter);
+            var evts = await _restClient.GetJsonAsync<List<Event>>(playersEventsUrlWithQuery);
+            Events = evts.ToList<Event>();
+
+            ready = Player != null && Events != null;
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
-            var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
-
-            var serviceIP = envVars["REST_SERVICE_IP"];
-            var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
-
-            _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
-
-            await localStore.SetItemAsStringAsync("eventId", _eventId);
-            await localStore.SetItemAsStringAsync("playerName", Player.Name);
-            await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
-            await localStore.SetItemAsStringAsync("servicePort", servicePort);
         }
         catch (Exception e)
         {
@@ -186,11 +200,46 @@
         }
     }
 
-    private async Task LaunchGame()
+    private async Task CreateEvent()
     {
-        //NavigationManager!.NavigateTo("/player.html", true);
+        if (string.IsNullOrEmpty(Event.Id) || string.IsNullOrEmpty(Event.Name))
+        {
+            _errorMessage = "[please fill out the Event ID and Name]";
+            return;
+        }
 
-        await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
+        _errorMessage = "";
+
+        var args = new Dictionary<string, string>
+{
+            { "id", Event.Id }
+        };
+
+        string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, args);
+
+        var events = await _restClient.GetJsonAsync<List<Event>>(urlWithQuery);
+        var existingEvent = events.FirstOrDefault();
+
+        if (existingEvent != null)
+        {
+            _errorMessage = $"THIS EVENT ALREADY EXISTS!!!";
+        }
+        else
+        {
+            Event.Location = _location; // TO-DO
+
+            var request = new RestRequest(Constants.RestServiceEndpointEvents).AddJsonBody(Event);
+            await _restClient.PostAsync<Player>(request);
+
+            var newDestination = UrlForPlayerAndEvent(Event.Location, Player.Name, Event.Id);
+            NavigationManager!.NavigateTo(newDestination);
+        }
+    }
+
+    private static string UrlForPlayerAndEvent(string location, string name, string eventId)
+    {
+        var newDestination = "/playerEventHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
+        return newDestination;
     }
 
 }
