@@ -37,7 +37,9 @@
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
 
-        <h4 class="text-center">Registration & Login</h4>
+        <h4 class="card-title mt-3 text-center">
+            <h2 class="text-center">Registration & Login</h2>
+        </h4>
 
         <h4 class="card-title mt-3 text-center">
             <b class="validation-message">@_errorMessage</b>
@@ -51,7 +53,7 @@
                     </span>
                 </div>
                 <input id="name" type="text" class="form-control" placeholder="Nickname (case sensitive! no spaces!)"
-                       @bind="Player.Name" name="" @oninput="AutoCompleteName" required>
+                       @bind="Player.Name" name="" @oninput="AutoCompleteName" required pattern="/^[a-zA-Z0-9_\-]+$/">
 
 
                 <div id="autocomplete" class="autocomplete">
@@ -86,7 +88,8 @@
                     </span>
                 </div>
                 <input id="email" @bind="Player.Email" name="" class="form-control"
-                       placeholder="E-Mail for prizes (optional)" type="email">
+                       placeholder="E-Mail for prizes (optional)" type="email"
+                       pattern="/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/">
             </div> <!-- form-group// -->
 
 

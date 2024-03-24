@@ -27,7 +27,7 @@
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
     <div style="display:inline">
         <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution"
-            target="_blank">Solution</a>
+           target="_blank">Solution</a>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
@@ -36,35 +36,28 @@
 </div>
 <div class="card bg-white">
     <article class="card-body mx-auto" style="max-width: 400px;">
-        <table>
-            <tr>
-                <td>
-                    <div>
-                        <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
-                    </div>
-                </td>
-                <td>
-                    <h2 class="card-title mt-3 text-center">
-                        <b>
-                            @if ((_event != null))
-                            {
-                                if ((_event.Location != null) && (_event.Name != null))
-                                {
-                                    <a target="_blank" href="/eventDashboard/?location=@_event.Location&EventId=@_event.Id">@_event.Name</a>
-                                }
-                                else
-                                {
-                                    @_event.Name
-                                }
-                            }
-                        </b>
-                    </h2>
-                </td>
-            </tr>
-        </table>
 
+        <h4 class="card-title mt-3 text-center">
+            <h2 class="text-center">Registration & Login</h2>
+        </h4>
 
-        <h4 class="text-center">Registration & Login</h4>
+        @if ((_event != null))
+        {
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                        </div>
+                    </td>
+                    <td>
+                        <h2 class="card-title mt-3 text-center">
+                            <b>@_event.Name</b>
+                        </h2>
+                    </td>
+                </tr>
+            </table>
+        }
 
         <h4 class="card-title mt-3 text-center">
             <b class="validation-message">@_errorMessage</b>
@@ -115,7 +108,7 @@
                 <input id="email" @bind="_player.Email" name="" class="form-control"
                        placeholder="E-Mail for prizes (optional)" type="email"
                        pattern="/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/">
-                        <!-- @@ escapes 'at' symbol in razor -->
+                <!-- @@ escapes 'at' symbol in razor -->
             </div> <!-- form-group// -->
 
 
@@ -185,9 +178,9 @@
         Constants.DefaultEventId;
 
         var eventsFilter = new Dictionary<string, string>
-{
-{ "id", _eventId }
-};
+        {
+            { "id", _eventId }
+        };
 
         string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
         var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
@@ -237,9 +230,9 @@
         _errorMessage = "";
 
         var args = new Dictionary<string, string>
-{
-{ "Name", _player.Name }
-};
+        {
+            { "Name", _player.Name }
+        };
 
         string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, args);
 
@@ -266,9 +259,9 @@
         {
 
             var args = new Dictionary<string, string>
-{
-{ "Name", input }
-};
+            {
+                { "Name", input }
+            };
 
             string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayersAutoComplete, args);
 

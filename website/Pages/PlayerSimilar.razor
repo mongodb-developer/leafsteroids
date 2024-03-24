@@ -47,9 +47,9 @@
     else
     {
         <article class="card-body mx-auto" style="max-width: 400px;">
-            <h2 class="text-center">Player Dashboard</h2>
+            <h2 class="text-center">Player Similarity</h2>
             <h4 class="card-title mt-3 text-center">
-                Similar Players based on Highest Score, Speed and Acceleration
+                Vector Search based on Scores, Speed and Acceleration
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -59,10 +59,12 @@
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-user"></i>
+                            <a href="/PlayerHome?Name=@_player.Name">
+                                <i class="fa fa-user"></i>
+                            </a>
                         </span>
                     </div>
-                    <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="name" @bind="_player.Name" name="" class="form-control" placeholder="" type="text" disabled>
                 </div> <!-- form-group// -->
 
                 <div class="form-group input-group">
@@ -71,7 +73,7 @@
                             <i class="fa fa-users"></i>
                         </span>
                     </div>
-                    <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="" type="text"
+                    <input id="teamname" @bind="_player.Team" name="" class="form-control" placeholder="" type="text"
                            disabled>
                 </div> <!-- form-group// -->
 
@@ -81,7 +83,7 @@
                             <i class="fa fa-comment"></i>
                         </span>
                     </div>
-                    <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+                    <input id="email" @bind="_player.Email" name="" class="form-control" placeholder="" type="text" disabled>
 
                 </div> <!-- form-group// -->
             </form>
@@ -145,12 +147,9 @@
                 </tr>
             </table>
             <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
-            <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-                <div style="display:inline">
-                    &nbsp;&nbsp;&nbsp;
-                    <a target="_blank" href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id">View JSON data</a>
-                    &nbsp;&nbsp;&nbsp;
-                </div>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
             </div>
         </center>
 
@@ -198,12 +197,9 @@
                 </tr>
             </table>
             <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
-            <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-                <div style="display:inline">
-                    &nbsp;&nbsp;&nbsp;
-                    <a target="_blank" href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id">View JSON data</a>
-                    &nbsp;&nbsp;&nbsp;
-                </div>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
             </div>
         </center>
 
@@ -213,12 +209,9 @@
         <center>
             <h5>@rec.Name</h5>
             <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
-            <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-                <div style="display:inline">
-                    &nbsp;&nbsp;&nbsp;
-                    <a target="_blank" href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id">View JSON data</a>
-                    &nbsp;&nbsp;&nbsp;
-                </div>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
             </div>
         </center>
 
@@ -228,12 +221,9 @@
         <center>
             <h5>@rec.Name</h5>
             <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
-            <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-                <div style="display:inline">
-                    &nbsp;&nbsp;&nbsp;
-                    <a target="_blank" href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id">View JSON data</a>
-                    &nbsp;&nbsp;&nbsp;
-                </div>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
             </div>
         </center>
 
@@ -280,12 +270,9 @@
                     <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
                 </tr>
             </table>
-            <div class="card" style="max-width: 400px; background:#00ed64; text-align: center">
-                <div style="display:inline">
-                    &nbsp;&nbsp;&nbsp;
-                    <a target="_blank" href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id">View JSON data</a>
-                    &nbsp;&nbsp;&nbsp;
-                </div>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
             </div>
         </center>
     }
@@ -297,7 +284,7 @@
 
     private string _eventId = string.Empty;
 
-    private Player? Player { get; set; } = new();
+    private Player? _player { get; set; } = new();
     private List<SimilarRecording>? Similar { get; set; } = new();
     private List<SimilarRecording>? SimilarByStats { get; set; } = new();
     private List<SimilarRecording>? SimilarBySpeed { get; set; } = new();
@@ -324,13 +311,13 @@
             _name = queryParameters[Constants.QueryParameterName];
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var playerFilter = new Dictionary<string, string>
-    {
+            {
                 { "name", _name }
             };
 
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
             var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
-            Player = players.First();
+            _player = players.First();
 
             // overall similarity
             string similarUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilar, playerFilter);
@@ -345,7 +332,7 @@
             string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAccel, playerFilter);
             SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAccelUrlWithQuery);
 
-            ready = Player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null && SimilarByAccel != null;
+            ready = _player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null && SimilarByAccel != null;
 
             DotEnv.Load();
             var envVars = DotEnv.Read();

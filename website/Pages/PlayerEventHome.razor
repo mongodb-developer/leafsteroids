@@ -50,18 +50,20 @@
                         </div>
                     </td>
                     <td>
-                        <h2 class="card-title mt-3 text-center"><b>@_event.Name</b></h2>
+                        <h2 class="card-title mt-3 text-center">@_event.Name</h2>
                     </td>
                 </tr>
                 <tr>
                     <td align="center">
                         <div class="text-center">
-                            <a href="/EventRegister/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Event Register</a>
+                            <a href="/EventRegister/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank"
+                               class="btn btn-block center">Register</a>
                         </div>
                     </td>
                     <td align="center">
                         <div class="text-center">
-                            <a href="/EventDashboard/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Event Dashboard</a>
+                            <a href="/EventDashboard/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank"
+                               class="btn btn-block center">Dashboard</a>
                         </div>
                     </td>
                 </tr>
@@ -90,7 +92,9 @@
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-user"></i>
+                            <a href="/PlayerHome?Name=@_player.Name">
+                                <i class="fa fa-user"></i>
+                            </a>
                         </span>
                     </div>
                     <input id="name" @bind="_player.Name" name="" class="form-control" placeholder="" type="text" disabled>
@@ -171,7 +175,7 @@
 
             _eventId = queryParameters[Constants.QueryParameterEventId];
             var eventsFilter = new Dictionary<string, string>
-    {
+            {
                 { "id", _eventId }
             };
             string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
@@ -180,7 +184,7 @@
 
             _name = queryParameters[Constants.QueryParameterName];
             var playerFilter = new Dictionary<string, string>
-    {
+            {
                 { "name", _name }
             };
             string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);

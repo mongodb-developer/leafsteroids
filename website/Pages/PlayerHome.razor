@@ -25,7 +25,7 @@
     }
 </style>
 
-<a href="/PlayerHome?Name=@Player.Name">
+<a href="/">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
@@ -37,16 +37,19 @@
         <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
     </div>
 </div>
-<div class="card bg-white">
-    @if (!ready)
-    {
+
+@if (!ready)
+{
+    <div class="card bg-white">
         <p>
             <em>Loading...</em>
         </p>
-    }
-    else
-    {
-        <!-- Player Details -->
+    </div>
+}
+else
+{
+    <!-- Player Details -->
+    <div class="card bg-white">
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Home</h2>
             <h4 class="card-title mt-3 text-center">
@@ -57,7 +60,9 @@
                 <div class="form-group input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">
-                            <i class="fa fa-user"></i>
+                            <a href="/PlayerHome?Name=@Player.Name">
+                                <i class="fa fa-user"></i>
+                            </a>
                         </span>
                     </div>
                     <input id="name" @bind="Player.Name" name="" class="form-control" placeholder="" type="text" disabled>
@@ -82,13 +87,12 @@
                     <input id="email" @bind="Player.Email" name="" class="form-control" placeholder="" type="text" disabled>
 
                 </div> <!-- form-group// -->
-
             </form>
-
         </article>
+    </div>
 
-
-        <!-- Event Creation -->
+    <!-- Event Creation -->
+    <div class="card bg-white">
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">New Event</h2>
             <h4 class="card-title mt-3 text-center">
@@ -115,7 +119,6 @@
                     <input id="eventName" @bind="Event.Name" name="" class="form-control"
                            placeholder="Friendly description" type="text">
                 </div> <!-- form-group// -->
-
                 <!-- TO DO: Obtain location from autocomplete box -->
 
                 <div class="form-group">
@@ -126,13 +129,14 @@
                         </button>
                     </div>
                 </div> <!-- form-group// -->
-
             </form>
-
         </article>
+    </div>
 
+    <!-- All Events for this Player -->
+    <div class="card bg-white">
         <article class="card-body mx-auto" style="max-width: 400px;">
-            <h2 class="text-center">Your Events</h2>
+            <h2 class="text-center">Events Played In</h2>
             <center>
                 @foreach (Event evt in Events)
                 {
@@ -141,13 +145,11 @@
                     </h4>
                     <h6>@evt.Name</h6>
                     <h6>&nbsp;</h6>
-
                 }
             </center>
         </article>
-    }
-
-</div> <!-- card.// -->
+    </div>
+}
 
 @code {
 
@@ -170,7 +172,7 @@
 
             // Get Player
             var playerFilter = new Dictionary<string, string>
-            {
+{
                 { "name", _name }
             };
 
@@ -209,7 +211,7 @@
         _errorMessage = "";
 
         var args = new Dictionary<string, string>
-        {
+{
             { "id", Event.Id }
         };
 
