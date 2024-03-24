@@ -1,6 +1,7 @@
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using RestService.Dtos.RequestObjects;
 using RestService.Dtos.ResponseObjects;
@@ -15,6 +16,7 @@ public class PlayersController : BaseController
     private readonly IMongoCollection<Player> _playersCollection;
     private readonly IMongoCollection<PlayerUnique> _playersUniqueCollection;
     private readonly IMongoCollection<PlayerUnique> _playersUniqueCollectionOnSecondary;
+    private readonly IMongoCollection<Recording> _recordingsCollection;
 
     public PlayersController(ILogger<PlayersController> logger) : base(logger)
     {
@@ -26,6 +28,8 @@ public class PlayersController : BaseController
             Constants.PlayersUniqueCollectionName,
             new MongoCollectionSettings() { ReadPreference = ReadPreference.SecondaryPreferred }
         );
+
+        _recordingsCollection = Database!.GetCollection<Recording>(Constants.RecordingsCollectionName);
     }
 
     [HttpGet(Name = "GetPlayers")]
@@ -61,6 +65,58 @@ public class PlayersController : BaseController
             players.ToList().Select(player => new PlayerResponse(player)).ToList();
             
         return playersResponse;
+    }
+
+    [HttpGet("events", Name = "GetPlayerEvents")]
+    public async Task<List<EventResponse>> GetEventsForPlayer([FromQuery] PlayerRequest playerRequest)
+    {
+        var pipeline = new List<IPipelineStageDefinition>
+        {
+            new JsonPipelineStageDefinition<Recording, BsonDocument>(
+                "{$match:{'Player.Nickname': '" + playerRequest.Name + "'}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                "{$project:{_id: 0,'Player.Nickname': 1,'Event._id': 1}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                "{$group:{_id: 1,EventIds:{$addToSet: '$Event._id'}}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                "{$project:{_id: 0,EventId:{$sortArray:{input: '$EventIds',sortBy: 1}}}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                "{$unwind:{path: '$EventId'}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                @"{$lookup:{
+                    from: 'events',
+                    localField: 'EventId',
+                    foreignField: '_id',
+                    as: 'event'}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                "{$unwind:{path: '$event'}}"
+            ),
+            new JsonPipelineStageDefinition<BsonDocument, BsonDocument>(
+                "{$replaceRoot:{newRoot: '$event'}}"
+            )
+        };
+
+        try
+        {
+            var result = await _recordingsCollection.AggregateAsync<BsonDocument>(pipeline);
+            List<BsonDocument> bsonDocuments = await result.ToListAsync();
+            List<EventResponse> events = bsonDocuments.Select(document => BsonSerializer.Deserialize<EventResponse>(document)).ToList();
+
+            return events;
+        }
+        catch (Exception e)
+        {
+            Logger.LogError("GetEventsForPlayer did not find matches");
+            Logger.LogError(e.Message);
+
+            return new List<EventResponse>();
+        }
     }
 
     [HttpPost(Name = "CreatePlayer")]
