@@ -1,4 +1,4 @@
-﻿@page "/eventHome"
+﻿@page "/eventDashboard"
 @using RestSharp
 @using website.Data
 @using website.Utils
@@ -21,7 +21,7 @@
         margin: auto;
     }
 </style>
-<a href="\?EventId=@_eventId">
+<a href="/EventRegister?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
@@ -33,29 +33,32 @@
         <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
     </div>
 </div>
-<div class="card bg-white">
-    <article class="card-body mx-auto" style="max-width: 400px;">
-        <table>
-            <tr>
-                <td>
-                    <div>
-                        <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
-                    </div>
-                </td>
-                <td>
-                    @if (Event?.Name != null)
-                    {
-                        <h2 class="card-title mt-3 text-center">@Event.Name</h2>
-                    }
-                </td>
-            </tr>
-        </table>
-        <h4 class="card-title mt-3 text-center">
-            <h2 class="text-center">Event Dashboard</h2>
-        </h4>
-    </article>
-</div>
 
+@if (_event != null)
+{
+    <div class="card bg-white">
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h4 class="card-title mt-3 text-center">
+                <h2 class="text-center">Event Dashboard</h2>
+            </h4>
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                        </div>
+                    </td>
+                    <td>
+                        @if (_event?.Name != null)
+                        {
+                            <h2 class="card-title mt-3 text-center">@_event.Name</h2>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </article>
+    </div>
+}
 
 @if (_chartUrl.Length == 0)
 {
@@ -72,7 +75,7 @@ else
 
 @code {
 
-    private Event? Event { get; set; }
+    private Event? _event { get; set; }
     private string _eventId = string.Empty;
     private string _chartUrl = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
@@ -90,12 +93,12 @@ else
             };
             string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
             var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
-            Event = events.FirstOrDefault();
+            _event = events.FirstOrDefault();
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
             var atlasChartIdEvent = envVars["ATLAS_CHART_ID_EVENT"];
-            _chartUrl = ChartsUrl.CreateEventUrl(atlasChartIdEvent, Event!.Id!, Event.Location!);
+            _chartUrl = ChartsUrl.CreateEventUrl(atlasChartIdEvent, _event!.Id!, _event.Location!);
         }
         catch (Exception e)
         {
@@ -110,7 +113,7 @@ else
     private string GetQRCodeForCurrentUrl()
     {
         string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
-        NavigationManager.BaseUri + "?EventId=" + _eventId;
+        NavigationManager.BaseUri + "/EventRegister?EventId=" + _eventId;
         Console.WriteLine(url);
         return url;
     }

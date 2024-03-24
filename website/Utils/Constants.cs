@@ -8,6 +8,7 @@ public static class Constants
     public const string RestServiceEndpointPlayers = "players";
     public const string RestServiceEndpointPlayersAutoComplete = "players/autocomplete";
     public const string RestServiceEndpointPlayersSearch = "players/search";
+    public const string RestServiceEndpointPlayersEvents = "players/events";
     public const string RestServiceEndpointRecordings = "recordings";
     public const string RestServiceEndpointRecordingsSimilar = "recordings/similar";
     public const string RestServiceEndpointRecordingsSimilarBySpeed = "recordings/similarBySpeed";

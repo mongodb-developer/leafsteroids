@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/EventRegister"
 @using RestSharp
 @using website.Data
 @using website.Utils
@@ -21,13 +21,13 @@
         height: 90vh;
     }
 </style>
-<a href="/">
+<a href="/EventRegister?EventId=@_eventId">
     <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
 </a>
 <div class="card" style="max-width:400px;background:yellow;text-align:center">
     <div style="display:inline">
         <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution"
-            target="_blank">Solution</a>
+           target="_blank">Solution</a>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
         <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
@@ -41,6 +41,24 @@
             <h2 class="text-center">Registration & Login</h2>
         </h4>
 
+        @if ((_event != null))
+        {
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                        </div>
+                    </td>
+                    <td>
+                        <h2 class="card-title mt-3 text-center">
+                            @_event.Name
+                        </h2>
+                    </td>
+                </tr>
+            </table>
+        }
+
         <h4 class="card-title mt-3 text-center">
             <b class="validation-message">@_errorMessage</b>
         </h4>
@@ -53,7 +71,7 @@
                     </span>
                 </div>
                 <input id="name" type="text" class="form-control" placeholder="Nickname (no spaces! case sensitive!)"
-                       @bind="Player.Name" name="" @oninput="AutoCompleteName" required pattern="/^[a-zA-Z0-9_\-]+$/">
+                       @bind="_player.Name" name="" @oninput="AutoCompleteName" required pattern="/^[a-zA-Z0-9_\-]+$/">
 
 
                 <div id="autocomplete" class="autocomplete">
@@ -77,7 +95,7 @@
                         <i class="fa fa-users"></i>
                     </span>
                 </div>
-                <input id="teamname" @bind="Player.Team" name="" class="form-control" placeholder="Team Name (optional)"
+                <input id="teamname" @bind="_player.Team" name="" class="form-control" placeholder="Team Name (optional)"
                        type="text">
             </div> <!-- form-group// -->
 
@@ -87,9 +105,10 @@
                         <i class="fa fa-comment"></i>
                     </span>
                 </div>
-                <input id="email" @bind="Player.Email" name="" class="form-control"
+                <input id="email" @bind="_player.Email" name="" class="form-control"
                        placeholder="E-Mail for prizes (optional)" type="email"
                        pattern="/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/">
+                <!-- @@ escapes 'at' symbol in razor -->
             </div> <!-- form-group// -->
 
 
@@ -109,9 +128,27 @@
     </article>
 </div> <!-- card.// -->
 
+<div class="card bg-white">
+    @if (_chartUrl.Length == 0)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <div class="iframe-wrapper">
+            <iframe class="chartsiframe" src="@_chartUrl"></iframe>
+        </div>
+    }
+</div>
+
 @code {
-    private Player Player { get; } = new();
+    private Player _player { get; } = new();
     private List<string> _suggestedNames = new();
+    private Event? _event;
+    private string _eventId = string.Empty;
+    private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
@@ -125,13 +162,35 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await SetEventFromUrlParameters();
         DotEnv.Load();
         var envVars = DotEnv.Read();
+        var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
+
+        _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
+    }
+
+    private async Task SetEventFromUrlParameters()
+    {
+        var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
+        _eventId = queryParameters.TryGetValue(Constants.QueryParameterEventId, out var eventIdValue) ? eventIdValue :
+        queryParameters.TryGetValue("event", out var eventValue) ? eventValue :
+        Constants.DefaultEventId;
+
+        var eventsFilter = new Dictionary<string, string>
+        {
+            { "id", _eventId }
+        };
+
+        string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+        var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+
+        _event = events.FirstOrDefault();
     }
 
     private async Task CreatePlayer()
     {
-        if (string.IsNullOrEmpty(Player.Name))
+        if (string.IsNullOrEmpty(_player.Name) || string.IsNullOrEmpty(_event?.Location))
         {
             _errorMessage = "[please fill out the form]";
             return;
@@ -139,29 +198,30 @@
 
         _errorMessage = "";
 
+        //TO-DO ADD FILTER FOR PLAYER!!!!
         var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
-        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(Player.Name));
+        var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(_player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
         if (existingPlayer != null)
         {
-            _errorMessage = $"[{Player.Name}] exists! Login instead?";
+            _errorMessage = $"[{_player.Name}] exists! Login instead?";
         }
         else
         {
-            Player.Location = "US"; // TO-DO Obtain from autocomplete input box
+            _player.Location = _event.Location;
 
-            var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(Player);
+            var request = new RestRequest(Constants.RestServiceEndpointPlayers).AddJsonBody(_player);
             await _restClient.PostAsync<Player>(request);
 
-            var newDestination = UrlForPlayer(Player.Location, Player.Name);
+            var newDestination = UrlForPlayerAndEvent(_player.Location, _player.Name, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
     }
 
     private async Task LoginPlayer()
     {
-        if (string.IsNullOrEmpty(Player.Name))
+        if (string.IsNullOrEmpty(_player.Name))
         {
             _errorMessage = "[Enter your name!]";
             return;
@@ -171,23 +231,23 @@
 
         var args = new Dictionary<string, string>
         {
-            { "Name", Player.Name }
+            { "Name", _player.Name }
         };
 
         string urlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, args);
 
         var players = await _restClient.GetJsonAsync<List<Player>>(urlWithQuery);
-        var filteredPlayers = players!.FindAll(p => p.Name!.Equals(Player.Name));
+        var filteredPlayers = players!.FindAll(p => p.Name!.Equals(_player.Name));
         var existingPlayer = filteredPlayers.FirstOrDefault();
 
         if (existingPlayer != null)
         {
-            var newDestination = UrlForPlayer("US", existingPlayer.Name!); // TO-DO Obtain from autocomplete input box
+            var newDestination = UrlForPlayerAndEvent(_event!.Location!, existingPlayer.Name!, _event.Id!);
             NavigationManager!.NavigateTo(newDestination);
         }
         else
         {
-            _errorMessage = $"[{Player.Name}] not found. Register instead?";
+            _errorMessage = $"[{_player.Name}] not found. Register instead?";
         }
     }
 
@@ -219,14 +279,23 @@
 
     private void SelectName(string name)
     {
-        Player.Name = name;
+        _player.Name = name;
         _suggestedNames.Clear();
     }
 
-    private static string UrlForPlayer(string location, string name)
+    private static string UrlForPlayerAndEvent(string location, string name, string eventId)
     {
-        var newDestination = "/playerHome?location=" + location + "&Name=" + name + "&hack=1"; // hack for players with trailing space
+        var newDestination = "/playerEventHome?location=" + location + "&Name=" + name + "&EventId=" + eventId;
         return newDestination;
+    }
+
+    // return current url location
+    private string GetQRCodeForCurrentUrl()
+    {
+        string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+        NavigationManager.BaseUri + "/EventRegister?EventId=" + _eventId;
+        Console.WriteLine(url);
+        return url;
     }
 
 }

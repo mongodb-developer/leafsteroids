@@ -1,0 +1,234 @@
+﻿@page "/playerEventHome"
+@using RestSharp
+@using website.Data
+@using website.Utils
+@using dotenv.net
+
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStore
+@inject IJSRuntime JSRuntime
+
+<style>
+    /* this in inside the body tag */
+    body {
+        background-color: #023430;
+    }
+
+    .atlascharts_iframe {
+        /*background: #21313C; */
+        border: none;
+        border-radius: 2px;
+        /* box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2); */
+        width: 100%;
+        height: 200vh;
+        margin: auto;
+    }
+</style>
+
+<a href="/EventRegister?EventId=@_eventId">
+    <img src="\mongodb-logo-green-bg.jpg" class="rounded mx-auto d-block" alt="logo">
+</a>
+<div class="card" style="max-width:400px;background:yellow;text-align:center">
+    <div style="display:inline">
+        <a href="https://www.mongodb.com/solutions/solutions-library/gaming-player-profiles-solution" target="_blank">Solution</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://www.mongodb.com/use-cases/gaming" target="_blank">MDB for Gaming</a>
+        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/mongodb-developer/leafsteroids" target="_blank">GitHub</a>
+    </div>
+</div>
+
+@if (_event != null)
+{
+    <div class="card bg-white">
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <table>
+                <tr>
+                    <td>
+                        <div>
+                            <img src="@GetQRCodeForCurrentUrl()" class="rounded mx-auto d-block" alt="logo">
+                        </div>
+                    </td>
+                    <td>
+                        <h2 class="card-title mt-3 text-center">@_event.Name</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <div class="text-center">
+                            <a href="/EventRegister/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank"
+                               class="btn btn-block center">Register</a>
+                        </div>
+                    </td>
+                    <td align="center">
+                        <div class="text-center">
+                            <a href="/EventDashboard/?EventId=@_event.Id" style="background-color:#00ed64" target="_blank"
+                               class="btn btn-block center">Dashboard</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </article>
+    </div>
+}
+
+<div class="card bg-white">
+    @if (_event == null)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Player</h2>
+
+            <h4 class="card-title mt-3 text-center">
+                <b class="validation-message">@_errorMessage</b>
+            </h4>
+
+            <form>
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <a href="/PlayerHome?Name=@_player.Name">
+                                <i class="fa fa-user"></i>
+                            </a>
+                        </span>
+                    </div>
+                    <input id="name" @bind="_player.Name" name="" class="form-control" placeholder="" type="text" disabled>
+                </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-users"></i>
+                        </span>
+                    </div>
+                    <input id="teamname" @bind="_player.Team" name="" class="form-control" placeholder="" type="text"
+                           disabled>
+                </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-comment"></i>
+                        </span>
+                    </div>
+                    <input id="email" @bind="_player.Email" name="" class="form-control" placeholder="" type="text" disabled>
+
+                </div> <!-- form-group// -->
+
+                <div class="text-center">
+                    <a href="/player.html" style="background-color:#00ed64" target="_blank" class="btn btn-block center">Play Now</a>
+                </div>
+            </form>
+
+        </article>
+    }
+
+</div> <!-- card.// -->
+
+
+<div class="card bg-white">
+    @if (_chartUrl.Length == 0)
+    {
+        <p>
+            <em>Loading...</em>
+        </p>
+    }
+    else
+    {
+        <article class="card-body mx-auto" style="max-width: 400px;">
+            <h2 class="text-center">Player Dashboard</h2>
+        </article>
+
+        <div class="text-center">
+            <a href="/playerSimilar/?location=@_event.Location&Name=@_player.Name&EventId=@_event.Id"
+               style="background-color:#00ed64" target="_blank" class="btn btn-block center">
+                View Similar Players to @_player.Name
+            </a>
+        </div>
+
+        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
+    }
+</div>
+
+
+@code {
+
+    private Event? _event { get; set; }
+    private Player _player { get; set; } = new();
+    private string _eventId = string.Empty;
+    private string _location = string.Empty;
+    private string _name = string.Empty;
+    private string _chartUrl = string.Empty;
+    private string _errorMessage = string.Empty;
+    private readonly RestClient _restClient = RestServiceClient.Create();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var queryParameters = UrlHelper.GetParameters(NavigationManager.Uri);
+
+            _eventId = queryParameters[Constants.QueryParameterEventId];
+            var eventsFilter = new Dictionary<string, string>
+            {
+                { "id", _eventId }
+            };
+            string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
+            var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
+            _event = events.First();
+
+            _name = queryParameters[Constants.QueryParameterName];
+            var playerFilter = new Dictionary<string, string>
+            {
+                { "name", _name }
+            };
+            string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
+            var players = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
+            _player = players.First();
+
+            _location = _event.Location;
+
+            DotEnv.Load();
+            var envVars = DotEnv.Read();
+            var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
+
+            var serviceIP = envVars["REST_SERVICE_IP"];
+            var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
+
+            _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
+
+            await localStore.SetItemAsStringAsync("eventId", _eventId);
+            await localStore.SetItemAsStringAsync("playerName", _player.Name);
+            await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
+            await localStore.SetItemAsStringAsync("servicePort", servicePort);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            Console.WriteLine(e.StackTrace);
+            _errorMessage = "PLAYER NOT FOUND";
+        }
+    }
+
+    private async Task LaunchGame()
+    {
+        //NavigationManager!.NavigateTo("/player.html", true);
+
+        await JSRuntime.InvokeAsync<object>("open", "/player.html", "_blank");
+    }
+
+    // return current url location
+    private string GetQRCodeForCurrentUrl()
+    {
+        string url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" +
+        NavigationManager.BaseUri + "/EventRegister?EventId=" + _eventId;
+        Console.WriteLine(url);
+        return url;
+    }
+
+}
