@@ -39,7 +39,7 @@
 </div>
 <div class="card bg-white">
     @if (!ready)
-        {
+    {
         <p>
             <em>Loading...</em>
         </p>
@@ -49,7 +49,7 @@
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Similarity</h2>
             <h4 class="card-title mt-3 text-center">
-                Vector Search based on Scores, Speed and Acceleration
+                Vector Search based on Scores & Speed
             </h4>
             <h4 class="card-title mt-3 text-center">
                 <b class="validation-message">@_errorMessage</b>
@@ -214,7 +214,7 @@
                    class="btn btn-block center">View JSON data</a>
             </div>
         </center>
-
+        <!--
         rec = SimilarByAccel[1]; // 0 is this player
         chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
         <h4 class="card-title mt-3 text-center">Top Similar Player BY ACCELERATION</h4>
@@ -226,6 +226,7 @@
                    class="btn btn-block center">View JSON data</a>
             </div>
         </center>
+        -->
 
         rec = SimilarByStats[1];
         chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
@@ -276,7 +277,6 @@
             </div>
         </center>
     }
-    }
 </div>
 
 
@@ -288,7 +288,7 @@
     private List<SimilarRecording>? Similar { get; set; } = new();
     private List<SimilarRecording>? SimilarByStats { get; set; } = new();
     private List<SimilarRecording>? SimilarBySpeed { get; set; } = new();
-    private List<SimilarRecording>? SimilarByAccel { get; set; } = new();
+    //private List<SimilarRecording>? SimilarByAccel { get; set; } = new();
 
     private SimilarRecording? rec;
     private string chartUrl = string.Empty;
@@ -329,10 +329,10 @@
             string similarByStatsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByStats, playerFilter);
             SimilarByStats = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByStatsUrlWithQuery);
             // by acceleration
-            string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAccel, playerFilter);
-            SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAccelUrlWithQuery);
+            //string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAccel, playerFilter);
+            //SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAccelUrlWithQuery);
 
-            ready = _player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null && SimilarByAccel != null;
+            ready = _player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null; //&& SimilarByAccel != null;
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
