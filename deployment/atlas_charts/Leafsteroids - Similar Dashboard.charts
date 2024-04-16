@@ -1,0 +1,186 @@
+{
+    "exportVersion": 7,
+    "dashboards": {
+        "dashboard-1": {
+            "description": "Leafsteroids PROD",
+            "embedding": {
+                "anonymousAuthEnabled": true,
+                "allowAllFieldsAnonymousAuth": false,
+                "anonymousAuthWhitelist": [
+                    "_id"
+                ]
+            },
+            "filters": [
+                {
+                    "type": "ObjectId",
+                    "disabled": false,
+                    "name": "_id",
+                    "settings": {
+                        "allOthers": false,
+                        "values": [
+                            "650aefec238ef70112216b11"
+                        ]
+                    },
+                    "linkedFields": [
+                        {
+                            "dataSourceId": "data-source-1",
+                            "fieldPath": "_id"
+                        }
+                    ]
+                }
+            ],
+            "layout": [
+                {
+                    "i": "item-1",
+                    "w": 2,
+                    "h": 2,
+                    "x": 0,
+                    "y": 2
+                }
+            ],
+            "title": "Leafsteroids - Similar Dashboard"
+        }
+    },
+    "items": {
+        "item-1": {
+            "calculatedFields": [],
+            "channels": {
+                "x": {
+                    "channelType": "category",
+                    "inferredType": "Number",
+                    "field": "Snapshots.Position.X",
+                    "type": "nominal",
+                    "transformedType": "Number",
+                    "isBinning": true,
+                    "quantitativeBinning": {
+                        "binSize": 1
+                    }
+                },
+                "y": {
+                    "channelType": "category",
+                    "inferredType": "Number",
+                    "field": "Snapshots.Position.Z",
+                    "type": "nominal",
+                    "transformedType": "Number",
+                    "isBinning": true,
+                    "quantitativeBinning": {
+                        "binSize": 1
+                    }
+                },
+                "color": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "Snapshots.Position.Y",
+                    "type": "quantitative",
+                    "transformedType": "Number",
+                    "aggregate": "count"
+                }
+            },
+            "chartType": "Heatmap",
+            "convertedFields": [],
+            "customisations": {
+                "options": {
+                    "colorContinuous": {
+                        "enabled": true,
+                        "value": {
+                            "color": "yelloworangered",
+                            "reverse": false
+                        }
+                    }
+                },
+                "conditionalFormatting": [],
+                "axes": {
+                    "x": {
+                        "categoryLabelAngle": {
+                            "enabled": true,
+                            "value": "vertical"
+                        }
+                    }
+                },
+                "channels": {
+                    "x": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "X"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "y": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Z"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "color": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "score"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "heatmap",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 1,\n      Snapshots: 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {
+                "x": [
+                    {
+                        "dimensionality": 1,
+                        "field": "Snapshots",
+                        "type": "Unwind array",
+                        "arguments": []
+                    }
+                ],
+                "y": [
+                    {
+                        "dimensionality": 1,
+                        "field": "Snapshots",
+                        "type": "Unwind array",
+                        "arguments": []
+                    }
+                ],
+                "color": [
+                    {
+                        "dimensionality": 1,
+                        "field": "Snapshots",
+                        "type": "Unwind array",
+                        "arguments": []
+                    }
+                ]
+            },
+            "sample": false,
+            "title": "Heat Map: Player Location",
+            "embedding": {}
+        }
+    },
+    "dataSources": {
+        "data-source-1": {
+            "alias": "recordings",
+            "collection": "recordings",
+            "database": "Leafsteroids",
+            "deployment": "Leafsteroids",
+            "sourceType": "cluster"
+        }
+    },
+    "queries": {}
+}
