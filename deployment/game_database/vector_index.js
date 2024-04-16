@@ -11,7 +11,7 @@
       "type": "filter"
     },
     {
-      "numDimensions": 1186,
+      "numDimensions": 598,
       "path": "similarity_vector",
       "similarity": "euclidean",
       "type": "vector"
