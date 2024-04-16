@@ -65,9 +65,9 @@ public class RecordingsController : BaseController
 
             newRecording.SimilarityVector = CalculateSimilarityVector(
                 new List<double[]>() {
-                    newRecording.StatsVector,
                     newRecording.SpeedVector,
-                    newRecording.AccelVector });
+                    newRecording.StatsVector
+                });
 
         } catch (Exception) {
             // Favor persisting Recording over setting vectors
