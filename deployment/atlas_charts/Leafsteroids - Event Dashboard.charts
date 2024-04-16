@@ -1,717 +1,762 @@
 {
-	"exportVersion": 6,
-	"dashboards": {
-		"dashboard-1": {
-			"description": "",
-			"embedding": {
-				"anonymousAuthEnabled": true,
-				"allowAllFieldsAnonymousAuth": false,
-				"anonymousAuthWhitelist": ["location", "Event._id"]
-			},
-			"filters": [{
-				"type": "String",
-				"disabled": false,
-				"name": "location",
-				"settings": {
-					"allOthers": false,
-					"values": ["US-CA"]
-				},
-				"linkedFields": [{
-					"dataSourceId": "data-source-1",
-					"fieldPath": "location"
-				}]
-			}, {
-				"type": "String",
-				"disabled": false,
-				"name": "_id",
-				"settings": {
-					"allOthers": false,
-					"values": ["mdb-internal"]
-				},
-				"linkedFields": [{
-					"dataSourceId": "data-source-1",
-					"fieldPath": "Event._id"
-				}]
-			}],
-			"layout": [{
-				"i": "item-1",
-				"w": 3,
-				"h": 2,
-				"x": 0,
-				"y": 0
-			}, {
-				"i": "item-2",
-				"w": 1,
-				"h": 1,
-				"x": 0,
-				"y": 2
-			}, {
-				"i": "item-3",
-				"w": 3,
-				"h": 3,
-				"x": 3,
-				"y": 1
-			}, {
-				"i": "item-4",
-				"w": 1,
-				"h": 1,
-				"x": 0,
-				"y": 3
-			}, {
-				"i": "item-5",
-				"w": 1,
-				"h": 1,
-				"x": 1,
-				"y": 2
-			}, {
-				"i": "item-6",
-				"w": 1,
-				"h": 1,
-				"x": 2,
-				"y": 2
-			}, {
-				"i": "item-7",
-				"w": 2,
-				"h": 1,
-				"x": 3,
-				"y": 0
-			}, {
-				"i": "item-8",
-				"w": 2,
-				"h": 1,
-				"x": 1,
-				"y": 3
-			}, {
-				"i": "item-9",
-				"w": 1,
-				"h": 1,
-				"x": 5,
-				"y": 0
-			}],
-			"title": "Leafsteroids - Event Dashboard"
-		}
-	},
-	"items": {
-		"item-1": {
-			"calculatedFields": [],
-			"channels": {
-				"x": {
-					"channelType": "category",
-					"inferredType": "Number",
-					"field": "Snapshots.PlayerPosition.X",
-					"type": "nominal",
-					"transformedType": "Number",
-					"isBinning": true,
-					"quantitativeBinning": {
-						"binSize": 1
-					}
-				},
-				"y": {
-					"channelType": "category",
-					"inferredType": "Number",
-					"field": "Snapshots.PlayerPosition.Z",
-					"type": "nominal",
-					"transformedType": "Number",
-					"isBinning": true,
-					"quantitativeBinning": {
-						"binSize": 1
-					}
-				},
-				"color": {
-					"channelType": "aggregation",
-					"inferredType": "String",
-					"field": "_id",
-					"type": "quantitative",
-					"aggregate": "count"
-				}
-			},
-			"chartType": "Heatmap",
-			"convertedFields": [],
-			"customisations": {
-				"options": {
-					"colorContinuous": {
-						"enabled": true,
-						"value": {
-							"color": "yelloworangered",
-							"reverse": false
-						}
-					}
-				},
-				"conditionalFormatting": [],
-				"axes": {
-					"x": {
-						"categoryLabelAngle": {
-							"enabled": true,
-							"value": "vertical"
-						}
-					}
-				},
-				"channels": {
-					"x": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					},
-					"y": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					},
-					"color": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				}
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "heatmap",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {
-				"x": [{
-					"dimensionality": 1,
-					"field": "Snapshots",
-					"type": "Unwind array",
-					"arguments": []
-				}],
-				"y": [{
-					"dimensionality": 1,
-					"field": "Snapshots",
-					"type": "Unwind array",
-					"arguments": []
-				}]
-			},
-			"sample": false,
-			"title": "Heat Map: Player Location",
-			"embedding": {
-				"anonymousAuthEnabled": true
-			}
-		},
-		"item-2": {
-			"calculatedFields": [],
-			"channels": {
-				"value": {
-					"channelType": "aggregation",
-					"inferredType": "String",
-					"field": "_id",
-					"type": "quantitative",
-					"aggregate": "count"
-				}
-			},
-			"chartType": "Number",
-			"convertedFields": [],
-			"customisations": {
-				"options": {},
-				"conditionalFormatting": [],
-				"axes": {},
-				"channels": {
-					"value": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				}
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "number",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Games Played",
-			"embedding": {}
-		},
-		"item-3": {
-			"calculatedFields": [],
-			"channels": {
-				"group": {
-					"channelType": "category",
-					"inferredType": "String",
-					"field": "Player.Nickname",
-					"type": "nominal",
-					"isBinning": false
-				},
-				"value": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.Score",
-					"type": "quantitative",
-					"aggregate": "max"
-				}
-			},
-			"chartType": "Data Table",
-			"convertedFields": [],
-			"customisations": {
-				"options": {
-					"totalsColumn": {
-						"enabled": false,
-						"value": null
-					}
-				},
-				"conditionalFormatting": [],
-				"axes": {},
-				"channels": {
-					"group": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Player"
-						}
-					},
-					"value": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Score"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				}
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "data-table",
-			"interactiveFiltering": "filter",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {
-				"sortModel": [{
-					"colId": "value",
-					"sort": "desc"
-				}],
-				"columnWidths": {
-					"group": 150
-				}
-			},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Leaderboard",
-			"embedding": {
-				"anonymousAuthEnabled": true
-			}
-		},
-		"item-4": {
-			"calculatedFields": [],
-			"channels": {
-				"x_series_0": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.PelletsDestroyedMedium",
-					"type": "quantitative",
-					"aggregate": "sum"
-				},
-				"x_series_1": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.PelletsDestroyedSmall",
-					"type": "quantitative",
-					"aggregate": "sum"
-				},
-				"x": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.PelletsDestroyedLarge",
-					"type": "quantitative",
-					"aggregate": "sum"
-				}
-			},
-			"chartType": "Grouped Bar",
-			"convertedFields": [],
-			"customisations": {
-				"axes": {
-					"x": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Amount"
-						}
-					}
-				},
-				"conditionalFormatting": [],
-				"channels": {
-					"x": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Large"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					},
-					"x_series_0": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Medium"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					},
-					"x_series_1": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Small"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				},
-				"options": {}
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "bar-grouped",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Pellets Destroyed",
-			"embedding": {}
-		},
-		"item-5": {
-			"calculatedFields": [],
-			"channels": {
-				"value": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.BulletsFired",
-					"type": "quantitative",
-					"aggregate": "sum"
-				}
-			},
-			"chartType": "Number",
-			"convertedFields": [],
-			"customisations": {
-				"options": {},
-				"axes": {},
-				"channels": {
-					"value": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				},
-				"conditionalFormatting": []
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "number",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Total Bullets Fired",
-			"embedding": {}
-		},
-		"item-6": {
-			"calculatedFields": [],
-			"channels": {
-				"value": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.DamageDone",
-					"type": "quantitative",
-					"aggregate": "sum"
-				}
-			},
-			"chartType": "Number",
-			"convertedFields": [],
-			"customisations": {
-				"options": {},
-				"conditionalFormatting": [],
-				"axes": {},
-				"channels": {
-					"value": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				}
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "number",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Total Damage",
-			"embedding": {}
-		},
-		"item-7": {
-			"calculatedFields": [],
-			"channels": {
-				"x": {
-					"channelType": "category",
-					"inferredType": "Date",
-					"field": "DateTime",
-					"type": "nominal",
-					"isBinning": true,
-					"temporalBinning": ["hours"]
-				},
-				"y": {
-					"channelType": "aggregation",
-					"inferredType": "String",
-					"field": "Player.Nickname",
-					"type": "quantitative",
-					"aggregate": "count"
-				}
-			},
-			"chartType": "Line",
-			"convertedFields": [{
-				"fieldPath": "DateTime",
-				"convertTo": "date",
-				"arrayParentPaths": []
-			}],
-			"customisations": {
-				"options": {
-					"colorDiscrete": {
-						"enabled": true,
-						"value": ["#196ee6"]
-					},
-					"dataMarkers": {
-						"enabled": true,
-						"value": null
-					},
-					"dataValueLabels": {
-						"enabled": true,
-						"value": null
-					}
-				},
-				"axes": {
-					"x": {
-						"categoryLabelAngle": {
-							"enabled": true,
-							"value": "vertical"
-						}
-					},
-					"y": {}
-				},
-				"channels": {
-					"x": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Time"
-						},
-						"dateTimeFormatting": {
-							"enabled": true,
-							"value": "HH:00"
-						}
-					},
-					"y": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				},
-				"conditionalFormatting": []
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "line-discrete",
-			"interactiveFiltering": "filter",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Player Activity",
-			"embedding": {}
-		},
-		"item-8": {
-			"calculatedFields": [],
-			"channels": {
-				"x": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.PowerUpBulletDamageCollected",
-					"type": "quantitative",
-					"aggregate": "sum"
-				},
-				"x_series_0": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.PowerUpBulletSpeedCollected",
-					"type": "quantitative",
-					"aggregate": "sum"
-				},
-				"x_series_1": {
-					"channelType": "aggregation",
-					"inferredType": "Number",
-					"field": "SessionStatisticsPlain.PowerUpPlayerSpeedCollected",
-					"type": "quantitative",
-					"aggregate": "sum"
-				}
-			},
-			"chartType": "Grouped Bar",
-			"convertedFields": [],
-			"customisations": {
-				"options": {},
-				"conditionalFormatting": [],
-				"axes": {
-					"x": {}
-				},
-				"channels": {
-					"x": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Bullet Damage"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					},
-					"x_series_0": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Bullet Speed"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					},
-					"x_series_1": {
-						"labelOverride": {
-							"enabled": true,
-							"value": "Player Speed"
-						},
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				}
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "bar-grouped",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "Power Ups Collected",
-			"embedding": {}
-		},
-		"item-9": {
-			"calculatedFields": [],
-			"channels": {
-				"value": {
-					"channelType": "aggregation",
-					"inferredType": "String",
-					"field": "Player.Nickname",
-					"type": "quantitative",
-					"aggregate": "distinct"
-				}
-			},
-			"chartType": "Number",
-			"convertedFields": [],
-			"customisations": {
-				"options": {},
-				"axes": {},
-				"channels": {
-					"value": {
-						"numberFormatting": {
-							"enabled": true,
-							"value": "Default"
-						}
-					}
-				},
-				"conditionalFormatting": []
-			},
-			"dashboardId": "dashboard-1",
-			"dataSourceId": "data-source-1",
-			"description": "",
-			"filters": [],
-			"iconValue": "number",
-			"interactiveFiltering": "highlight",
-			"itemType": "chart",
-			"lookupFields": [],
-			"meta": {},
-			"missedFields": [],
-			"query": null,
-			"queryId": null,
-			"reductions": {},
-			"sample": false,
-			"title": "# Unique Players",
-			"embedding": {}
-		}
-	},
-	"dataSources": {
-		"data-source-1": {
-			"alias": "recordings",
-			"collection": "recordings",
-			"database": "Leafsteroids",
-			"deployment": "demo",
-			"sourceType": "cluster"
-		}
-	},
-	"queries": {}
+    "exportVersion": 7,
+    "dashboards": {
+        "dashboard-1": {
+            "description": "Leafsteroids PROD",
+            "embedding": {
+                "anonymousAuthEnabled": true,
+                "allowAllFieldsAnonymousAuth": false,
+                "anonymousAuthWhitelist": [
+                    "location",
+                    "Event._id"
+                ]
+            },
+            "filters": [
+                {
+                    "type": "String",
+                    "disabled": false,
+                    "name": "location",
+                    "settings": {
+                        "allOthers": false,
+                        "values": [
+                            "US-CA"
+                        ]
+                    },
+                    "linkedFields": [
+                        {
+                            "dataSourceId": "data-source-1",
+                            "fieldPath": "location"
+                        }
+                    ]
+                },
+                {
+                    "type": "String",
+                    "disabled": false,
+                    "name": "_id",
+                    "settings": {
+                        "allOthers": false,
+                        "values": [
+                            "mdb-internal"
+                        ]
+                    },
+                    "linkedFields": [
+                        {
+                            "dataSourceId": "data-source-1",
+                            "fieldPath": "Event._id"
+                        }
+                    ]
+                }
+            ],
+            "layout": [
+                {
+                    "i": "item-1",
+                    "w": 1,
+                    "h": 1,
+                    "x": 0,
+                    "y": 2
+                },
+                {
+                    "i": "item-2",
+                    "w": 3,
+                    "h": 3,
+                    "x": 3,
+                    "y": 1
+                },
+                {
+                    "i": "item-3",
+                    "w": 1,
+                    "h": 1,
+                    "x": 0,
+                    "y": 3
+                },
+                {
+                    "i": "item-4",
+                    "w": 1,
+                    "h": 1,
+                    "x": 1,
+                    "y": 2
+                },
+                {
+                    "i": "item-5",
+                    "w": 1,
+                    "h": 1,
+                    "x": 2,
+                    "y": 2
+                },
+                {
+                    "i": "item-6",
+                    "w": 2,
+                    "h": 1,
+                    "x": 3,
+                    "y": 0
+                },
+                {
+                    "i": "item-7",
+                    "w": 2,
+                    "h": 1,
+                    "x": 1,
+                    "y": 3
+                },
+                {
+                    "i": "item-8",
+                    "w": 1,
+                    "h": 1,
+                    "x": 5,
+                    "y": 0
+                },
+                {
+                    "i": "item-9",
+                    "w": 3,
+                    "h": 2,
+                    "x": 0,
+                    "y": 0
+                }
+            ],
+            "title": "Leafsteroids - Event Dashboard"
+        }
+    },
+    "items": {
+        "item-8": {
+            "calculatedFields": [],
+            "channels": {
+                "value": {
+                    "channelType": "aggregation",
+                    "inferredType": "String",
+                    "field": "Player.Nickname",
+                    "type": "quantitative",
+                    "aggregate": "distinct"
+                }
+            },
+            "chartType": "Number",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {},
+                "channels": {
+                    "value": {
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "number",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"Player.Nickname\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "# Unique Players",
+            "embedding": {}
+        },
+        "item-2": {
+            "calculatedFields": [],
+            "channels": {
+                "group": {
+                    "channelType": "category",
+                    "inferredType": "String",
+                    "field": "Player.Nickname",
+                    "type": "nominal",
+                    "isBinning": false
+                },
+                "value": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.Score",
+                    "type": "quantitative",
+                    "aggregate": "max"
+                }
+            },
+            "chartType": "Data Table",
+            "convertedFields": [],
+            "customisations": {
+                "options": {
+                    "totalsColumn": {
+                        "enabled": false,
+                        "value": null
+                    }
+                },
+                "conditionalFormatting": [],
+                "axes": {},
+                "channels": {
+                    "group": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Player"
+                        }
+                    },
+                    "value": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Score"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "data-table",
+            "interactiveFiltering": "filter",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {
+                "sortModel": [
+                    {
+                        "colId": "value",
+                        "sort": "desc"
+                    }
+                ],
+                "columnWidths": {
+                    "group": 150
+                }
+            },
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"SessionStatisticsPlain.Score\": 1,\n      \"Player.Nickname\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Leaderboard",
+            "embedding": {}
+        },
+        "item-9": {
+            "calculatedFields": [],
+            "channels": {
+                "x": {
+                    "channelType": "category",
+                    "inferredType": "Number",
+                    "field": "Snapshots.Position.X",
+                    "type": "nominal",
+                    "transformedType": "Number",
+                    "isBinning": true,
+                    "quantitativeBinning": {
+                        "binSize": 1
+                    }
+                },
+                "y": {
+                    "channelType": "category",
+                    "inferredType": "Number",
+                    "field": "Snapshots.Position.Z",
+                    "type": "nominal",
+                    "transformedType": "Number",
+                    "isBinning": true,
+                    "quantitativeBinning": {
+                        "binSize": 1
+                    }
+                },
+                "color": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "Snapshots.Position.Y",
+                    "type": "quantitative",
+                    "transformedType": "Number",
+                    "aggregate": "count"
+                }
+            },
+            "chartType": "Heatmap",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {
+                    "x": {
+                        "categoryLabelAngle": {
+                            "enabled": true,
+                            "value": "vertical"
+                        }
+                    }
+                },
+                "channels": {
+                    "x": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "X"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "y": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Y"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "color": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "score"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "heatmap",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      Snapshots: 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {
+                "x": [
+                    {
+                        "dimensionality": 1,
+                        "field": "Snapshots",
+                        "type": "Unwind array",
+                        "arguments": []
+                    }
+                ],
+                "y": [
+                    {
+                        "dimensionality": 1,
+                        "field": "Snapshots",
+                        "type": "Unwind array",
+                        "arguments": []
+                    }
+                ],
+                "color": [
+                    {
+                        "dimensionality": 1,
+                        "field": "Snapshots",
+                        "type": "Unwind array",
+                        "arguments": []
+                    }
+                ]
+            },
+            "sample": false,
+            "title": "Heat Map: Player Location",
+            "embedding": {}
+        },
+        "item-1": {
+            "calculatedFields": [],
+            "channels": {
+                "value": {
+                    "channelType": "aggregation",
+                    "inferredType": "String",
+                    "field": "_id",
+                    "type": "quantitative",
+                    "aggregate": "count"
+                }
+            },
+            "chartType": "Number",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {},
+                "channels": {
+                    "value": {
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "number",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 1,\n      location: 1,\n      \"Event._id\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Games Played",
+            "embedding": {}
+        },
+        "item-4": {
+            "calculatedFields": [],
+            "channels": {
+                "value": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.BulletsFired",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                }
+            },
+            "chartType": "Number",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {},
+                "channels": {
+                    "value": {
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "number",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"SessionStatisticsPlain.BulletsFired\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Total Bullets Fired",
+            "embedding": {}
+        },
+        "item-3": {
+            "calculatedFields": [],
+            "channels": {
+                "x_series_0": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.PelletsDestroyedMedium",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                },
+                "x_series_1": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.PelletsDestroyedSmall",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                },
+                "x": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.PelletsDestroyedLarge",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                }
+            },
+            "chartType": "Grouped Bar",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {
+                    "x": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Amount"
+                        }
+                    }
+                },
+                "channels": {
+                    "x_series_0": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Medium"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "x_series_1": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Small"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "x": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Large"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "bar-grouped",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"SessionStatisticsPlain.PelletsDestroyedSmall\": 1,\n      \"SessionStatisticsPlain.PelletsDestroyedMedium\": 1,\n      \"SessionStatisticsPlain.PelletsDestroyedLarge\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Pellets Destroyed",
+            "embedding": {}
+        },
+        "item-7": {
+            "calculatedFields": [],
+            "channels": {
+                "x": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.PowerUpBulletDamageCollected",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                },
+                "x_series_0": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.PowerUpBulletSpeedCollected",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                },
+                "x_series_1": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.PowerUpPlayerSpeedCollected",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                }
+            },
+            "chartType": "Grouped Bar",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {
+                    "x": {}
+                },
+                "channels": {
+                    "x": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Bullet Damage"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "x_series_0": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Bullet Speed"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    },
+                    "x_series_1": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Player Speed"
+                        },
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "bar-grouped",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"SessionStatisticsPlain.PowerUpBulletDamageCollected\": 1,\n      \"SessionStatisticsPlain.PowerUpBulletSpeedCollected\": 1,\n      \"SessionStatisticsPlain.PowerUpPlayerSpeedCollected\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Power Ups Collected",
+            "embedding": {}
+        },
+        "item-6": {
+            "calculatedFields": [],
+            "channels": {
+                "x": {
+                    "channelType": "category",
+                    "inferredType": "Date",
+                    "field": "DateTime",
+                    "type": "nominal",
+                    "isBinning": true,
+                    "temporalBinning": [
+                        "hours"
+                    ]
+                },
+                "y": {
+                    "channelType": "aggregation",
+                    "inferredType": "String",
+                    "field": "Player.Nickname",
+                    "type": "quantitative",
+                    "aggregate": "count"
+                }
+            },
+            "chartType": "Line",
+            "convertedFields": [
+                {
+                    "fieldPath": "DateTime",
+                    "convertTo": "date",
+                    "arrayParentPaths": []
+                }
+            ],
+            "customisations": {
+                "options": {
+                    "colorDiscrete": {
+                        "enabled": true,
+                        "value": [
+                            "#196ee6"
+                        ]
+                    },
+                    "dataMarkers": {
+                        "enabled": true,
+                        "value": null
+                    },
+                    "dataValueLabels": {
+                        "enabled": true,
+                        "value": null
+                    }
+                },
+                "conditionalFormatting": [],
+                "axes": {
+                    "x": {
+                        "categoryLabelAngle": {
+                            "enabled": true,
+                            "value": "vertical"
+                        }
+                    },
+                    "y": {}
+                },
+                "channels": {
+                    "x": {
+                        "labelOverride": {
+                            "enabled": true,
+                            "value": "Time"
+                        },
+                        "dateTimeFormatting": {
+                            "enabled": true,
+                            "value": "HH:00"
+                        }
+                    },
+                    "y": {
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "line-discrete",
+            "interactiveFiltering": "filter",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"Player.Nickname\": 1,\n      DateTime: 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Player Activity",
+            "embedding": {}
+        },
+        "item-5": {
+            "calculatedFields": [],
+            "channels": {
+                "value": {
+                    "channelType": "aggregation",
+                    "inferredType": "Number",
+                    "field": "SessionStatisticsPlain.DamageDone",
+                    "type": "quantitative",
+                    "aggregate": "sum"
+                }
+            },
+            "chartType": "Number",
+            "convertedFields": [],
+            "customisations": {
+                "options": {},
+                "conditionalFormatting": [],
+                "axes": {},
+                "channels": {
+                    "value": {
+                        "numberFormatting": {
+                            "enabled": true,
+                            "value": "Default"
+                        }
+                    }
+                }
+            },
+            "dashboardId": "dashboard-1",
+            "dataSourceId": "data-source-1",
+            "description": "",
+            "filters": [],
+            "iconValue": "number",
+            "interactiveFiltering": "highlight",
+            "itemType": "chart",
+            "lookupFields": [],
+            "meta": {},
+            "missedFields": [],
+            "query": "[\n  {\n    $project: {\n      _id: 0,\n      location: 1,\n      \"Event._id\": 1,\n      \"SessionStatisticsPlain.DamageDone\": 1\n    }\n  }\n]",
+            "queryId": null,
+            "reductions": {},
+            "sample": false,
+            "title": "Total Damage",
+            "embedding": {}
+        }
+    },
+    "dataSources": {
+        "data-source-1": {
+            "alias": "recordings",
+            "collection": "recordings",
+            "database": "Leafsteroids",
+            "deployment": "Leafsteroids",
+            "sourceType": "cluster"
+        }
+    },
+    "queries": {}
 }
