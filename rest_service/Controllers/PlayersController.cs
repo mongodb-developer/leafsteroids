@@ -53,7 +53,7 @@ public class PlayersController : BaseController
             var playerUnique = _playersUniqueCollection
                 .Find(Builders<PlayerUnique>
                     .Filter.Eq(x => x.Name, playerRequest.Name))
-                .First<PlayerUnique>();
+                .FirstOrDefault<PlayerUnique>();
 
             if (playerUnique != null)
                 filter &= Builders<Player>.Filter.Eq(x => x.Location, playerUnique.Location);
