@@ -119,6 +119,19 @@ else
                     <input id="eventName" @bind="Event.Name" name="" class="form-control"
                            placeholder="Friendly description" type="text">
                 </div> <!-- form-group// -->
+
+                <div class="form-group input-group">
+                    
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fa fa-comment"></i>
+                        </span>
+                    </div>
+                    
+                    <input id="emailRequired" @bind="Event.EmailRequired" class="input.largerCheckbox" name="" type="checkbox" style="width:30px;height:30px">
+                    <label for="emailRequired">&nbsp;eMail required</label>
+                </div> <!-- form-group// -->
+
                 <!-- TO DO: Obtain location from autocomplete box -->
 
                 <div class="form-group">
@@ -172,7 +185,7 @@ else
 
             // Get Player
             var playerFilter = new Dictionary<string, string>
-{
+            {
                 { "name", _name }
             };
 
@@ -227,9 +240,10 @@ else
         else
         {
             Event.Location = _location; // TO-DO
+            Console.WriteLine("############ Event.EmailRequired= " + Event.EmailRequired.ToString());
 
             var request = new RestRequest(Constants.RestServiceEndpointEvents).AddJsonBody(Event);
-            await _restClient.PostAsync<Player>(request);
+            await _restClient.PostAsync<Event>(request);
 
             var newDestination = UrlForPlayerAndEvent(Event.Location, Player.Name, Event.Id);
             NavigationManager!.NavigateTo(newDestination);

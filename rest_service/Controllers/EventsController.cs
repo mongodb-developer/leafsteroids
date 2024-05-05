@@ -38,14 +38,15 @@ public class EventsController : BaseController
     }
 
     [HttpPost(Name = "CreateEvent")]
-    public async Task<Event> CreateEvent(EventRequest eventRequest)
+    public async Task<EventResponse> CreateEvent(EventRequest eventRequest)
     {
         Logger.LogDebug($"Route {nameof(CreateEvent)} called.");
         var newEvent = new Event()
         {
             Id = eventRequest.Id,
             Name = eventRequest.Name,
-            Location = eventRequest.Location
+            Location = eventRequest.Location,
+            EmailRequired = eventRequest.EmailRequired
         };
         try
         {
@@ -58,6 +59,6 @@ public class EventsController : BaseController
         }
 
 
-        return newEvent;
+        return new EventResponse(newEvent);
     }
 }
