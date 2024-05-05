@@ -196,10 +196,22 @@
             return;
         }
 
+        if ((bool)_event.EmailRequired && string.IsNullOrEmpty(_player.Email))
+        {
+            _errorMessage = "[please provide an email]";
+            return;
+        }
+
         _errorMessage = "";
 
-        //TO-DO ADD FILTER FOR PLAYER!!!!
-        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(Constants.RestServiceEndpointPlayers);
+        // Get Player
+        var playerFilter = new Dictionary<string, string>
+        {
+            { "name", _player.Name }
+        };
+
+        string playersUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointPlayers, playerFilter);
+        var playersUnique = await _restClient.GetJsonAsync<List<Player>>(playersUrlWithQuery);
         var filteredPlayersUnique = playersUnique!.FindAll(p => p.Name!.Equals(_player.Name));
         var existingPlayer = filteredPlayersUnique.FirstOrDefault();
 
