@@ -106,7 +106,7 @@
                     </span>
                 </div>
                 <input id="email" @bind="_player.Email" name="" class="form-control"
-                       placeholder="E-Mail for prizes (optional)" type="email"
+                       placeholder="@hintEmail"
                        pattern="/^[a-zA-Z0-9._%+-]+@@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/">
                 <!-- @@ escapes 'at' symbol in razor -->
             </div> <!-- form-group// -->
@@ -152,6 +152,10 @@
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
+    private const string hintEmailRequired = "E-Mail for prizes";
+    private const string hintEmailNotRequired = "E-Mail for prizes (optional)";
+    private string hintEmail = hintEmailNotRequired;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -186,6 +190,9 @@
         var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
 
         _event = events.FirstOrDefault();
+
+        if (_event != null && _event.EmailRequired)
+            hintEmail = hintEmailRequired;
     }
 
     private async Task CreatePlayer()
