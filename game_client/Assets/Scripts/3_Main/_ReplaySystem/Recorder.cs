@@ -44,7 +44,9 @@ namespace _3_Main._ReplaySystem
         {
             var snapshot = new Snapshot
             {
-                Position = new Position(Helper.InvertY(player!.transform.position))
+                Position = new Position(Helper.InvertY(player!.transform.position)),
+                SessionStatisticsPlain = SessionStatistics.Instance!.GetPlainCopy()
+
             };
             _snapshots!.Add(snapshot);
         }
