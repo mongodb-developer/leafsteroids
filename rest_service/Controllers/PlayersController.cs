@@ -59,11 +59,11 @@ public class PlayersController : BaseController
                 filter &= Builders<Player>.Filter.Eq(x => x.Location, playerUnique.Location);
         }
 
-        var players = await _playersCollection.FindAsync(filter, new FindOptions<Player,Player>() { Limit = 10 });
+        var players = await _playersCollection.FindAsync(filter, new FindOptions<Player, Player>() { Limit = 10 });
 
         var playersResponse =
             players.ToList().Select(player => new PlayerResponse(player)).ToList();
-            
+
         return playersResponse;
     }
 
@@ -156,7 +156,7 @@ public class PlayersController : BaseController
             try
             {
                 await _playersCollection.InsertOneAsync(session, player);
-                
+
                 await _playersUniqueCollection.InsertOneAsync(session, playerUnique);
 
                 if (session.IsInTransaction)
@@ -205,7 +205,8 @@ public class PlayersController : BaseController
             return arrMatches.GetElement("matches").Value.AsBsonArray
                              .Select(x => x.ToString())
                              .ToList();
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Logger.LogError("GetPlayerAutoComplete did not find matches");
             Logger.LogError(e.Message);
