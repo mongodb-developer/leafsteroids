@@ -1,9 +1,14 @@
 # Leafsteroids
 
-This repository contains the MongoDB `Leafsteroids` demo.  
+This repository contains the MongoDB `Leafsteroids` demo. A game developed by the MongoDB team, featuring a 2D arcade-style space shooter. Built with Unity3D and .NET, it includes a game client, an ASP.NET Web API, and a website using Blazor pages. Players aim to destroy bricks (asteroids) and achieve the highest score within 60 seconds by collecting power-ups and destroying targets quickly, while competing against each other within the concept of an event (tournament). The backend uses MongoDB Atlas for data storage, including Atlas Vector Search to match players based on gameplay style, score, and speed. The game is playable on tablets, mobiles, and desktop/laptop, with real-time scoreboards for competitive play.
+
 Follow the instructions in this README to run a clone of your own to get your MongoDB development jump started.
 
+You can also register and create your own event to share with your friends and play live anywhere [here](https://leafsteroids.net/).
+
 ## Architecture
+
+![Leafsteroids Architecture](./arch_diagram.png)
 
 The demo and repository consist of the following parts:
 
