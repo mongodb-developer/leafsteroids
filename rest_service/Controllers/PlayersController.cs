@@ -47,23 +47,33 @@ public class PlayersController : BaseController
         if (!string.IsNullOrEmpty(playerRequest.Id))
             filter &= Builders<Player>.Filter.Eq("Id", playerRequest.Id);
 
+        // Projection to only include Name and Age fields
+        var projection = Builders<Player>.Projection
+                         .Exclude("Email");
+
         // If Name but no Location, then get Location from players_unique
         if (!string.IsNullOrEmpty(playerRequest.Name) && string.IsNullOrEmpty(playerRequest.Location))
         {
+
+            // Projection to only include Name and Age fields
+            var projectionUnique = Builders<PlayerUnique>.Projection
+                             .Exclude("Email");
+
             var playerUnique = _playersUniqueCollection
                 .Find(Builders<PlayerUnique>
                     .Filter.Eq(x => x.Name, playerRequest.Name))
+                .Project<PlayerUnique>(projectionUnique)
                 .FirstOrDefault<PlayerUnique>();
 
             if (playerUnique != null)
                 filter &= Builders<Player>.Filter.Eq(x => x.Location, playerUnique.Location);
         }
 
-        var players = await _playersCollection.FindAsync(filter, new FindOptions<Player,Player>() { Limit = 10 });
+        var players = await _playersCollection.FindAsync(filter, new FindOptions<Player, Player>() { Limit = 10, Projection = projection });
 
         var playersResponse =
             players.ToList().Select(player => new PlayerResponse(player)).ToList();
-            
+
         return playersResponse;
     }
 
@@ -156,7 +166,7 @@ public class PlayersController : BaseController
             try
             {
                 await _playersCollection.InsertOneAsync(session, player);
-                
+
                 await _playersUniqueCollection.InsertOneAsync(session, playerUnique);
 
                 if (session.IsInTransaction)
@@ -205,7 +215,8 @@ public class PlayersController : BaseController
             return arrMatches.GetElement("matches").Value.AsBsonArray
                              .Select(x => x.ToString())
                              .ToList();
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Logger.LogError("GetPlayerAutoComplete did not find matches");
             Logger.LogError(e.Message);
@@ -307,6 +318,11 @@ public class PlayersController : BaseController
                                         }
                                     }
                                 }
+                            }),
+                            new BsonDocument("$project", new BsonDocument
+                            {
+                                { "Email", 0 },
+
                             })
                         }
                     },
