@@ -10,7 +10,5 @@ RUN dotnet publish -c Release -o /publish
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
 WORKDIR /publish
 COPY --from=build-env /publish .
-COPY --from=build-env /src/.env .
-RUN ls
 EXPOSE 80
 ENTRYPOINT ["dotnet", "RestService.dll"]
