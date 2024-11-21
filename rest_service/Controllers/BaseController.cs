@@ -15,8 +15,18 @@ namespace RestService.Controllers
             Logger = logger;
             DotEnv.Load();
             var envVars = DotEnv.Read();
-            var connectionString = envVars[Constants.ConnectionStringKey];
-            var databaseName = envVars[Constants.DatabaseNameKey];
+
+            String connectionString;
+            String databaseName;
+
+            if(envVars.Count > 0) {
+              connectionString = envVars[Constants.ConnectionStringKey];
+              databaseName = envVars[Constants.DatabaseNameKey];
+            } else {
+              connectionString = System.Environment.GetEnvironmentVariable(Constants.ConnectionStringKey);
+              databaseName = System.Environment.GetEnvironmentVariable(Constants.DatabaseNameKey);
+            }
+
             Client = new MongoClient(connectionString);
             Database = Client.GetDatabase(databaseName);
         }
