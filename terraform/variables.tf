@@ -30,3 +30,36 @@ variable "account_id" {
 variable "connection_arn" {
   description = "The ARN of the CodePipeline connection to the GitHub repo"
 }
+
+variable "rest_service_ip" {
+  description = "The IP address of the REST service"
+}
+
+variable "rest_service_port" {
+  description = "The port of the REST service"
+}
+
+variable "atlas_chart_embed_dashboard_url" {
+  description = "The URL of the embedded Atlas dashboard"
+}
+
+variable "atlas_chart_id_event" {
+  description = "The ID of the event chart"
+}
+
+variable "atlas_chart_id_player" {
+  description = "The ID of the player chart"
+}
+
+variable "atlas_chart_id_home" {
+  description = "The ID of the home chart"
+}
+
+variable "atlas_chart_id_similar" {
+  description = "The ID of the similar chart"
+}
+
+variable "game_client_port" {
+  description = "The port of the game client"
+  default     = 80
+}

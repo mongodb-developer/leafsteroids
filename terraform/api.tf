@@ -1,10 +1,10 @@
 locals {
-  name = "leafsteroids-api-${var.environment}"
+  api_name = "leafsteroids-api-${var.environment}"
 }
 
 resource "aws_ecr_repository" "leafsteroids-api" {
   image_tag_mutability = "MUTABLE"
-  name                 = "leafsteroids/${local.name}"
+  name                 = "leafsteroids/${local.api_name}"
   tags                 = local.tags
 
   encryption_configuration {
@@ -36,7 +36,7 @@ resource "aws_ecr_lifecycle_policy" "leafsteroids-api" {
       ]
     }
   )
-  repository = "leafsteroids/${local.name}"
+  repository = "leafsteroids/${local.api_name}"
 }
 
 resource "aws_ecs_cluster" "leafsteroids_api" {
@@ -78,7 +78,7 @@ resource "aws_iam_role" "leafsteroids_api_codebuild" {
   description           = null
   force_detach_policies = false
   max_session_duration  = 3600
-  name                  = "codebuild-${local.name}"
+  name                  = "codebuild-${local.api_name}"
   path                  = "/"
 
   tags = local.tags
@@ -103,19 +103,19 @@ resource "aws_iam_role" "leafsteroids_api_codepipeline" {
   description           = null
   force_detach_policies = false
   max_session_duration  = 3600
-  name                  = "codepipeline-${local.name}"
+  name                  = "codepipeline-${local.api_name}"
   path                  = "/"
 
   tags = local.tags
 }
 
 resource "aws_cloudwatch_log_group" "leafsteroids_api" {
-  name = "/aws/codebuild/${local.name}"
+  name = "/aws/codebuild/${local.api_name}"
   tags = local.tags
 }
 
 resource "aws_iam_role_policy" "leafsteroids_api_codepipeline" {
-  name = "codepipeline-${local.name}"
+  name = "codepipeline-${local.api_name}"
   role = aws_iam_role.leafsteroids_api_codepipeline.name
 
   policy = jsonencode(
@@ -311,7 +311,7 @@ resource "aws_iam_role_policy" "leafsteroids_api_codepipeline" {
 }
 
 resource "aws_iam_role_policy" "leafsteroids_api_codebuild" {
-  name = "codebuild-${local.name}"
+  name = "codebuild-${local.api_name}"
   role = aws_iam_role.leafsteroids_api_codebuild.id
 
   policy = jsonencode(
@@ -374,7 +374,7 @@ resource "aws_iam_role" "leafsteroids_api" {
   description           = null
   force_detach_policies = false
   max_session_duration  = 3600
-  name                  = "ecsTaskExecutionRole-${local.name}"
+  name                  = "ecsTaskExecutionRole-${local.api_name}"
   path                  = "/"
 
   tags = local.tags
@@ -436,13 +436,13 @@ resource "aws_ecs_task_definition" "leafsteroids-api" {
           secretOptions = []
         }
         mountPoints = []
-        name        = local.name
+        name        = local.api_name
         portMappings = [
           {
             appProtocol   = "http"
             containerPort = 80
             hostPort      = 80
-            name          = "${local.name}-80-tcp"
+            name          = "${local.api_name}-80-tcp"
             protocol      = "tcp"
           },
         ]
@@ -454,7 +454,7 @@ resource "aws_ecs_task_definition" "leafsteroids-api" {
   )
   cpu                = "1024"
   execution_role_arn = aws_iam_role.leafsteroids_api.arn
-  family             = local.name
+  family             = local.api_name
   memory             = "2048"
   network_mode       = "awsvpc"
   requires_compatibilities = [
@@ -527,7 +527,7 @@ resource "aws_ecs_service" "leafsteroids-api" {
   enable_execute_command             = false
   health_check_grace_period_seconds  = 0
   launch_type                        = "FARGATE"
-  name                               = local.name
+  name                               = local.api_name
   propagate_tags                     = "NONE"
   scheduling_strategy                = "REPLICA"
   tags                               = local.tags
@@ -554,7 +554,7 @@ resource "aws_ecs_service" "leafsteroids-api" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.leafsteroids_api.arn
-    container_name   = local.name
+    container_name   = local.api_name
     container_port   = 80
   }
 
@@ -568,7 +568,7 @@ resource "aws_codebuild_project" "leafsteroids_api" {
   badge_url            = null
   build_timeout        = 60
   description          = null
-  name                 = local.name
+  name                 = local.api_name
   project_visibility   = "PRIVATE"
   public_project_alias = null
   queued_timeout       = 480
@@ -582,7 +582,7 @@ resource "aws_codebuild_project" "leafsteroids_api" {
     bucket_owner_access    = null
     encryption_disabled    = false
     location               = null
-    name                   = local.name
+    name                   = local.api_name
     namespace_type         = null
     override_artifact_name = false
     packaging              = "NONE"
@@ -617,7 +617,7 @@ resource "aws_codebuild_project" "leafsteroids_api" {
     environment_variable {
       name  = "API_IMAGE_REPO_NAME"
       type  = "PLAINTEXT"
-      value = "leafsteroids/${local.name}"
+      value = "leafsteroids/${local.api_name}"
     }
   }
 
@@ -662,7 +662,7 @@ resource "aws_codebuild_project" "leafsteroids_api" {
               - docker push $API_REPOSITORY_URI:latest
               - docker push $API_REPOSITORY_URI:$IMAGE_TAG
               - echo Writing image definitions file...
-              - printf '[{"name":"${local.name}","imageUri":"%s"}]' $API_REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+              - printf '[{"name":"${local.api_name}","imageUri":"%s"}]' $API_REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
         artifacts:
             files: 
               - imagedefinitions.json
@@ -676,14 +676,14 @@ resource "aws_codebuild_project" "leafsteroids_api" {
 }
 
 resource "aws_s3_bucket" "leafsteroids_api" {
-  bucket = local.name
+  bucket = local.api_name
 
   tags = local.tags
 }
 
 resource "aws_codepipeline" "leafsteroids_api" {
   execution_mode = "QUEUED"
-  name           = local.name
+  name           = local.api_name
   pipeline_type  = "V2"
   role_arn       = aws_iam_role.leafsteroids_api_codepipeline.arn
   tags           = local.tags
@@ -725,7 +725,7 @@ resource "aws_codepipeline" "leafsteroids_api" {
     action {
       category = "Build"
       configuration = {
-        "ProjectName" = local.name
+        "ProjectName" = local.api_name
       }
       input_artifacts = [
         "SourceArtifact",
@@ -790,7 +790,7 @@ resource "aws_lb_target_group" "leafsteroids_api" {
   load_balancing_algorithm_type     = "round_robin"
   load_balancing_anomaly_mitigation = "off"
   load_balancing_cross_zone_enabled = "use_load_balancer_configuration"
-  name                              = local.name
+  name                              = local.api_name
   name_prefix                       = null
   port                              = 80
   protocol                          = "HTTP"
@@ -849,7 +849,7 @@ resource "aws_lb" "leafsteroids_api" {
   internal                                                     = false
   ip_address_type                                              = "ipv4"
   load_balancer_type                                           = "application"
-  name                                                         = local.name
+  name                                                         = local.api_name
   name_prefix                                                  = null
   preserve_host_header                                         = false
   security_groups = [

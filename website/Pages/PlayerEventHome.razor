@@ -195,8 +195,19 @@
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
+            if (envVars.Count == 0)
+            {
+                envVars["ATLAS_CHART_ID_PLAYER"] = System.Environment.GetEnvironmentVariable(
+                    "ATLAS_CHART_ID_PLAYER"
+                );
+                envVars["REST_SERVICE_PORT"] = System.Environment.GetEnvironmentVariable(
+                    "REST_SERVICE_PORT"
+                );
+                envVars["GAME_CLIENT_PORT"] = System.Environment.GetEnvironmentVariable(
+                    "GAME_CLIENT_PORT"
+                );
+            }
             var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
-
             var serviceIP = envVars["REST_SERVICE_IP"];
             var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
 

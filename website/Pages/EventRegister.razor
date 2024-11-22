@@ -169,6 +169,12 @@
         await SetEventFromUrlParameters();
         DotEnv.Load();
         var envVars = DotEnv.Read();
+        if (envVars.Count == 0)
+        {
+            envVars["ATLAS_CHART_ID_HOME"] = System.Environment.GetEnvironmentVariable(
+                "ATLAS_CHART_ID_HOME"
+            );
+        }
         var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
 
         _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
