@@ -63,3 +63,8 @@ variable "game_client_port" {
   description = "The port of the game client"
   default     = 80
 }
+
+variable "branch_name" {
+  description = "The name of the branch"
+}
+

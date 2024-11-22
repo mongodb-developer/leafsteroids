@@ -731,7 +731,7 @@ resource "aws_codepipeline" "leafsteroids_website" {
     action {
       category = "Source"
       configuration = {
-        "BranchName"           = "feature/dockerize"
+        "BranchName"           = var.branch_name
         "ConnectionArn"        = var.connection_arn
         "DetectChanges"        = "false"
         "FullRepositoryId"     = "mongodb-developer/leafsteroids"
