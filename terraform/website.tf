@@ -907,3 +907,18 @@ resource "aws_lb_listener" "leafsteroids_website" {
     type             = "forward"
   }
 }
+
+resource "aws_lb_listener" "leafsteroids_website_https" {
+  load_balancer_arn = aws_lb.leafsteroids_website.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = aws_acm_certificate.leafsteroids.arn
+
+  tags = local.tags
+  default_action {
+    target_group_arn = aws_lb_target_group.leafsteroids_website.arn
+    type             = "forward"
+  }
+}
+
