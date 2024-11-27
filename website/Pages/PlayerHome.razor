@@ -201,9 +201,6 @@ else
             Events = evts.ToList<Event>();
 
             ready = Player != null && Events != null;
-
-            DotEnv.Load();
-            var envVars = DotEnv.Read();
         }
         catch (Exception e)
         {
