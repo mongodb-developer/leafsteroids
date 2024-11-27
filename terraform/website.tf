@@ -50,7 +50,7 @@ resource "aws_ecs_cluster" "leafsteroids_website" {
 }
 
 resource "aws_secretsmanager_secret" "leafsteroids_website" {
-  name = "leafsteroids/website-prod"
+  name = "leafsteroids/website-prod-${var.environment}"
   tags = local.tags
 }
 
@@ -808,7 +808,7 @@ resource "aws_codepipeline" "leafsteroids_website" {
       push {
         branches {
           includes = [
-            "feature/dockerize",
+            var.branch_name,
           ]
         }
       }
