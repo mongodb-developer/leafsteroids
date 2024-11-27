@@ -82,9 +82,6 @@
 
             string recordingUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordings, recordingFilter);
             recordingAsString = await _restClient.GetJsonAsync<string>(recordingUrlWithQuery);
-
-            DotEnv.Load();
-            var envVars = DotEnv.Read();
         }
         catch (Exception e)
         {

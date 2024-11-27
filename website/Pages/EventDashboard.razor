@@ -97,6 +97,12 @@ else
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
+            if (envVars.Count == 0)
+            {
+                envVars["ATLAS_CHART_ID_EVENT"] = System.Environment.GetEnvironmentVariable(
+                    "ATLAS_CHART_ID_EVENT"
+                );
+            }
             var atlasChartIdEvent = envVars["ATLAS_CHART_ID_EVENT"];
             _chartUrl = ChartsUrl.CreateEventUrl(atlasChartIdEvent, _event!.Id!, _event.Location!);
         }

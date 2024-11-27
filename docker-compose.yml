@@ -1,0 +1,14 @@
+services:
+  rest_service:
+    build: ./rest_service/
+    ports:
+      - "8000:80"
+    volumes:
+      - ./rest_service/.env:/publish/.env
+
+  website:
+    build: ./website/
+    ports:
+      - "80:80"
+    volumes:
+      - ./website/.env:/publish/.env

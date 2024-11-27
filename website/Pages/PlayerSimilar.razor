@@ -336,6 +336,12 @@
 
             DotEnv.Load();
             var envVars = DotEnv.Read();
+            if (envVars.Count == 0)
+            {
+                envVars["ATLAS_CHART_ID_SIMILAR"] = System.Environment.GetEnvironmentVariable(
+                    "ATLAS_CHART_ID_SIMILAR"
+                );
+            }
             _atlasChartIdSimilar = envVars["ATLAS_CHART_ID_SIMILAR"];
         }
         catch (Exception e)
