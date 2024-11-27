@@ -50,7 +50,7 @@ resource "aws_ecs_cluster" "leafsteroids_api" {
 }
 
 resource "aws_secretsmanager_secret" "leafsteroids_api" {
-  name = "leafsteroids/api-prod"
+  name = "leafsteroids/api-prod-${var.environment}"
   tags = local.tags
 }
 
@@ -776,7 +776,7 @@ resource "aws_codepipeline" "leafsteroids_api" {
       push {
         branches {
           includes = [
-            "feature/dockerize",
+            var.branch_name,
           ]
         }
       }
