@@ -52,6 +52,18 @@ public class RecordingsController : BaseController
                     X = dto.Position.X,
                     Y = dto.Position.Y,
                     Z = dto.Position.Z
+                },
+                SessionStatisticsPlain = new SessionStatisticsPlain
+                {
+                    Score = dto.SessionStatisticsPlain.Score,
+                    DamageDone = dto.SessionStatisticsPlain.DamageDone,
+                    BulletsFired = dto.SessionStatisticsPlain.BulletsFired,
+                    PelletsDestroyedLarge = dto.SessionStatisticsPlain.PelletsDestroyedLarge,
+                    PelletsDestroyedMedium = dto.SessionStatisticsPlain.PelletsDestroyedMedium,
+                    PelletsDestroyedSmall = dto.SessionStatisticsPlain.PelletsDestroyedSmall,
+                    PowerUpBulletDamageCollected = dto.SessionStatisticsPlain.PowerUpBulletDamageCollected,
+                    PowerUpBulletSpeedCollected = dto.SessionStatisticsPlain.PowerUpBulletSpeedCollected,
+                    PowerUpPlayerSpeedCollected = dto.SessionStatisticsPlain.PowerUpPlayerSpeedCollected
                 }
             }).ToList()
         };
@@ -69,7 +81,9 @@ public class RecordingsController : BaseController
                     newRecording.StatsVector
                 });
 
-        } catch (Exception) {
+        }
+        catch (Exception)
+        {
             // Favor persisting Recording over setting vectors
         }
 
@@ -97,9 +111,9 @@ public class RecordingsController : BaseController
         catch (MultiplePlayersFoundException)
         {
             return BadRequest(new
-                { Message = $"The player '{newRecording.Player.Name}' exists multiple times." });
+            { Message = $"The player '{newRecording.Player.Name}' exists multiple times." });
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Console.WriteLine(e.Message);
             Console.WriteLine(e.StackTrace);
@@ -129,11 +143,11 @@ public class RecordingsController : BaseController
         switch (events.Count)
         {
             case 1:
-            {
-                var eventLocation = events[0].Location;
-                recording.Location = eventLocation;
-                break;
-            }
+                {
+                    var eventLocation = events[0].Location;
+                    recording.Location = eventLocation;
+                    break;
+                }
             case 0:
                 throw new EventNotFoundException();
             default:
@@ -149,11 +163,11 @@ public class RecordingsController : BaseController
         switch (players.Count)
         {
             case 1:
-            {
-                recording.Player.Name = players[0].Name;
-                recording.Player.Location = players[0].Location;
-                break;
-            }
+                {
+                    recording.Player.Name = players[0].Name;
+                    recording.Player.Location = players[0].Location;
+                    break;
+                }
             case 0:
                 throw new PlayerNotFoundException();
             default:
@@ -292,7 +306,7 @@ public class RecordingsController : BaseController
 
         return response;
     }
-    
+
     [HttpGet("similarByAcceleration", Name = "GetSimilarByAcceleration")]
     public async Task<List<SimilarRecordingResponse>> SimilarByAcceleration([FromQuery] PlayerRequest playerRequest)
     {
