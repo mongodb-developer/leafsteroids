@@ -153,55 +153,7 @@
             </div>
         </center>
 
-        rec = Similar[1];
-        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
-        <h4 class="card-title mt-3 text-center">Top Similar Player OVERALL </h4>
-        <center>
-            <h5>@rec.Name</h5>
-            <table style="width:60%;">
-                <tr>
-                    <td>Score</td>
-                    <td>@rec.SessionStatisticsPlain.Score</td>
-                </tr>
-                <tr>
-                    <td>DamageDone</td>
-                    <td>@rec.SessionStatisticsPlain.DamageDone</td>
-                </tr>
-                <tr>
-                    <td>BulletsFired</td>
-                    <td>@rec.SessionStatisticsPlain.BulletsFired</td>
-                </tr>
-                <tr>
-                    <td>PelletsDestroyedLarge</td>
-                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
-                </tr>
-                <tr>
-                    <td>PelletsDestroyedMedium</td>
-                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
-                </tr>
-                <tr>
-                    <td>PelletsDestroyedSmall</td>
-                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
-                </tr>
-                <tr>
-                    <td>PowerUpBulletDamageCollected</td>
-                    <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
-                </tr>
-                <tr>
-                    <td>PowerUpBulletSpeedCollected</td>
-                    <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
-                </tr>
-                <tr>
-                    <td>PowerUpPlayerSpeedCollected</td>
-                    <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
-                </tr>
-            </table>
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
-            <div class="text-center">
-                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
-                   class="btn btn-block center">View JSON data</a>
-            </div>
-        </center>
+        
 
         rec = SimilarBySpeed[1]; // 0 is this player
         chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
@@ -276,6 +228,253 @@
                    class="btn btn-block center">View JSON data</a>
             </div>
         </center>
+
+        rec = SimilarByScoreProgress[1];
+        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+        <h4 class="card-title mt-3 text-center">Top Similar Player by Score Progress </h4>
+        <center>
+            <h5>@rec.Name</h5>
+            <table style="width:60%;">
+                <tr>
+                    <td>Score</td>
+                    <td>@rec.SessionStatisticsPlain.Score</td>
+                </tr>
+                <tr>
+                    <td>DamageDone</td>
+                    <td>@rec.SessionStatisticsPlain.DamageDone</td>
+                </tr>
+                <tr>
+                    <td>BulletsFired</td>
+                    <td>@rec.SessionStatisticsPlain.BulletsFired</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedLarge</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedMedium</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedSmall</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletDamageCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpPlayerSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
+                </tr>
+            </table>
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
+            </div>
+        </center>
+
+        rec = SimilarByGameStyle[1];
+        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+        <h4 class="card-title mt-3 text-center">Top Similar Player by Game Style </h4>
+        <center>
+            <h5>@rec.Name</h5>
+            <table style="width:60%;">
+                <tr>
+                    <td>Score</td>
+                    <td>@rec.SessionStatisticsPlain.Score</td>
+                </tr>
+                <tr>
+                    <td>DamageDone</td>
+                    <td>@rec.SessionStatisticsPlain.DamageDone</td>
+                </tr>
+                <tr>
+                    <td>BulletsFired</td>
+                    <td>@rec.SessionStatisticsPlain.BulletsFired</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedLarge</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedMedium</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedSmall</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletDamageCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpPlayerSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
+                </tr>
+            </table>
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
+            </div>
+        </center>
+        rec = SimilarByAverageScorePerBullet[1];
+        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+        <h4 class="card-title mt-3 text-center">Top Similar Player by Average Score Per Bullet </h4>
+        <center>
+            <h5>@rec.Name</h5>
+            <table style="width:60%;">
+                <tr>
+                    <td>Score</td>
+                    <td>@rec.SessionStatisticsPlain.Score</td>
+                </tr>
+                <tr>
+                    <td>DamageDone</td>
+                    <td>@rec.SessionStatisticsPlain.DamageDone</td>
+                </tr>
+                <tr>
+                    <td>BulletsFired</td>
+                    <td>@rec.SessionStatisticsPlain.BulletsFired</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedLarge</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedMedium</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedSmall</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletDamageCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpPlayerSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
+                </tr>
+            </table>
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
+            </div>
+        </center>
+        rec = SimilarByAverageDamagePerBullet[1];
+        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+        <h4 class="card-title mt-3 text-center">Top Similar Player by Average Damage Per Bullet </h4>
+        <center>
+            <h5>@rec.Name</h5>
+            <table style="width:60%;">
+                <tr>
+                    <td>Score</td>
+                    <td>@rec.SessionStatisticsPlain.Score</td>
+                </tr>
+                <tr>
+                    <td>DamageDone</td>
+                    <td>@rec.SessionStatisticsPlain.DamageDone</td>
+                </tr>
+                <tr>
+                    <td>BulletsFired</td>
+                    <td>@rec.SessionStatisticsPlain.BulletsFired</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedLarge</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedMedium</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedSmall</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletDamageCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpPlayerSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
+                </tr>
+            </table>
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
+            </div>
+        </center>
+        rec = SimilarByAveragePelletsPerBullet[1];
+        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
+        <h4 class="card-title mt-3 text-center">Top Similar Player by Average Pellets Per Bullet </h4>
+        <center>
+            <h5>@rec.Name</h5>
+            <table style="width:60%;">
+                <tr>
+                    <td>Score</td>
+                    <td>@rec.SessionStatisticsPlain.Score</td>
+                </tr>
+                <tr>
+                    <td>DamageDone</td>
+                    <td>@rec.SessionStatisticsPlain.DamageDone</td>
+                </tr>
+                <tr>
+                    <td>BulletsFired</td>
+                    <td>@rec.SessionStatisticsPlain.BulletsFired</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedLarge</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedLarge</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedMedium</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedMedium</td>
+                </tr>
+                <tr>
+                    <td>PelletsDestroyedSmall</td>
+                    <td>@rec.SessionStatisticsPlain.PelletsDestroyedSmall</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletDamageCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletDamageCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpBulletSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpBulletSpeedCollected</td>
+                </tr>
+                <tr>
+                    <td>PowerUpPlayerSpeedCollected</td>
+                    <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
+                </tr>
+            </table>
+            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <div class="text-center">
+                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
+                   class="btn btn-block center">View JSON data</a>
+            </div>
+        </center>
     }
 </div>
 
@@ -288,7 +487,12 @@
     private List<SimilarRecording>? Similar { get; set; } = new();
     private List<SimilarRecording>? SimilarByStats { get; set; } = new();
     private List<SimilarRecording>? SimilarBySpeed { get; set; } = new();
+    private List<SimilarRecording>? SimilarByScoreProgress { get; set; } = new();
+    private List<SimilarRecording>? SimilarByGameStyle { get; set; } = new();
     //private List<SimilarRecording>? SimilarByAccel { get; set; } = new();
+    private List<SimilarRecording>? SimilarByAverageScorePerBullet { get; set; } = new();
+    private List<SimilarRecording>? SimilarByAverageDamagePerBullet { get; set; } = new();
+    private List<SimilarRecording>? SimilarByAveragePelletsPerBullet { get; set; } = new();
 
     private SimilarRecording? rec;
     private string chartUrl = string.Empty;
@@ -331,7 +535,21 @@
             // by acceleration
             //string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAccel, playerFilter);
             //SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAccelUrlWithQuery);
-
+            //by score progress
+            string similarByScoreProgressUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByScoreProgress, playerFilter);
+            SimilarByScoreProgress = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByScoreProgressUrlWithQuery);
+            // by game style
+            string similarByGameStyleUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByGameStyle, playerFilter);
+            SimilarByGameStyle = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByGameStyleUrlWithQuery);
+            //by AverageScorePerBullet
+            string similarByAverageScorePerBulletUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAverageScorePerBullet, playerFilter);
+            SimilarByAverageScorePerBullet = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAverageScorePerBulletUrlWithQuery);
+            //by AverageDamagePerBullet
+            string similarByAverageDamagePerBulletUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAverageDamagePerBullet, playerFilter);
+            SimilarByAverageDamagePerBullet = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAverageDamagePerBulletUrlWithQuery);
+            //by AveragePelletsPerBullet
+            string similarByAveragePelletsPerBulletUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAveragePelletsPerBullet, playerFilter);
+            SimilarByAveragePelletsPerBullet = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAveragePelletsPerBulletUrlWithQuery);
             ready = _player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null; //&& SimilarByAccel != null;
 
             DotEnv.Load();

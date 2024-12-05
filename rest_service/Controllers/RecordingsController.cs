@@ -45,12 +45,11 @@ public class RecordingsController : BaseController
             DateTime = DateTime.UtcNow,
             Player = new RecordingPlayer { Name = recordingRequest.PlayerName },
             Event = new RecordingEvent { Id = recordingRequest.EventId },
-            Snapshots = recordingRequest.Snapshots.Select(dto => new Snapshot
+            Snapshots = recordingRequest.Snapshots.Select(dto => new RecordingSnapshot
             {
                 Position = new Position
                 {
                     X = dto.Position.X,
-                    Y = dto.Position.Y,
                     Z = dto.Position.Z
                 },
                 SessionStatisticsPlain = new SessionStatisticsPlain
@@ -74,13 +73,19 @@ public class RecordingsController : BaseController
             newRecording.StatsVector = CalculateStatsVector(newRecording.SessionStatisticsPlain);
             newRecording.SpeedVector = CalculateSpeedVector(newRecording.Snapshots);
             newRecording.AccelVector = CalculateAcceleration(newRecording.SpeedVector);
+            newRecording.ScoreVector = CalculateScoreVector(newRecording.Snapshots);
+            newRecording.ScoreCumulativeVector = CalculateScoreCumulativeVector(newRecording.Snapshots);
+            double [][] ratios = CalculateRatiosVector(newRecording.Snapshots);
+            newRecording.AverageScorePerBulletVector = ratios[0];
+            newRecording.AverageDamagePerBulletVector = ratios[1];
+            newRecording.AveragePelletsPerBulletVector = ratios[2];
+            newRecording.RatiosVector = ratios[3];
 
             newRecording.SimilarityVector = CalculateSimilarityVector(
                 new List<double[]>() {
                     newRecording.SpeedVector,
-                    newRecording.StatsVector
+                    newRecording.StatsVector,
                 });
-
         }
         catch (Exception)
         {
@@ -192,7 +197,7 @@ public class RecordingsController : BaseController
         return stats;
     }
 
-    private static double[] CalculateSpeedVector(List<Snapshot> snapshots)
+    private static double[] CalculateSpeedVector(List<RecordingSnapshot> snapshots)
     {
         long vectorSize = snapshots.Count - 1;
         if (vectorSize != 589) // 590 represents movements in 60s
@@ -223,6 +228,85 @@ public class RecordingsController : BaseController
             accelVector[i] = (speedVector[i + 1] - speedVector[i]) / dt;
 
         return accelVector;
+    }
+
+    private static double[] CalculateScoreVector(List<RecordingSnapshot> snapshots)
+    {
+        double[] score = new double[60]; 
+        long vectorSize = snapshots.Count - 1;
+        uint index = 0;
+        for (int i = 0; i < vectorSize; i=i+10)
+        {
+            // Calculate score for each 10s interval
+            score[index] = snapshots[i+9].SessionStatisticsPlain.Score-snapshots[i].SessionStatisticsPlain.Score;
+            index++;
+        }
+        return score;
+    }
+
+    private static double[] CalculateScoreCumulativeVector(List<RecordingSnapshot> snapshots)
+    {
+        double[] score = new double[60]; 
+        long vectorSize = snapshots.Count - 1;
+        uint index = 0;
+        for (int i = 0; i < vectorSize; i=i+10)
+        {
+            // Calculate score for each 10s interval
+            if(index == 0 ){
+                score[index] = snapshots[i+9].SessionStatisticsPlain.Score-snapshots[i].SessionStatisticsPlain.Score;
+            
+            }
+            else{
+                score[index] = snapshots[i+9].SessionStatisticsPlain.Score-snapshots[i].SessionStatisticsPlain.Score + score[index-1];
+            }
+            index++;
+        }
+        return score;
+    }
+
+    private static double[][] CalculateRatiosVector(List<RecordingSnapshot> snapshots)
+    {
+        long vectorSize = snapshots.Count - 1;
+
+        double[] scorePerBullet=new double[vectorSize+1];
+        double[] damagePerBullet=new double[vectorSize+1];
+        double[] pelletsPerBullet=new double[vectorSize+1];
+        double[] averageScorePerBullet = new double[60];
+        double[] averageDamagePerBullet = new double[60];
+        double[] averagePelletsPerBullet = new double[60];
+        double[] ratiosVector = new double[60];
+        uint index = 0;
+        for (int i = 0; i <= vectorSize; i++)
+        {
+            // Calculate ratios 
+            if (snapshots[i].SessionStatisticsPlain.BulletsFired > 0)
+            {
+                scorePerBullet[i] = (double)snapshots[i].SessionStatisticsPlain.Score/snapshots[i].SessionStatisticsPlain.BulletsFired;
+                damagePerBullet[i] = (double)snapshots[i].SessionStatisticsPlain.DamageDone/snapshots[i].SessionStatisticsPlain.BulletsFired;
+                pelletsPerBullet[i] = (double)(snapshots[i].SessionStatisticsPlain.PelletsDestroyedLarge + snapshots[i].SessionStatisticsPlain.PelletsDestroyedMedium + snapshots[i].SessionStatisticsPlain.PelletsDestroyedSmall) / snapshots[i].SessionStatisticsPlain.BulletsFired;
+            }else
+            {
+                scorePerBullet[i] = 0;
+                damagePerBullet[i] = 0;
+                pelletsPerBullet[i] = 0;
+            }
+        }
+        //average of the ratios for each second  
+        for (int i = 0; i < vectorSize; i=i+10)
+        {
+            averageScorePerBullet[index] = (double)(scorePerBullet[i]+scorePerBullet[i+1]+scorePerBullet[i+2]+scorePerBullet[i+3]+scorePerBullet[i+4]+scorePerBullet[i+5]+scorePerBullet[i+6]+scorePerBullet[i+7]+scorePerBullet[i+8]+scorePerBullet[i+9])/10;
+            averageDamagePerBullet[index] = (double)(damagePerBullet[i]+damagePerBullet[i+1]+damagePerBullet[i+2]+damagePerBullet[i+3]+damagePerBullet[i+4]+damagePerBullet[i+5]+damagePerBullet[i+6]+damagePerBullet[i+7]+damagePerBullet[i+8]+damagePerBullet[i+9])/10;
+            averagePelletsPerBullet[index] = (double)(pelletsPerBullet[i]+pelletsPerBullet[i+1]+pelletsPerBullet[i+2]+pelletsPerBullet[i+3]+pelletsPerBullet[i+4]+pelletsPerBullet[i+5]+pelletsPerBullet[i+6]+pelletsPerBullet[i+7]+pelletsPerBullet[i+8]+pelletsPerBullet[i+9])/10;
+            ratiosVector[index] =  (double)(averageScorePerBullet[index] + averageDamagePerBullet[index] + averagePelletsPerBullet[index])/3;
+            index++;
+        }
+        
+        double [][] vectors = new double[5][];
+        vectors[0] = averageScorePerBullet;
+        vectors[1] = averageDamagePerBullet;
+        vectors[2] = averagePelletsPerBullet;
+        vectors[3] = ratiosVector;
+        return vectors;
     }
 
     private static double[] CalculateSimilarityVector(List<double[]> vectors)
@@ -358,6 +442,188 @@ public class RecordingsController : BaseController
             .VectorSearch(
                 r => r.StatsVector,
                 topRecording.StatsVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
+    }
+    [HttpGet("similarByScoreProgress", Name = "GetSimilarByScoreProgress")]
+    public async Task<List<SimilarRecordingResponse>> SimilarByScoreProgress([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.ScoreCumulativeVector,
+                topRecording.ScoreCumulativeVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
+    }
+
+    [HttpGet("similarByGameStyle", Name = "GetSimilarByGameStyle")]
+    public async Task<List<SimilarRecordingResponse>> SimilarByGameStyle([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.RatiosVector,
+                topRecording.RatiosVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
+    }
+
+    [HttpGet("similarByAverageScorePerBullet", Name = "GetSimilarByAverageScorePerBullet")]
+    public async Task<List<SimilarRecordingResponse>> SimilarByAverageScorePerBullet([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.AverageScorePerBulletVector,
+                topRecording.AverageScorePerBulletVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
+    }
+    [HttpGet("similarByAverageDamagePerBullet", Name = "GetSimilarByAverageDamagePerBullet")]
+    public async Task<List<SimilarRecordingResponse>> SimilarByAverageDamagePerBullet([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.AverageDamagePerBulletVector,
+                topRecording.AverageDamagePerBulletVector,
+                3,
+                new VectorSearchOptions<Recording>()
+                {
+                    IndexName = "vector_index",
+                    NumberOfCandidates = 1000,
+                    Filter = Builders<Recording>.Filter
+                        .Where(r => !r.Player.Name.Equals(playerRequest.Name))
+                })
+            .ToList();
+
+        // Return this player's top recording + top similar
+        List<SimilarRecordingResponse> response = new()
+        {
+            new SimilarRecordingResponse(topRecording)
+        };
+        response.AddRange(
+            similarRecordings
+            .Select(r => new SimilarRecordingResponse(r))
+            .ToList());
+
+        return response;
+    }
+    [HttpGet("similarByAveragePelletsPerBullet", Name = "GetSimilarByAveragePelletsPerBullet")]
+    public async Task<List<SimilarRecordingResponse>> SimilarByAveragePelletsPerBullet([FromQuery] PlayerRequest playerRequest)
+    {
+        // Get the highest scoring run for this player
+        Recording topRecording = _recordingsCollection
+            .Find(r => r.Player.Name.Equals(playerRequest.Name))
+            .SortByDescending(r => r.SessionStatisticsPlain.Score)
+            .Limit(1).ToList().First();
+
+        // Now get similar recordings
+        List<Recording> similarRecordings = _recordingsCollection.Aggregate()
+            .VectorSearch(
+                r => r.AveragePelletsPerBulletVector,
+                topRecording.AveragePelletsPerBulletVector,
                 3,
                 new VectorSearchOptions<Recording>()
                 {

@@ -33,6 +33,36 @@
       "path": "accel_vector",
       "similarity": "euclidean",
       "type": "vector"
-    }
+    },
+    {
+      "numDimensions": 60,
+      "path": "ratios_vector",
+      "similarity": "euclidean",
+      "type": "vector"
+    },
+    {
+      "numDimensions": 60,
+      "path": "scoreCumulative_vector",
+      "similarity": "euclidean",
+      "type": "vector"
+    },
+    {
+      "numDimensions": 60,
+      "path": "average_score_per_bullet_vector",
+      "similarity": "euclidean",
+      "type": "vector"
+    },
+    {
+      "numDimensions": 60,
+      "path": "average_damage_per_bullet_vector",
+      "similarity": "euclidean",
+      "type": "vector"
+    },
+    {
+      "numDimensions": 60,
+      "path": "average_pellets_per_bullet_vector",
+      "similarity": "euclidean",
+      "type": "vector"
+    },
   ]
 }

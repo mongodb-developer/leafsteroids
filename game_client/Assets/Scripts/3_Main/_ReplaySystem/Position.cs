@@ -15,14 +15,14 @@ namespace _3_Main._ReplaySystem
         public float Y { get; set; }
         public float Z { get; set; }
 
-        public Vector3 ToVector3()
+        public Vector2 ToVector3()
         {
-            return new Vector3(X, Y, Z);
+            return new Vector2(X, Z);
         }
-
+ 
         public override string ToString()
         {
-            return $"{{ x={X}, y={Y}, z={Z} }}";
+            return $"{{ x={X},z={Z} }}";
         }
     }
 }

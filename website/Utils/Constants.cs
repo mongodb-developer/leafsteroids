@@ -14,6 +14,11 @@ public static class Constants
     public const string RestServiceEndpointRecordingsSimilarBySpeed = "recordings/similarBySpeed";
     public const string RestServiceEndpointRecordingsSimilarByAccel = "recordings/similarByAcceleration";
     public const string RestServiceEndpointRecordingsSimilarByStats = "recordings/similarByStats";
+    public const string RestServiceEndpointRecordingsSimilarByScoreProgress = "recordings/similarByScoreProgress";
+    public const string RestServiceEndpointRecordingsSimilarByGameStyle = "recordings/similarByGameStyle";
+    public const string RestServiceEndpointRecordingsSimilarByAverageScorePerBullet = "recordings/similarByAverageScorePerBullet";
+    public const string RestServiceEndpointRecordingsSimilarByAverageDamagePerBullet = "recordings/similarByAverageDamagePerBullet";
+    public const string RestServiceEndpointRecordingsSimilarByAveragePelletsPerBullet = "recordings/similarByAveragePelletsPerBullet";
     public const string QueryParameterEventId = "EventId";
     public const string QueryParameterName = "Name";
     public const string QueryParameterRecordingId = "recordingId";
