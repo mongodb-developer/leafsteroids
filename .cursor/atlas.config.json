@@ -1,0 +1,5 @@
+{
+  "projectId": "<your-24-char-hex-project-id>",
+  "clusterName": "<your-cluster-name>",
+  "databaseName": "Leafsteroids"
+}

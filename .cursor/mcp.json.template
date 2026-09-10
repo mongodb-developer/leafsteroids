@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "mongodb-atlas": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "mongodb-atlas-mcp-remote@latest"],
+      "env": {
+        "MDB_MCP_API_CLIENT_ID": "<paste-client-id>",
+        "MDB_MCP_API_CLIENT_SECRET": "<paste-client-secret>"
+      }
+    }
+  }
+}

@@ -2,6 +2,7 @@
 # This file only contains entries that need to be globally excluded.
 
 .env
+.cursor/mcp.json
 .idea/
 
 game_client/build_web/Build/build_web.data

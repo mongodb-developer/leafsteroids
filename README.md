@@ -37,16 +37,20 @@ The demo and repository consist of the following parts:
 You can adjust the config to change how the game behaves and add more events to have several to choose from.  
 To get started, it is recommended to use those default documents.
 
+### Run locally over HTTP (no TLS certificates)
+
+Stay on HTTP for laptop development. Production TLS lives on AWS ACM / load balancers, not in these apps. Do **not** use `--launch-profile https` locally (`dotnet dev-certs` only covers `localhost`, not LAN IPs or port 443).
+
 ### Run the REST service
 
 - Switch into the `rest_service` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
-- [Grab the connection string for your Atlas cluster](https://www.mongodb.com/docs/guides/atlas/connection-string/) and
+- [Grab the connection string for your Atlas cluster](https://www.mongodb.com/docs/guides/atlas/connection-string/) (or use a local MongoDB URI such as `mongodb://127.0.0.1:27017`) and
   exchange it in the `.env` file in the `rest_service` folder.
 - Also replace the `DATABASE_NAME` in the `.env` file with the database name you created earlier.
 
 ```shell
-dotnet run --urls "http://0.0.0.0:8000"
+dotnet run --launch-profile http --urls "http://127.0.0.1:8000"
 ```
 
 Open http://127.0.0.1:8000/ to verify the REST service is running.
@@ -55,15 +59,16 @@ Open http://127.0.0.1:8000/ to verify the REST service is running.
 
 - Switch into the `website` folder.
 - Make a copy of the `.env.template` file and call it `.env`.
-- [Grab the connection string for your Atlas cluster](https://www.mongodb.com/docs/guides/atlas/connection-string/) and
-  exchange it in the `.env` file in the `website` folder.
-- Also replace the `DATABASE_NAME` in the `.env` file with the database name you created earlier.
+- Set `REST_SERVICE_IP=127.0.0.1`, `REST_SERVICE_PORT=8000`, and `GAME_CLIENT_PORT=8000` so the Unity WebGL client calls the local API over HTTP. The website talks to the REST service only; it does not need `CONNECTION_STRING`.
+- Atlas Charts IDs can be left empty; dashboards will be blank.
 
 ```shell
-dotnet run --urls "http://0.0.0.0:8001"
+dotnet run --launch-profile http --urls "http://127.0.0.1:8001"
 ```
 
 Open http://127.0.0.1:8001/ to verify the website is running.
+
+To play in the browser, open `http://127.0.0.1:8001/EventRegister?EventId=<your events._id>`, register or log in, then click **Play Now**. Do not open `/player.html` directly; the game reads API host/port from `localStorage` set on that page.
 
 ### Run the Game Client
 
