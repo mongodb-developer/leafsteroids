@@ -13,7 +13,16 @@ public class ChartsController : BaseController
 
     public ChartsController(ILogger<ChartsController> logger) : base(logger)
     {
-        _recordings = Database!.GetCollection<BsonDocument>(Constants.RecordingsCollectionName);
+        // Atlas analytics nodes are secondaries tagged nodeType=ANALYTICS.
+        // Secondary with only that tag does not fall back to the primary.
+        _recordings = Database!.GetCollection<BsonDocument>(
+            Constants.RecordingsCollectionName,
+            new MongoCollectionSettings
+            {
+                ReadPreference = new ReadPreference(
+                    ReadPreferenceMode.Secondary,
+                    new[] { new TagSet(new[] { new Tag("nodeType", "ANALYTICS") }) })
+            });
     }
 
     [HttpGet("leaderboard")]
