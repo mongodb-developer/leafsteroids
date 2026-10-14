@@ -2,7 +2,6 @@
 @using RestSharp
 @using website.Data
 @using website.Utils
-@using dotenv.net
 
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStore
@@ -104,7 +103,6 @@
     else
     {
         rec = Similar.First(); // this player
-        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
         <h4 class="card-title mt-3 text-center">Your Best Run</h4>
         <center>
             <h5>@rec.Name</h5>
@@ -146,7 +144,7 @@
                     <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
                 </tr>
             </table>
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <HeatmapChart ElementId="heat-best" Points="@Heat("heat-best")" />
             <div class="text-center">
                 <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
                    class="btn btn-block center">View JSON data</a>
@@ -154,7 +152,6 @@
         </center>
 
         rec = Similar[1];
-        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
         <h4 class="card-title mt-3 text-center">Top Similar Player OVERALL </h4>
         <center>
             <h5>@rec.Name</h5>
@@ -196,7 +193,7 @@
                     <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
                 </tr>
             </table>
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <HeatmapChart ElementId="heat-overall" Points="@Heat("heat-overall")" />
             <div class="text-center">
                 <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
                    class="btn btn-block center">View JSON data</a>
@@ -204,32 +201,18 @@
         </center>
 
         rec = SimilarBySpeed[1]; // 0 is this player
-        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
         <h4 class="card-title mt-3 text-center">Top Similar Player BY SPEED </h4>
         <center>
             <h5>@rec.Name</h5>
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
+            <HeatmapChart ElementId="heat-speed" Points="@Heat("heat-speed")" />
             <div class="text-center">
                 <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
                    class="btn btn-block center">View JSON data</a>
             </div>
         </center>
-        <!--
-        rec = SimilarByAccel[1]; // 0 is this player
-        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
-        <h4 class="card-title mt-3 text-center">Top Similar Player BY ACCELERATION</h4>
-        <center>
-            <h5>@rec.Name</h5>
-            <iframe style="background: #FFFFFF;border: none;border-radius: 2px;box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);" width="440" height="480" src=@chartUrl></iframe>
-            <div class="text-center">
-                <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
-                   class="btn btn-block center">View JSON data</a>
-            </div>
-        </center>
-        -->
+        @* Acceleration similarity is not shown. The recordings/similarByAcceleration endpoint is still available. *@
 
         rec = SimilarByStats[1];
-        chartUrl = ChartsUrl.CreateSimilarUrl(_atlasChartIdSimilar, rec.Id);
         <h4 class="card-title mt-3 text-center">Top Similar Player BY STATS</h4>
         <center>
             <h5>@rec.Name</h5>
@@ -271,6 +254,7 @@
                     <td>@rec.SessionStatisticsPlain.PowerUpPlayerSpeedCollected</td>
                 </tr>
             </table>
+            <HeatmapChart ElementId="heat-stats" Points="@Heat("heat-stats")" />
             <div class="text-center">
                 <a href="/playerSimilar_json/?EventId=@_eventId&recordingId=@rec.Id" style="background-color:#00ed64" target="_blank"
                    class="btn btn-block center">View JSON data</a>
@@ -291,16 +275,12 @@
     //private List<SimilarRecording>? SimilarByAccel { get; set; } = new();
 
     private SimilarRecording? rec;
-    private string chartUrl = string.Empty;
     private bool ready = false;
 
     private string _name = string.Empty;
-    private string _atlasChartIdSimilar = string.Empty;
-    private string _chartUrl = string.Empty;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
-
-    private string chartFilter = string.Empty;
+    private readonly Dictionary<string, List<HeatmapPoint>> _heats = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -332,17 +312,16 @@
             //string similarByAccelUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointRecordingsSimilarByAccel, playerFilter);
             //SimilarByAccel = await _restClient.GetJsonAsync<List<SimilarRecording>>(similarByAccelUrlWithQuery);
 
-            ready = _player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null; //&& SimilarByAccel != null;
+            if (Similar?.Count > 0)
+                _heats["heat-best"] = await LoadHeatmap(Similar[0].Id);
+            if (Similar?.Count > 1)
+                _heats["heat-overall"] = await LoadHeatmap(Similar[1].Id);
+            if (SimilarBySpeed?.Count > 1)
+                _heats["heat-speed"] = await LoadHeatmap(SimilarBySpeed[1].Id);
+            if (SimilarByStats?.Count > 1)
+                _heats["heat-stats"] = await LoadHeatmap(SimilarByStats[1].Id);
 
-            DotEnv.Load();
-            var envVars = DotEnv.Read();
-            if (envVars.Count == 0)
-            {
-                envVars["ATLAS_CHART_ID_SIMILAR"] = System.Environment.GetEnvironmentVariable(
-                    "ATLAS_CHART_ID_SIMILAR"
-                );
-            }
-            _atlasChartIdSimilar = envVars["ATLAS_CHART_ID_SIMILAR"];
+            ready = _player != null && Similar != null && SimilarByStats != null && SimilarBySpeed != null;
         }
         catch (Exception e)
         {
@@ -350,5 +329,22 @@
             Console.WriteLine(e.StackTrace);
             _errorMessage = "PLAYER NOT FOUND";
         }
+    }
+
+    private List<HeatmapPoint> Heat(string elementId)
+    {
+        return _heats.TryGetValue(elementId, out var points) ? points : new List<HeatmapPoint>();
+    }
+
+    private async Task<List<HeatmapPoint>> LoadHeatmap(string? recordingId)
+    {
+        if (string.IsNullOrEmpty(recordingId))
+            return new List<HeatmapPoint>();
+
+        var url = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointChartsHeatmap, new Dictionary<string, string>
+        {
+            { "recordingId", recordingId }
+        });
+        return await _restClient.GetJsonAsync<List<HeatmapPoint>>(url) ?? new List<HeatmapPoint>();
     }
 }

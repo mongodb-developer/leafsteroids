@@ -2,7 +2,6 @@
 @using RestSharp
 @using website.Data
 @using website.Utils
-@using dotenv.net
 
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
@@ -129,7 +128,7 @@
 </div> <!-- card.// -->
 
 <div class="card bg-white">
-    @if (_chartUrl.Length == 0)
+    @if (_leaderboard == null)
     {
         <p>
             <em>Loading...</em>
@@ -137,8 +136,25 @@
     }
     else
     {
-        <div class="iframe-wrapper">
-            <iframe class="chartsiframe" src="@_chartUrl"></iframe>
+        <div class="chart-card">
+            <h3 class="text-center">Leaderboard</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in _leaderboard)
+                    {
+                        <tr>
+                            <td>@row.Player</td>
+                            <td>@row.Score</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     }
 </div>
@@ -148,7 +164,7 @@
     private List<string> _suggestedNames = new();
     private Event? _event;
     private string _eventId = string.Empty;
-    private string _chartUrl = string.Empty;
+    private List<LeaderboardRow>? _leaderboard;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
@@ -167,17 +183,18 @@
     protected override async Task OnInitializedAsync()
     {
         await SetEventFromUrlParameters();
-        DotEnv.Load();
-        var envVars = DotEnv.Read();
-        if (envVars.Count == 0)
+        if (string.IsNullOrEmpty(_event?.Id))
         {
-            envVars["ATLAS_CHART_ID_HOME"] = System.Environment.GetEnvironmentVariable(
-                "ATLAS_CHART_ID_HOME"
-            );
+            _leaderboard = new List<LeaderboardRow>();
+            return;
         }
-        var atlasChartIdHome = envVars["ATLAS_CHART_ID_HOME"];
 
-        _chartUrl = ChartsUrl.CreateHomeUrl(atlasChartIdHome, _event!.Id!, _event.Location!);
+        var url = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointChartsLeaderboard, new Dictionary<string, string>
+        {
+            { "eventId", _event.Id },
+            { "location", _event.Location ?? "" }
+        });
+        _leaderboard = await _restClient.GetJsonAsync<List<LeaderboardRow>>(url) ?? new List<LeaderboardRow>();
     }
 
     private async Task SetEventFromUrlParameters()

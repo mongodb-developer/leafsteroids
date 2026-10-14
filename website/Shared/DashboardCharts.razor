@@ -1,0 +1,186 @@
+@using website.Data
+@inject IJSRuntime JS
+
+<div class="dash-panel">
+    <div class="dash-stats">
+        @if (Data.UniquePlayers != null)
+        {
+            <div class="dash-stat">
+                <div class="value">@Data.UniquePlayers</div>
+                <div class="label"># Unique Players</div>
+            </div>
+        }
+        <div class="dash-stat">
+            <div class="value">@Data.GamesPlayed</div>
+            <div class="label">Games Played</div>
+        </div>
+        <div class="dash-stat">
+            <div class="value">@Data.TotalBulletsFired</div>
+            <div class="label">Total Bullets Fired</div>
+        </div>
+        <div class="dash-stat">
+            <div class="value">@Data.TotalDamage</div>
+            <div class="label">Total Damage</div>
+        </div>
+    </div>
+
+    @if (Data.Leaderboard != null)
+    {
+        <section class="dash-block">
+            <h3>Leaderboard</h3>
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Player</th>
+                        <th class="text-end">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Data.Leaderboard)
+                    {
+                        <tr>
+                            <td>@row.Player</td>
+                            <td class="text-end">@row.Score</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    }
+
+    @if (Data.Plays != null)
+    {
+        <section class="dash-block">
+            <h3>Game Plays</h3>
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th class="text-end">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Data.Plays)
+                    {
+                        <tr>
+                            <td>@row.Time</td>
+                            <td class="text-end">@row.Score</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    }
+
+    <div class="dash-charts">
+        <div id="@Prefix-pellets" class="dash-chart"></div>
+        <div id="@Prefix-powerups" class="dash-chart"></div>
+        <div id="@Prefix-activity" class="dash-chart dash-chart-wide"></div>
+        <div id="@Prefix-heat" class="dash-chart dash-heat"></div>
+    </div>
+</div>
+
+<style>
+    .dash-panel {
+        width: min(1040px, calc(100% - 24px));
+        margin: 0 auto 24px;
+        min-width: 0;
+    }
+
+    .dash-stats,
+    .dash-charts {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .dash-stats {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        margin-bottom: 12px;
+    }
+
+    .dash-charts {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @@media (max-width: 720px) {
+        .dash-charts {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    .dash-stat,
+    .dash-block,
+    .dash-chart {
+        min-width: 0;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 10px 0 rgba(70, 76, 79, .2);
+        overflow: hidden;
+    }
+
+    .dash-stat {
+        padding: 16px;
+        text-align: center;
+    }
+
+    .dash-stat .value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #023430;
+        line-height: 1.1;
+    }
+
+    .dash-stat .label {
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .dash-block {
+        margin-bottom: 12px;
+        padding: 16px 20px 8px;
+    }
+
+    .dash-block h3 {
+        margin: 0 0 8px;
+        text-align: center;
+        color: #023430;
+        font-size: 1.4rem;
+    }
+
+    .dash-block table {
+        width: 100%;
+    }
+
+    .dash-chart {
+        height: 320px;
+    }
+
+    .dash-chart-wide {
+        grid-column: 1 / -1;
+        height: 380px;
+    }
+
+    .dash-heat {
+        grid-column: 1 / -1;
+        height: 480px;
+    }
+</style>
+
+@code {
+    [Parameter, EditorRequired] public DashboardData Data { get; set; } = new();
+    [Parameter] public string Prefix { get; set; } = "dash";
+
+    private bool _drawn;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_drawn) return;
+        _drawn = true;
+        await JS.InvokeVoidAsync("leafsteroidsCharts.bars", Prefix + "-pellets", Data.PelletsDestroyed, "Pellets Destroyed");
+        await JS.InvokeVoidAsync("leafsteroidsCharts.bars", Prefix + "-powerups", Data.PowerUpsCollected, "Power Ups Collected");
+        await JS.InvokeVoidAsync("leafsteroidsCharts.line", Prefix + "-activity", Data.Activity, Data.ActivityValueLabel, "Player Activity");
+        await JS.InvokeVoidAsync("leafsteroidsCharts.heatmap", Prefix + "-heat", Data.Heatmap);
+        await JS.InvokeVoidAsync("leafsteroidsCharts.resize");
+    }
+}

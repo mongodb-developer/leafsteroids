@@ -2,7 +2,6 @@
 @using RestSharp
 @using website.Data
 @using website.Utils
-@using dotenv.net
 
 @inject NavigationManager NavigationManager
 
@@ -60,7 +59,7 @@
     </div>
 }
 
-@if (_chartUrl.Length == 0)
+@if (_dashboard == null)
 {
     <p>
         <em>Loading...</em>
@@ -68,16 +67,14 @@
 }
 else
 {
-    <div class="row">
-        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
-    </div>
+    <DashboardCharts Data="_dashboard" Prefix="event" />
 }
 
 @code {
 
     private Event? _event { get; set; }
     private string _eventId = string.Empty;
-    private string _chartUrl = string.Empty;
+    private DashboardData? _dashboard;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
     protected override async Task OnInitializedAsync()
@@ -94,17 +91,18 @@ else
             string eventsUrlWithQuery = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointEvents, eventsFilter);
             var events = await _restClient.GetJsonAsync<List<Event>>(eventsUrlWithQuery);
             _event = events.FirstOrDefault();
-
-            DotEnv.Load();
-            var envVars = DotEnv.Read();
-            if (envVars.Count == 0)
+            if (string.IsNullOrEmpty(_event?.Id))
             {
-                envVars["ATLAS_CHART_ID_EVENT"] = System.Environment.GetEnvironmentVariable(
-                    "ATLAS_CHART_ID_EVENT"
-                );
+                _dashboard = new DashboardData();
+                return;
             }
-            var atlasChartIdEvent = envVars["ATLAS_CHART_ID_EVENT"];
-            _chartUrl = ChartsUrl.CreateEventUrl(atlasChartIdEvent, _event!.Id!, _event.Location!);
+
+            var chartsUrl = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointChartsEvent, new Dictionary<string, string>
+            {
+                { "eventId", _event.Id },
+                { "location", _event.Location ?? "" }
+            });
+            _dashboard = await _restClient.GetJsonAsync<DashboardData>(chartsUrl) ?? new DashboardData();
         }
         catch (Exception e)
         {

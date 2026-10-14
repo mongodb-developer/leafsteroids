@@ -132,28 +132,31 @@
 
 
 <div class="card bg-white">
-    @if (_chartUrl.Length == 0)
-    {
-        <p>
-            <em>Loading...</em>
-        </p>
-    }
-    else
+    @if (_event != null && _player.Name != null)
     {
         <article class="card-body mx-auto" style="max-width: 400px;">
             <h2 class="text-center">Player Dashboard</h2>
         </article>
 
-        <div class="text-center">
+        <div class="text-center pb-3">
             <a href="/playerSimilar/?location=@_event.Location&Name=@_player.Name&EventId=@_event.Id"
                style="background-color:#00ed64" target="_blank" class="btn btn-block center">
                 View Similar Players to @_player.Name
             </a>
         </div>
-
-        <iframe class="atlascharts_iframe" src="@_chartUrl"></iframe>
     }
 </div>
+
+@if (_dashboard == null && string.IsNullOrEmpty(_errorMessage))
+{
+    <p class="text-center text-white">
+        <em>Loading...</em>
+    </p>
+}
+else if (_dashboard != null)
+{
+    <DashboardCharts Data="_dashboard" Prefix="player" />
+}
 
 
 @code {
@@ -163,7 +166,7 @@
     private string _eventId = string.Empty;
     private string _location = string.Empty;
     private string _name = string.Empty;
-    private string _chartUrl = string.Empty;
+    private DashboardData? _dashboard;
     private string _errorMessage = string.Empty;
     private readonly RestClient _restClient = RestServiceClient.Create();
 
@@ -197,9 +200,6 @@
             var envVars = DotEnv.Read();
             if (envVars.Count == 0)
             {
-                envVars["ATLAS_CHART_ID_PLAYER"] = System.Environment.GetEnvironmentVariable(
-                    "ATLAS_CHART_ID_PLAYER"
-                );
                 envVars["REST_SERVICE_IP"] = System.Environment.GetEnvironmentVariable(
                     "REST_SERVICE_IP"
                 );
@@ -207,16 +207,29 @@
                     "GAME_CLIENT_PORT"
                 );
             }
-            var atlasChartIdPlayer = envVars["ATLAS_CHART_ID_PLAYER"];
             var serviceIP = envVars["REST_SERVICE_IP"];
             var servicePort = envVars["GAME_CLIENT_PORT"]; // use different port for the game client
-
-            _chartUrl = ChartsUrl.CreatePlayerUrl(atlasChartIdPlayer, _name, _location, _eventId);
 
             await localStore.SetItemAsStringAsync("eventId", _eventId);
             await localStore.SetItemAsStringAsync("playerName", _player.Name);
             await localStore.SetItemAsStringAsync("serviceIP", serviceIP);
             await localStore.SetItemAsStringAsync("servicePort", servicePort);
+
+            try
+            {
+                var chartsUrl = UrlHelper.BuildUrlWithQuery(Constants.RestServiceEndpointChartsPlayer, new Dictionary<string, string>
+                {
+                    { "eventId", _eventId },
+                    { "location", _location ?? "" },
+                    { "name", _name }
+                });
+                _dashboard = await _restClient.GetJsonAsync<DashboardData>(chartsUrl) ?? new DashboardData();
+            }
+            catch (Exception chartError)
+            {
+                Console.WriteLine(chartError.Message);
+                _dashboard = new DashboardData();
+            }
         }
         catch (Exception e)
         {
